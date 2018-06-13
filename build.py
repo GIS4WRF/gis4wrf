@@ -85,9 +85,9 @@ download_and_unzip('https://github.com/GIS4WRF/gis4wrf-docs/archive/master.zip',
 # TODO: enable this bit for automatically download and generate the documentation.
 # download_and_unzip('https://github.com/dmey/gis4wrf-tutorials/archive/master.zip', PATH_TO_DOCS)
 
-subprocess.run(["mkdocs", "build"], cwd=PATH_TO_DOCS.parent)
+subprocess.run(["mkdocs", "build"], cwd=str(PATH_TO_DOCS.parent), check=True)
 
-# Copy `CHANGELOG.txt` and `ATTRIBUTION.txt`and `LICENSE.txt`into gis4wrf plugin directory
+# Copy CHANGELOG.txt, ATTRIBUTION.txt, and LICENSE.txt into gis4wrf plugin directory
 print('Copying CHANGELOG.txt to the package directory: '+ PKG_DIR)
 shutil.copy(os.path.join(THIS_DIR,'CHANGELOG.txt' ), os.path.join(PKG_DIR,'CHANGELOG.txt'))
 print('Copying ATTRIBUTION.txt to the package directory: '+ PKG_DIR)

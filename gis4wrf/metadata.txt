@@ -7,7 +7,7 @@ name=GIS4WRF
 qgisMinimumVersion=3.0
 description=GIS4WRF is a free and open source QGIS plug-in to help researchers and practitioners with their Advanced Research Weather Research and Forecasting modelling (Skamarock et al., 2008) workflows. GIS4WRF can be used to pre-process input data, run simulations and visualize or post-process results on Windows, Linux, and macOS.
 version=0.8.0
-author=D.Meyer and M. Riechert
+author=D. Meyer and M. Riechert
 email=gis4wrf@users.noreply.github.com
 
 about=GIS4WRF is a free and open source QGIS plug-in to help researchers and practitioners with their Advanced Research Weather Research and Forecasting modelling (Skamarock et al., 2008) workflows. GIS4WRF can be used to pre-process input data, run simulations and visualize or post-process results on Windows, Linux, and macOS.
@@ -17,9 +17,6 @@ repository=https://github.com/GIS4WRF/gis4wrf
 # End of mandatory metadata
 
 # Recommended items:
-
-# Uncomment the following line and add your changelog:
-changelog=CHANGELOG.txt
 
 # Tags are comma separated with spaces allowed
 tags=WRF, WPS, GIS, Weather, NWP
