@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/plugins/gis4wrf" >
+        <file>gis4wrf_logo.svg</file>
+        <file>about_icon.svg</file>
+        <file>bug_icon.svg</file>
+        <file>AddWRFNetCDFLayer.svg</file>
+        <file>AddBinaryLayer.svg</file>
+    </qresource>
+</RCC>

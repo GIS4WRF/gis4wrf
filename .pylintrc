@@ -1,0 +1,5 @@
+[MESSAGES CONTROL]
+disable=wildcard-import,missing-docstring
+
+[FORMAT]
+max-line-length=140

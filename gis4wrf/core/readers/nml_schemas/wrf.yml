@@ -1,0 +1,4582 @@
+time_control:
+  run_days:
+    description: run time in days
+    type: int
+    example: 0
+  run_hours:
+    description: 'run time in hours *note: if it is more than 1 day, you may use both
+      run_days and run_hours or just run_hours.  e.g. if the total run length is 36
+      hrs, you may set run_days = 1, and run_hours = 12, or run_days = 0, and run_hours
+      = 36'
+    type: int
+    example: 0
+  run_minutes:
+    description: run time in minutes
+    type: int
+    example: 0
+  run_seconds:
+    description: run time in seconds
+    type: int
+    example: 0
+  start_year:
+    description: 4 digit year of starting time
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 2012
+  start_month:
+    description: 2 digit month of starting time
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 6
+  start_day:
+    description: 2 digit day of starting time
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 11
+  start_hour:
+    description: 2 digit hour of starting time
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 12
+  start_minute:
+    description: 2 digit minute of starting time
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 0
+  start_second:
+    description: '2 digit second of starting time  *note:  the start time is used
+      to name the first wrfout file.  It also controls the start time for nest domains,
+      and the time to restart'
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 0
+  end_year:
+    description: 4 digit year of ending time
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 2012
+  end_month:
+    description: 2 digit month of ending time
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 6
+  end_day:
+    description: 2 digit day of ending time
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 12
+  end_hour:
+    description: 2 digit hour of ending time
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 12
+  end_minute:
+    description: 2 digit minute of ending time
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 0
+  end_second:
+    description: '2 digit second of ending time  *note:  all end times also control
+      when the nest domain integrations end.  All start and end times are used by
+      real.exe.  You may use either run_days/run_hours/etc. or end_year/month/day/hour/etc.
+      to control the length of model integration; but run_days/run_hours takes precedence
+      over the end times.  The program real.exe uses start and end times only'
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 0
+  interval_seconds:
+    description: time interval between the incoming real data, which will be the interval
+      between the lateral boundary condition file (in seconds) (for real only)
+    type: int
+    example: 10800
+  input_from_file:
+    description: whether the nested run will have input files for domains other than
+      domain 1
+    type: list
+    itemtype: bool
+    minlen: max_dom
+    example: true
+    options:
+      true: Input files for domains other than domain 1
+      false: No input files for domains other than domain 1
+  fine_input_stream:
+    description: Selected fields from nest input
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: (default) all fields from nest input are used
+      2: only nest input specified from input stream 2 (defined in the Registry) are
+        used.  In V3.2, this requires io_form_auxinput2 to be set
+  history_interval:
+    description: history output file interval in minutes (integer only)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 60
+  history_interval_d:
+    description: history output file interval in days (integer only); used as an alternative
+      to history_interval
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 1
+  history_interval_h:
+    description: history output file interval in hours (integer only); used as an
+      alternative to history_interval
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 1
+  history_interval_m:
+    description: history output file interval in minutes (integer only); used as an
+      alternative to `history_interval` and is equivalent to `history_interval`
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 1
+  history_interval_s:
+    description: history output file interval in seconds (integer only); used as an
+      alternative to history_interval
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 1
+  frames_per_outfile:
+    description: number of output times bulked into each history file; used to split
+      output files into smaller pieces
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 1
+  restart:
+    description: Whether this run is a restart
+    type: bool
+    example: false
+    options:
+      true: Run is restart
+      false: Run is not restart
+  restart_interval:
+    description: restart output file interval in minutes
+    type: int
+    example: 1440
+  override_restart_timers:
+    description: Override restart timers
+    type: bool
+    example: false
+    options:
+      false: Uses all output intervals (including history) given by the wrfrst files.  (new
+        since V3.5.1)
+      true: Uses restart output intervals given by the namelist
+  write_hist_at_0h_rst:
+    description: History at initial time of restart
+    type: bool
+    default: false
+    options:
+      false: (default) does not give a history file at the initial time of restart
+        (prevents overwriting original history file at this time)
+      true: gives a history file at the initial time of restart
+  output_ready_flag:
+    description: when turned on, the model will write out an empty file with the name
+      wrfoutReady_d<domain>_< date>. This is useful in production runs so that postprocessing
+      code can check on the existence of this file to start doing processing. (new
+      since V3.6.1)
+    type: bool
+    default: false
+    example: true
+  reset_simulation_start:
+    description: whether to overwrite the simulation start date with the forecast
+      start time
+    type: bool
+    example: false
+    options:
+      true: Overwrite simulation start date
+      false: Do not overwrite simulation start date
+  auxinput1_inname:
+    description: (default); name of input file from WPS
+    type: str
+    default: met_em.d<domain> <date>
+  auxinput4_inname:
+    description: name of input file for lower boundary file; works with sst_update
+      = 1
+    type: str
+    example: wrflowinp_d<domai n>
+  auxinput4_interval:
+    description: file interval in minutes for lower boundary file; works with sst_update
+      = 1
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 360
+  io_form_auxinput4:
+    description: IO format for wrflowinp files; required for V3.2; works with sst_update
+      = 1
+    type: int
+    example: 360
+  io_form_history:
+    description: the format in which the history output file will be
+    type: int
+    options:
+      2: netCDF
+      102: 'split netCDF files, one per processor  *note:  no supported post-processing
+        software for split files'
+      1: 'binary format *note:  no supported post-processing software available'
+      4: 'PHDF5 format *note:  no supported post-processing software available'
+      5: GRIB1
+      10: GRIB2
+      11: parallel netCDF
+  io_form_restart:
+    description: the format in which the restart output files will be
+    type: int
+    options:
+      2: nedCDF
+      102: split netCDF files, one per processor (must restart with the same number
+        of processors)
+  io_form_input:
+    description: the format of the input files
+    type: int
+    options:
+      2: netCDF
+      102: allows the program real.exe to read in split met_em* files, and write split
+        wrfinput files.  No split file for the wrfbdy file.
+  io_form_boundary:
+    description: the format for the wrfbdy file
+    type: int
+    options:
+      2: netCDF format
+      4: PHD5 format
+      5: GRIB1 format
+      10: GRIB2 format
+      11: pnetCDF format
+  ncd_nofill:
+    description: single write or write/read/write sequence
+    type: bool
+    default: true
+    options:
+      true: (default) only a single write, not the write/read/write sequence (new
+        in V3.6)
+      false: write/read/write sequence
+  io_form_auxinput2:
+    description: IO format for input stream 2 data
+    type: int
+    options:
+      2: netCDF format
+      4: PHD5 format
+      5: GRIB1 format
+      10: GRIB2 format
+      11: pnetCDF format
+  diag_print:
+    description: Print Diagnostic. When set to 1 or 2, it allows some simple diagnostic
+      fields to be output
+    type: int
+    options:
+      0: (default) When set to 1 or 2, it allows some simple diagnostic fields to
+        be output
+      1: domain-averaged 3-hourly hydrostatic surface pressure tendency (Dpsfc/Dt),
+        and dryhydrostatic column pressure tendency (Dmu/Dt) will appear in stdout
+        file.
+      2: in addition to those listed above, domain-averaged rainfall, surface evaporation,
+        and sensible and latent heat fluxes will be output in stdout file.
+  debug_level:
+    description: giving this a larger value (50, 100, 200, etc.) increases the debugging
+      print-outs when running WRF
+    type: int
+    example: 0
+  auxhist2_outname:
+    description: file name to write additional output to a different unit or output
+      stream.. If not specified, auxhist2_d<domain>_<date> will be used.  Also note
+      that to write variables in output other than the history file requires either
+      a change in the Registry.EM_COMMON file, or the use of the option iofields_filename
+      option.
+    type: str
+    default: auxhist2_d<domain>_<date>
+    example: rainfall_d<domain>
+  auxhist2_interval:
+    description: the interval in minutes for the output
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 10
+  io_form_auxhist2:
+    description: output format for using auxhist2
+    type: int
+    options:
+      2: netCDF format
+      4: PHD5 format
+      5: GRIB1 format
+      10: GRIB2 format
+      11: pnetCDF format
+  frames_per_auxhist2:
+    description: how many output times will be in each output file
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 1000
+  auxinput11_interval:
+    description: interval in minutes for obs nudging input.  It should be set as the
+      same (or more) frequency as obs_ionf (with the unit of the coarse domain time
+      step)
+    type: int
+    example: 10
+  auxinput11_end_h:
+    description: end of the observation time (in hours), when using the diag_print
+      option
+    type: int
+    example: 6
+  nocolons:
+    description: when set to true this replaces the colons with underscores in the
+      output file names
+    type: bool
+    example: false
+    options:
+      true: Replaces colons with underscores in the output filenames
+      false: Leave colons in output filenames
+  write_input:
+    description: input-formatted data as output for 3DVAR application
+    type: bool
+    example: true
+    options:
+      true: write input-formatted data as output for 3DVAR application
+      false: do not write input-formatted data as output for 3DVAR application
+  inputout_interval:
+    description: interval in minutes when using the write_input option
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 180
+  input_outname:
+    description: Output file name from 3DVAR
+    type: str
+    example: '"wrf_3dvar_input_d< domain>_<date>"'
+  inputout_begin_y:
+    description: beginning year to write 3DVAR data
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 0
+  inputout_begin_d:
+    description: beginning day to write 3DVAR data
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 0
+  inputout_begin_h:
+    description: beginning hour to write 3DVAR data
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 3
+  inputout_begin_m:
+    description: beginning minute to write 3DVAR data
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 0
+  inputout_begin_s:
+    description: beginning second to write 3DVAR data
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 0
+  inputout_end_y:
+    description: ending year to write 3DVAR data
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 0
+  inputout_end_d:
+    description: ending day to write 3DVAR data
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 0
+  inputout_end_h:
+    description: ending hour to write 3DVAR data
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 12
+  inputout_end_m:
+    description: ending minute to write 3DVAR data
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 0
+  inputout_end_s:
+    description: ending second to write 3DVAR data
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 0
+  all_ic_times:
+    description: when set to true, allows you to output a wrfinput file for all time
+      periods
+    type: bool
+    example: false
+  adjust_output_times:
+    description: Adjust output times to the nearest hour?
+    type: bool
+    default: false
+    options:
+      false: Do not adjust output times to the nearest hour
+      true: Adjust output times to the nearest hour
+  output_diagnostics:
+    description: set to =1 to add 36 surface diagnostic arrays (max/min/mean/std)  (new
+      since V3.3.1)
+    type: int
+    options:
+      0: turned off
+      1: '36 surface diagnostic arrays (max/min/mean/std) in the time interval are
+        specified.  The output goes to auxiliary history output stream 3 with default
+        file name ''wrfxtrm_d<domain>_<date>.''  You must also set io_form_auxhist3
+        =2, auxhist3_interval = 1440, 1440, and frames_per_auxhist3 = 1000, 1000.
+        Note: do restart only at multiple of auxhist3_intervals'
+  nwp_diagnostics:
+    description: nwp diagnostics, 0 is turned off
+    type: int
+    example: 0
+  input_from_hires:
+    description: When set to true, high-resolution terrain and landuse will be used
+      in the nests (requires special input data, and environment variable TERRAIN_AND_LANDUSE
+      set at compile time). This optin will overwrite input_from_file option for nest
+      domains.  (new since V3.6). For automatic moving nests
+    type: list
+    itemtype: bool
+    minlen: max_dom
+    example: false
+  rsmas_data_path:
+    description: Directory path where the high-res data is. For automatic moving nests
+    type: str
+    example: high-res-datadirectory
+  iofields_filename:
+    description: 'an option to request particular variables to appear in output, if
+      they are not already, or to not appear if they do and you do not want them to.  You
+      must also create a text file (my_iofields_list.txt) in which you will declare
+      the variables to be output.  It will be a single line of text, e.g.:  +:h:7:RAINC,RAINNC
+      or -:h:0:RAINC,RAINNC. For automatic moving nests'
+    type: list
+    itemtype: str
+    minlen: max_dom
+    example: my_iofields_list.txt
+  ignore_iofields_warning:
+    description: I/O warnings
+    type: bool
+    example: true
+    options:
+      true: tells the model to continue if an error is encountered in the userspecified
+        files. For automatic moving nests
+      false: tells the model to abort if an error is encountered in the user-specified
+        files
+domains:
+  time_step:
+    description: time step for integration seconds (recommended 6*dx in km for a typical
+      case)
+    type: int
+    example: 60
+  time_step_fract_num:
+    description: numerator for fractional time step
+    type: int
+    example: 0
+  time_step_fract_den:
+    description: denominator for fractional time step.  E.g., if you want to use 60.3
+      sec as your time step, set time_step = 60, time_step_fract_num = 3, and time_step_fract_den
+      = 10.
+    type: int
+    example: 1
+  time_step_dfi:
+    description: time step when setting dfi_opt = 1, may be different from the regular
+      time step
+    type: int
+    example: 60
+  max_dom:
+    description: the number of domains over which you are running
+    type: int
+    example: 1
+  s_we:
+    description: start index in x (west-east) direction (leave as is)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 1
+  e_we:
+    description: end index in x (west_east) direction (staggered dimension)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 91
+  s_sn:
+    description: start index in y (south-north) direction (leave as is)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 1
+  e_sn:
+    description: end index in y (south-north) direction (staggered dimension)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 82
+  s_vert:
+    description: start index in z (vertical) direction (leave as is)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 1
+  e_vert:
+    description: 'end index in z (vertical) direction (staggered dimension -- this
+      refers to full levels).  Most variables are on unstaggered levels.  *Note:  Vertical
+      dimensions need to be the same for all nests'
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 30
+  dx:
+    description: grid length in x-direction (in meters)
+    type: list
+    itemtype: real
+    minlen: max_dom
+    example: 30000.0
+  dy:
+    description: grid length in y-direction (in meters)
+    type: list
+    itemtype: real
+    minlen: max_dom
+    example: 30000.0
+  ztop:
+    description: height in meters; used to define model top for idealized cases
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 19000
+  grid_id:
+    description: domain identifier
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 1
+  parent_id:
+    description: ID of the parent domain
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 0
+  i_parent_start:
+    description: the starting lower-left corner iindice from the parent domain
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 1
+  j_parent_start:
+    description: the starting lower-left corner j_indice from the parent domain
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 1
+  parent_grid_ratio:
+    description: 'parent-to-nest domain grid size ratio.  *Note:  for real data cases
+      the ratio must be odd; for ideal data cases, the ratio can be even if feedback
+      is set to 0.'
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 1
+  parent_time_step_ratio:
+    description: parent-to-nest time step ratio; this can be different from the parent_grid_ratio
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 1
+  feedback:
+    description: Feedback options.
+    type: int
+    options:
+      0: no feedback
+      1: feedback from nest to its parent domain
+  smooth_option:
+    description: smoothing option for parent domain; used only with feedback
+    type: int
+    options:
+      0: turned off
+      1: 1-2-1 smoothing option for parent domain; used only with feedback=1
+      2: (default) smoothing-desmoothing option for parent domain; used only with
+        feedback=1
+  hypsometric_opt:
+    description: (default) computes height in program real.exe and pressure in the
+      model (ARW only) by using an alternative method (less biased when compared against
+      input data) (default changed to 2 beginning V3.4)
+    type: int
+    default: 2
+    options:
+      2: (default) computes height in program real.exe and pressure in the model (ARW
+        only) by using an alternative method (less biased when compared against input
+        data) (default changed to 2 beginning V3.4)
+      1: original method
+  max_ts_locs:
+    description: maximum number of time series locations
+    type: int
+    example: 5
+  max_ts_level:
+    description: highest model level for profile output.  (new since V3.7)
+    type: int
+    example: 15
+  wif_input_opt:
+    description: whether to process the Water Ice Friendly Aerosol input from metgrid
+      (set to =1 to turn on); used for mp_physics = 28; see run/README.namelist for
+      additional information
+    type: int
+    default: 0
+    options:
+      0: 'off'
+      1: 'on'
+  num_wif_levels:
+    description: (default) number of levels in the Thompson Water Ice Friendly Aerosols
+      (mp_physics = 28); see run/README.namelist for additional information
+    type: int
+    default: 27
+  num_metgrid_levels:
+    description: number of vertical levels in WPS output (type ncdump -h on one of
+      the met_em* files to find out this number). Options for Program real.exe
+    type: int
+    example: 40
+  num_metgrid_soil_levels:
+    description: number of soil levels or layers in WPS output (type ncdump -h on
+      one of the met_em* files to find out this number). Options for Program real.exe
+    type: int
+    example: 4
+  eta_levels:
+    description: model eta levels from 1 to 0.  If not given, real will provide a
+      set of levels. Options for Program real.exe
+    type: list
+    itemtype: real
+    example: 1.0, 0.99, ...0.0
+  ideal_init_method:
+    description: method to compute albedo in idealized cases in start_em.  (new since
+      V3.8) . Options for Program real.exe
+    type: int
+    options:
+      1: (default) albedo from phb
+      2: albedo from t_init
+  interp_method_type:
+    description: The default is to use the Smolarkiewicz "SINT" method; however, this
+      is known to break with the implementation inside of WRF for large refinement
+      ratios (such as 15:1).  For those extreme and rare occurrences, other schemes
+      ar available.  For options 1, 3, 4, and 12, the FG lateral boundaries use the
+      same horizontal scheme for the lateral BC computations.  (new since V3.7). Horizontal
+      interpolation options, coarse grid to fine grid
+    type: int
+    default: 2
+    options:
+      1: bi-linear interpolation
+      2: (default) SINT
+      3: nearest-neighbor - only to be used for testing purposes
+      4: overlapping quadratic
+      12: for testing only, uses SINT horizontal interpolation, and same scheme for
+        computation of FG lateral boundaries
+  force_sfc_in_vinterp:
+    description: Vertical interpolation
+    type: int
+    default: 1
+    options:
+      1: (default) use the surface level as the lower boundary when interpolating
+        through this many eta levels. For Vertical interpolation options
+      0: perform traditional trapping interpolation. For Vertical interpolation options
+  maxw_horiz_pres_diff:
+    description: (default) Pressure threshold (Pa).  For using the level of max winds
+      when the pressure difference between neighboring values exceeds this maximum,
+      the variable is NOT inserted into the column for vertical interpolation.  ARW
+      real only.  (new since V3.6.1) . For Vertical interpolation options
+    type: int
+    default: 5000
+  trop_horiz_pres_diff:
+    description: (default) Pressure threshold (Pa).  For using the tropopause level
+      when the pressure difference between neighboring values exceeds this maximum,
+      the variable is NOT inserted into the column for vertical interpolation.  ARW
+      real only.  (new since V3.6.1) . For Vertical interpolation options
+    type: int
+    default: 5000
+  maxw_above_this_level:
+    description: (default) minimum height (it is actually pressure in Pa) to allow
+      using the level of max wind information in real.  With a value of 300 hPa, then
+      a max wind value at 500 hPa will be ignored.  ARW real only.  (new since V3.6.1).
+      For Vertical interpolation options
+    type: int
+    default: 30000
+  use_maxw_level:
+    description: use max wind speed level in vertical interpolation inside of the
+      ARW real program (default = 0; do not use level).  (new since V3.7.1) . For
+      Vertical interpolation options
+    type: int
+    default: 0
+    example: 1
+    options:
+      0: do not use
+      1: use
+  use_trop_level:
+    description: same as above, but with tropopause level data (default = 0; do not
+      use).  (new since V3.7.1) . For Vertical interpolation options
+    type: int
+    default: 0
+    example: 1
+    options:
+      0: do not use
+      1: use
+  interp_theta:
+    description: Vertical interpolation of potential temperature. For Vertical interpolation
+      options
+    type: bool
+    default: false
+    options:
+      false: (default) vertically interpolates temperature (which may reduce bias
+        when compared with input data).(new since V3.3.1). (default changed to  false
+        beginning V3.4).  . For Vertical interpolation options
+      true: vertically interpolates potential temperature. For Vertical interpolation
+        options
+  p_top_requested:
+    description: pressure top (in Pa) to use in the model; must be available in WPS
+      data. For Vertical interpolation options
+    type: int
+    example: 5000
+  interp_type:
+    description: Interpolation type. For Vertical interpolation options
+    type: int
+    default: 2
+    options:
+      2: (default) vertical interpolation that is linear in log(pressure). For Vertical
+        interpolation options
+      1: vertical interpolation that is linear in pressure. For Vertical interpolation
+        options
+  extrap_type:
+    description: Exytapolation Type. For Vertical interpolation options
+    type: int
+    default: 2
+    options:
+      2: (default) vertical extrapolation of non-temperature variables, using the
+        lowest level as constant below ground. For Vertical interpolation options
+      1: vertical extrapolation of nontemperature variables, using the 2 lowest levels.
+        For Vertical interpolation options
+  t_extrap_type:
+    description: vertical extrapolation for potential temp. For Vertical interpolation
+      options
+    type: int
+    default: 2
+    options:
+      2: (default) -6.5 K/km lapse rate for temperature
+      1: isothermal
+      3: constant theta
+  use_levels_below_ground:
+    description: in vertical interpolation, whether to use levels below input surface
+      level. For Vertical interpolation options.
+    type: bool
+    default: true
+    options:
+      true: (default) use input isobaric levels below input surface
+      false: extrapolate when WRF location is below input surface level
+  use_surface:
+    description: Input surface level data in vertical interpolation. For Vertical
+      interpolation options
+    type: bool
+    default: true
+    options:
+      true: (default) uses input surface level data in vertical interpolation. For
+        Vertical interpolation options
+      false: do not use input surface data
+  lagrange_order:
+    description: Vertical interpolation order. For Vertical interpolation options
+    type: int
+    default: 2
+    options:
+      2: (default) quadratic vertical interpolation order. (default changed to 2 beginning
+        V3.4) . For Vertical interpolation options
+      1: linear vertical interpolation order
+      9: Cubic spline
+  lowest_lev_from_sfc:
+    description: Surface values for the lowest eta (u,v,t,q). For Vertical interpolation
+      options
+    type: bool
+    default: false
+    options:
+      false: (default) use traditional interpolation. For Vertical interpolation options
+      true: use surface values for the lowest eta (u,v,t,q)
+  sfcp_to_sfcp:
+    description: optional method to compute model's surface pressure when incoming
+      data only has surface pressure and terrain, but not sealevel pressure (default
+      is false). For Vertical interpolation options
+    type: bool
+    default: false
+    options:
+      true: optional method to compute model's surface pressure when incoming data
+        only has surface pressure and terrain, but not sealevel pressure (default
+        is false). For Vertical interpolation options
+      false: optional method to compute model's surface pressure when incoming data
+        only has surface pressure and terrain, but not sealevel pressure (default
+        is false). For Vertical interpolation options
+  use_tavg_for_tsk:
+    description: uses diurnally-averaged surface temp as skin temp.  The diurnallyaveraged
+      surface temp can be computed using WPS utility avg_tsfc.exe.  May use this option
+      when SKINTEMP is not present (default is false). For Vertical interpolation
+      options
+    type: bool
+    default: false
+    options:
+      true: Use diuranlly averaged surface temperature for skink temp
+      false: Do not use diuranlly averaged surface temperature for skink temp
+  rh2qv_wrt_liquid:
+    description: Compute qv with respect to liquid water or ice
+    type: bool
+    default: true
+    options:
+      true: (default) computes qv with respect to liquid water.  (new since V3.3).
+        For Vertical interpolation options
+      false: computes qv with respect to ice
+  rh2qv_method:
+    description: which method to use to computer mixing ratio from RH.  (new since
+      V3.3). For Vertical interpolation options
+    type: int
+    options:
+      1: (default) old MM5 method
+      2: uses a WMO recommended method (WMO-No. 49, corrigendum, August 2000)
+  smooth_cg_topo:
+    description: Whether to smooth the outer rows and columns of the domain 1 topography
+      with respect to the input data (default is false). For Vertical interpolation
+      options
+    type: bool
+    default: false
+    options:
+      true: Smooth the outer rows and columns of the domain 1 topography with respect
+        to the input data (default is false). For Vertical interpolation options
+      false: Do not smooth the outer rows and columns of the domain 1 topography with
+        respect to the input data (default is false). For Vertical interpolation options
+  vert_refine_fact:
+    description: vertical refinement factor for ndown (1 = same number of vertical
+      levels as the coarse domain, 2 = double the vertical resolution, and so on);
+      not used for current vertical grid refinement . For Vertical interpolation options
+    type: int
+    example: 1
+  vert_refine_method:
+    description: Vertical refinement.  (new since V3.7)  . For Vertical interpolation
+      options
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: (default) no vertical refinement.  (new since V3.7)  . For Vertical interpolation
+        options
+      1: integer vertical refinement
+      2: use specified or computed eta levels for vertical refinement
+  num_moves:
+    description: 'total # of moves for all domains. For Preset Moving Nest'
+    type: int
+    example: 0
+  move_id:
+    description: a list of nest domain ID's, one per move. For Preset Moving Nest
+    type: list
+    itemtype: int
+    minlen: num_moves
+    example: 2, 2,
+  move_interval:
+    description: time in minutes since the start of this domain. For Preset Moving
+      Nest
+    type: list
+    itemtype: int
+    minlen: num_moves
+    example: 60, 120,
+  move_cd_x:
+    description: 'the # of parent domain grid cells to move in the i-direction. For
+      Preset Moving Nest'
+    type: list
+    itemtype: int
+    minlen: num_moves
+    example: 1, -1,
+  move_cd_y:
+    description: 'the # of parent domain grid cells to move in the j-direction (positive
+      in increasing i/j directions, and negative in decreasing i/j directions.  Only
+      1, 0, and -1 is permitted. For Preset Moving Nest'
+    type: list
+    itemtype: int
+    minlen: num_moves
+    example: -1, 1,
+  vortex_interval:
+    description: how often the new vortex position is computed (in mins) . For Automatic
+      Moving Nest
+    type: list
+    minlen: max_dom
+    itemtype: int
+    example: 15
+  max_vortex_speed:
+    description: used to compute the search radius for the new vortex position (in
+      m/s) . For Automatic Moving Nest
+    type: list
+    minlen: max_dom
+    itemtype: int
+    example: 40
+  corral_dist:
+    description: 'how close the moving nest is allowed to get to the coarse grid boundary.  This
+      # sets the minimum limit of grid cells allowed between them. For Automatic Moving
+      Nest'
+    type: list
+    minlen: max_dom
+    itemtype: int
+    example: 8
+  track_level:
+    description: pressure level value (Pa) at which the tropical storm vortex is tracked
+      . For Automatic Moving Nest
+    type: int
+    example: 50000
+  time_to_move:
+    description: time (in mins) to start moving nest. For Automatic Moving Nest
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 0
+  use_adaptive_time_step:
+    description: Whether to use adaptive time step (default is false). For Adaptive
+      Time Step
+    type: bool
+    default: false
+    options:
+      true: use adaptive time step
+      false: Do not use adaptive time step
+  step_to_output_time:
+    description: Whether to modify the time step so that the exact history time is
+      reached. For Adaptive Time Step
+    type: bool
+    example: true
+    options:
+      true: Modifies the time step so that the exact history time is reached. For
+        Adaptive Time Step
+      false: Do not modify the time step so that the exact history time is reached.
+        For Adaptive Time Step
+  target_cfl:
+    description: "if vertical CFL \u2264 this value, then time step is increased.\
+      \ For Adaptive Time Step"
+    type: list
+    itemtype: real
+    minlen: max_dom
+    example: 1.2., 1.2., 1.2.,
+  target_hcfl:
+    description: "if horizontal CFL \u2264 this value, the time step is increased.\
+      \  (new since V3.3). For Adaptive Time Step"
+    type: list
+    itemtype: real
+    minlen: max_dom
+    example: 0.84, 0.84, 0.84,
+  max_step_increase_pct:
+    description: "percentage of previous time step to increase if the max CFL is \u2264\
+      \ target_cfl. For Adaptive Time Step"
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 5, 51, 51,
+  starting_time_step:
+    description: 'flag -1 implies 4*dx is used to start the model.  Any positive integer
+      specifies the time step the model will use to start (in seconds).  *Note:  when
+      use_adapative_time_step =  true, the value specified for time_step is ignored..
+      For Adaptive Time Step'
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: -1, -1, -1,
+  starting_time_step_den:
+    description: denominator for starting_time_step (so that fractional time step
+      can be used).  (new since V3.6). For Adaptive Time Step
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 1
+  max_time_step:
+    description: flag -1 implies the maximum time step is 8*dx.  Any positive integer
+      specifies the maximum time step (in seconds).For Adaptive Time Step
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: -1, -1, -1,
+  max_time_step_den:
+    description: denominator for max_time_step.  (new since V3.6). For Adaptive Time
+      Step
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 1
+  min_time_step:
+    description: flag -1 implies the minimum time step is 3*dx.  Any positive integer
+      specifies the minimum time step (in seconds). For Adaptive Time Step
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: -1, -1, -1,
+  min_time_step_den:
+    description: denominator for min_time_step.  (new since V3.6). For Adaptive Time
+      Step
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 1
+  adaptation_domain:
+    description: (default) specifies which domain to use to drive adaptive time stepping.
+      For Adaptive Time Step
+    type: int
+    default: 1
+  tile_sz_x:
+    description: number of points in tile x direction (open MP only). For Controlling
+      Parallel Computing
+    type: int
+    example: 0
+  tile_sz_y:
+    description: number of points in tile y direction; can be determined automatically
+      (open MP only). For Controlling Parallel Computing
+    type: int
+    example: 0
+  numtiles:
+    description: number of tiles per patch (alternative to above 2 items; open MP
+      only). For Controlling Parallel Computing
+    type: int
+    example: 1
+  nproc_x:
+    description: automatic vs manual decomposition in x  (MPI only). For Controlling
+      Parallel Computing
+    type: int
+    default: -1
+  nproc_y:
+    description: Automatic vs manual decomposition in y  (MPI only). For Controlling
+      Parallel Computing
+    type: int
+    default: -1
+  ocean_levels:
+    description: (default) number of ocean levels when using sf_ocean_physics = 2.
+      For 3D Ocean Model
+    type: int
+    default: 30
+  ocean_z:
+    description: vertical profile of layer depths for for ocean (in meters).  See
+      /run/README.namelist for more details. For 3D Ocean Model
+    type: int
+    example: '(values for # of ocean_levels)'
+  ocean_t:
+    description: vertical profile of ocean temps (K).  See /run/README.namelist for
+      more details. For 3D Ocean Model
+    type: int
+    example: '(values for # of ocean_levels)'
+  ocean_s:
+    description: vertical profile of salinity.  See /run/README.namelist for more
+      details. For 3D Ocean Model
+    type: int
+    example: '(values for # of ocean_levels'
+physics:
+  physics_suite:
+    description: Since 3.9. A physics suite consists of a combination of physics options
+      (mp_physics, cu_physics, ra_lw_physics, ra_sw_physics, bl_pbl_physics, sf_sf_clay_physics,
+      and sf_surface_physic) that have been highly tested and have shown good and
+      reasonable results.
+    type: str
+    options:
+      tropical: mp_physics = 6, cu_physics = 16, ra_lw_physics = 4, ra_sw_physics
+        = 4, bl_pbl_physics = 1, sf_sfclay_physics = 91, sf_surface_physics = 2
+      CONUS: mp_physics = 8, cu_physics = 6, ra_lw_physics = 4, ra_sw_physics = 4,
+        bl_pbl_physics = 2, sf_sfclay_physics = 2, sf_surface_physics = 2
+  chem_opt:
+    description: chemistry option - use WRF-Chem
+    type: list
+    minlen: max_dom
+    itemtype: int
+    example: 0
+  mp_physics:
+    description: Microphysics
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: (default) no microphysics
+      1: Kessler scheme
+      2: Lin et al. scheme
+      3: WSM 3-class simple ice scheme
+      4: WSM 5-class scheme
+      5: Ferrier (new Eta) microphysics, operational High-Resolution Window
+      6: WSM 6-class graupel scheme
+      7: Goddard GCE scheme (also uses gsfcgce_hail and gsfcgce_2ice)
+      8: Thompson graupel scheme (2moment scheme in V3.1)
+      9: Milbrandt-Yau 2-moment scheme
+      10: Morrison 2-moment scheme
+      11: CAM 5.1 5-class scheme. (new since V3.5)
+      13: SBU_YLin, 5-class scheme. (new since V3.3)
+      14: WRF double moment, 5-class scheme
+      15: High-resolution Ferrier microphysics, with advection
+      16: WRF double moment, 6-class scheme
+      17: NSSL 2-moment 4-ice scheme (steady background CCN). (new since V3.4)
+      18: NSSL 2-moment 4-ice scheme with predicted CCN (better for idealized than
+        real cases); to set a global CCN value, use nssl_cccn = 0.7e9 (CCN for NSSL
+        scheme 18).  Also sets same value to ccn_conc for mp_physics = 18. (new since
+        V3.4). (new since V3.5)
+      19: NSSL 1-moment, 6-class scheme. (new since V3.5)
+      21: NSSL-LFO 1-moment, 6-class; very similar to Gilmore et al. 2004; can set
+        intercepts and particle densities in physics namelist, e.g., nssl_cnor for
+        NSSL 1-moment schemes, intercept and particle densities can be set for snow,
+        graupel, hail, and rain.  For the 1- and 2-moment schemes, the shape parameters
+        for graupel and hail can be set.  See /WRFV3/run/README.namelist file for
+        specifics. (new since V3.5)
+      22: NSSL 2-moment 3-ice scheme, no hail. (new since V3.7)
+      28: 'aerosol-aware Thompson scheme with water- and ice-friendly aerosol climatology
+        (new for V3.6); this option has 2 climatological aerosol input options: use_aero_icbs
+        = .F. (use constant values), and use_aero_icbc = .T. (use input from WPS).
+        (new since V3.6)'
+      30: HUJI (Hebrew University of Jerusalem, Israel) spectral bin. (new since V3.6)
+      32: HUJI spectral bin microphysics, full version. (new since V3.6)
+      50: P3 1-category. (new since V3.9)
+      51: P3 1-category plus double moment cloud water. (new since V3.9)
+      95: Ferrier (old Eta), operational NAM (WRF NMM)
+      98: Thompson scheme in V3.0
+  do_radar_ref:
+    description: 'allows radar reflectivity to be computed using mp-scheme- specific
+      parameters. Currently works for mp_physics = 2,4,6,7,8,10,14,16. 0: off. 1:
+      on.   (new since V3.4.1)'
+    type: int
+    example: 0
+    options:
+      0: 'OFF'
+      1: 'ON'
+  mp_zero_out:
+    description: "for non-zero mp_physics options, this keeps moisture variables above\
+      \ a threshold value \u22650.  An alternative (and better) way to keep moisture\
+      \ variables positive is to use the moist_adv_opt."
+    type: int
+    default: 0
+    options:
+      0: (default) no action taken; no adjustment to any moisture field
+      1: except for Qv, all other moisture arrays are set to zero if they fall below
+        a critical value
+      2: "Qv \u2265 0 and all other moisture arrays are set to zero if they fall below\
+        \ a critical value"
+  mp_zero_out_thresh:
+    description: 'critical value for moisture variable threshold, below which moisture
+      arrays (except for Qv) are set to zero (unit:  kg/kg)'
+    type: real
+    example: 1.0e-08
+  mp_tend_lim:
+    description: limit on temp tendency from microphysics latent heating when radar
+      data assimilation is used
+    type: int
+    example: ''
+  gsfcgce_hail:
+    description: Whether to run gsfcgce scheme with grauper or hail
+    type: int
+    example: 0
+    options:
+      0: (default) running gsfcgce scheme with graupel
+      1: running gsfcgce scheme with hail
+  gsfcgce_2ice:
+    description: gsfcgce scheme ice options
+    type: int
+    example: 0
+    options:
+      0: (default) running gsfcgce scheme with snow, ice, and graupel/hail
+      1: running gsfcgce scheme with only ice and snow (gsfcgce_hail is ignored)
+      2: running gsfcgce scheme with only ice and graupel (used only in very extreme
+        situation; gsfcgce_hail is ignored)
+  ccn_conc:
+    description: (default) CCN concentration; used by WDM schemes (previously afwa_ccn_conc,
+      new in V3.6.1).  (new name since V3.7)
+    type: real
+    example: ''
+  hail_opt:
+    description: hail/graupel switch for WSM6, WDM6, and Morrison schemes (previously
+      afwa_hail_opt, new in V3.6.1).  (new name since V3.7)
+    type: int
+    options:
+      0: 'OFF'
+      1: 'ON'
+  nssl_alphah:
+    description: shape parameter for graupel. For the NSSL 1-moment scheme.  For the
+      1- and 2-moment schemes, the shape parameters for graupel and hail can also
+      be set.
+    type: real
+    example: 0.0
+  nssl_alphahl:
+    description: shape parameter for hail. For the NSSL 1-moment scheme.  For the
+      1- and 2-moment schemes, the shape parameters for graupel and hail can also
+      be set.
+    type: real
+    example: 2.0
+  nssl_cnoh:
+    description: graupel intercept. For the NSSL 1-moment scheme.  For the 1- and
+      2-moment schemes, the shape parameters for graupel and hail can also be set.
+    type: real
+    example: 400000.0
+  nssl_cnohl:
+    description: hail intercept. For the NSSL 1-moment scheme.  For the 1- and 2-moment
+      schemes, the shape parameters for graupel and hail can also be set.
+    type: real
+    example: 40000.0
+  nssl_cnor:
+    description: rain intercept. For the NSSL 1-moment scheme.  For the 1- and 2-moment
+      schemes, the shape parameters for graupel and hail can also be set.
+    type: real
+    example: 800000.0
+  nssl_cnos:
+    description: snow intercept. For the NSSL 1-moment scheme.  For the 1- and 2-moment
+      schemes, the shape parameters for graupel and hail can also be set.
+    type: real
+    example: 3000000.0
+  nssl_rho_qh:
+    description: graupel density. For the NSSL 1-moment scheme.  For the 1- and 2-moment
+      schemes, the shape parameters for graupel and hail can also be set.
+    type: real
+    example: 500.0
+  nssl_rho_ghl:
+    description: hail density. For the NSSL 1-moment scheme.  For the 1- and 2-moment
+      schemes, the shape parameters for graupel and hail can also be set.
+    type: real
+    example: 900.0
+  nssl_rho_qs:
+    description: snow density. For the NSSL 1-moment scheme.  For the 1- and 2-moment
+      schemes, the shape parameters for graupel and hail can also be set.
+    type: real
+    example: 100.0
+  no_mp_heating:
+    description: turn off latent heating from a microphysics scheme (0 is off and
+      is default)
+    type: int
+    default: 0
+    options:
+      0: 'OFF'
+      1: 'ON'
+  use_mp_re:
+    description: whether to use effective radii computed in mp schemes in RRTMG (the
+      mp schemes that compute effective radii are 3, 4, 6, 8, 14, 16, 17-21). (new
+      since V3.8)
+    type: int
+    default: 1
+    options:
+      0: off; do not use
+      1: (default) on; use effective radii
+  ra_lw_physics:
+    description: Longwave radiation scheme
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: (default) no longwave radiation
+      1: 'rrtm scheme (Default values for GHG in V3.5: co2vmr=379.e-6, n2ovmr=319.e-9,
+        ch4vmr=1774.e-9; Values used in previous versions: co2vmr=330.e-6, n2ovmr=0.,
+        ch4vmr=0.)'
+      3: 'CAM scheme  *Note: restart must be at 6-hourly interval; also requires levsiz,
+        paerlev, cam_abs_dim1(2); see below'
+      4: 'rrtmg scheme (Default values for GHG in V3.5: co2vmr=379.e-6, n2ovmr=319.e-9,
+        ch4vmr=1774.e-9)'
+      24: fast rrtmg scheme for GPU and MIC . (new since V3.7)
+      5: Goddard scheme. (new since V3.3)
+      7: FLG (UCLA) scheme. (new since V3.4)
+      31: Earth Held-Suarez forcing
+      99: GFDL (Eta) longwave (semisupported); also must use co2tf = 1 for ARW
+  ra_sw_physics:
+    description: Shortwave radiation scheme
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: (default) no shortwave radiation
+      1: Dudhia scheme (ptop > 50 mb)
+      2: (old) Goddard shortwave scheme
+      3: CAM scheme (restart must be at 6hourly interval); must set levsiz, paerlev,
+        cam_abs_dim1/2
+      4: rrtmg scheme
+      24: fast rrtmg scheme for GPU and MIC. (new since V3.7)
+      5: Goddard scheme. (new since V3.3)
+      7: FLG (UCLA) scheme. (new since V3.4)
+      99: GFDL (Eta) longwave (semisupported); must use co2tf = 1 for ARW
+  radt:
+    description: minutes between radiation physics calls.  Recommended 1 minute per
+      km of dx (e.g. 10 for 10 km grid); use the same value for all nests
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 30
+  swint_opt:
+    description: Interpolation of shortwave radiation based on the updated solar zenith
+      angle between radiation calls.  (new since V3.5.1)
+    type: int
+    options:
+      0: no interpolation
+      1: use interpolation
+  ra_call_offset:
+    description: Radiation call options
+    type: int
+    default: 0
+    options:
+      0: default; call radiation after output time
+      -1: may call radiation just before output time.
+  co2tf:
+    description: CO2 transmission function flag for GFDL radiation only.  Set it to
+      1 for ARW, which allows generation of CO2 function internally
+    type: int
+    example: 1
+    options:
+      0: read CO2 function data from pre-generated file
+      1: generate CO2 functions internally in the forecast
+  cam_abs_freq_s:
+    description: default CAM clear sky longwave absorption calculation frequency (recommended
+      minimum value to speed scheme up). Automatically set since V3.2
+    type: int
+    example: 21600
+  levsiz:
+    description: (default) number of ozone data levels for  CAM radiation. Automatically
+      set since V3.2
+    type: int
+    example: 59
+  paerlev:
+    description: (default) number of aerosol data levels for CAM radiation. Automatically
+      set since V3.2
+    type: int
+    example: 29
+  cam_abs_dim1:
+    description: (default) dimension for absnxt (absorption save array) in CAM radiation.
+      Automatically set since V3.2
+    type: int
+    example: 4
+  cam_abs_dim2:
+    description: (default) dimension for abstot (2nd absorption save array) in CAM
+      radiation. Automatically set since V3.2
+    type: int
+    example: same as e_vert
+  o3input:
+    description: ozone input option (RRTMG only).  (new since V3.5)
+    type: int
+    options:
+      0: using  profile inside the scheme
+      2: using CAM ozone data (ozone.formatted). (default = 2 in V3.7)
+  aer_opt:
+    description: aerosol input for radiation option (RRTMG only)
+    type: int
+    options:
+      0: 'off'
+      1: using Tegen climatology. (new since V3.5)
+      2: using J. A. Ruiz-Arias method (see other aer* options). (new since V3.6)
+      3: using G. Thompson's water/icefriendly climatological aerosol. (new since
+        V3.8)
+  alevsiz:
+    description: no of vertical levels in aerosol data. Value set automatically.
+    type: int
+    example: 12
+  no_src_types:
+    description: Aerosol types
+    type: int
+    default: 0
+    options:
+      6: "no of aerosol types: organic and black carbon, sea salt, sulfate, dust and\
+        \ stratospheric aerosol (volcanic ash \u2013 currently 0).  Value set automatically."
+      0: do not interpolate (default)
+      1: interpolate
+  aer_aod550_opt:
+    description: Aerosol AOD at 550 nm
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 1
+    options:
+      1: (default) input constant value for AOD at 550 nm from namelist; in this case,
+        the value is read from aer_aod550_val. Aerosol options allow RRTMG and new
+        Goddard radiation schemes to see it, but the aerosols are constant during
+        the model integration
+      2: input value from auxiliary input 5; it is a time-varying 2D grid in netcdf
+        wrf-compatible format.  Aerosol options allow RRTMG and new Goddard radiation
+        schemes to see it, but the aerosols are constant during the model integration
+  aer_aod550_val:
+    description: (default) value to be used with  aer_aod550_opt = 1
+    type: list
+    itemtype: real
+    minlen: max_dom
+    default: 0.12
+  aer_angexp_opt:
+    description: Aerosol angstrom exponent
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 1
+    options:
+      1: (default) input constant value for Angstrom exponent from namelist.  In this
+        case, the value is read from aer_angexp_val Aerosol options allow RRTMG and
+        new Goddard radiation schemes to see it, but the aerosols are constant during
+        the model integration. Aerosol options allow RRTMG and new Goddard radiation
+        schemes to see it, but the aerosols are constant during the model integration
+      2: input value from auxiliary input 5, as in aer_aod550_opt
+      3: Angstrom exponent value estimated from the aerosol type defined in aer_type,
+        and modulated with the RH in WRF.
+  aer_angexp_val:
+    description: (default) value to be used with aer_angexp_opt = 1
+    type: list
+    itemtype: real
+    minlen: max_dom
+    default: 1.3
+  aer_ssa_opt:
+    description: Aerosol single scattering albedo
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 1
+    options:
+      1: (default)  input constant value for single scattering albedo from namelist.  In
+        this case, the value is read from aer_ssa_val. Aerosol options allow RRTMG
+        and new Goddard radiation schemes to see it, but the aerosols are constant
+        during the model integration
+      2: input value from auxiliary input 5, as in aer_aod550_opt
+      3: single scattering albedo value estimated from the aerosol type defined in
+        aer_type, and modulated with the RH in WRF.
+  aer_ssa_val:
+    description: (default) value to be used with  aer_ssa_opt = 1
+    type: list
+    itemtype: real
+    minlen: max_dom
+    default: 0.85
+  aer_asy_opt:
+    description: Aerosol aymmetry parameter
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 1
+    options:
+      1: (default)  input constant value for asymmetry parameter from namelist.  In
+        this case, the value is read from aer_asy_val. Aerosol options allow RRTMG
+        and new Goddard radiation schemes to see it, but the aerosols are constant
+        during the model integration
+      2: input value from auxiliary input 5, as in aer_aod550_opt
+      3: asymmetry parameter value estimated from the aerosol type defined in aer_type,
+        and modulated with the RH in WRF.
+  aer_asy_val:
+    description: (default) value to be used with aer_asy_opt = 1
+    type: list
+    itemtype: real
+    minlen: max_dom
+    default: 0.9
+  aer_type:
+    description: Aerosol type to be used with the above aerosol options. Aerosol options
+      allow RRTMG and new Goddard radiation schemes to see it, but the aerosols are
+      constant during the model integration
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 1
+    options:
+      1: (default) rural
+      2: urban
+      3: maritime
+  sf_sfclay_physics:
+    description: surface layer option. (since V3.6; option 11 for V3.4 and V3.5)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: (default) no surface-layer
+      1: Revised MM5 Monin-Obukhov scheme (Jimenez, renamed in v3.6)
+      2: Monin-Obukhov (Janjic Eta) scheme
+      3: NCEP GFS scheme (NMM only)
+      4: QNSE
+      5: MYNN
+      7: Pleim-Xiu (ARW only), only tested with Pleim-Xiu surface and ACM2 PBL
+      10: TEMF (ARW only). (new since V3.3)
+      91: old MM5 surface layer scheme (previously option 1). (since V3.6; option
+        1 in earlier versions)
+  iz0tlnd:
+    description: switch to control land thermal roughness length. (new since V3.2)
+    type: int
+    default: 0
+    options:
+      0: (default) old, or non-vegetation dependent thermal roughness length over
+        land
+      1: veg dependent Chen-Zhang Czil
+  sf_surface_physics:
+    description: land-surface option (set this before running real.exe; also make
+      sure num_soil_layers is set correctly)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: (default) no surface temp prediction
+      1: thermal diffusion scheme
+      2: unified Noah land-surface model
+      3: RUC land-surface model
+      4: Noah-MP land-surface model (additional options under the noah_mp section).
+        (new since V3.4)
+      5: CLM4 (Community Land Model Version 4). (new since V3.5)
+      7: Pleim-Xiu scheme (ARW only)
+      8: SSiB land-surface model (ARW only).  Works with ra_lw_physics = 1, 3, or
+        4, and ra_sw_physics = 1, 3, or 4. (new since V3.4)
+  sf_urban_physics:
+    description: activate urban canopy model (in Noah LSM only)
+    type: int
+    default: 0
+    options:
+      0: (default) off
+      1: Single-layer, UCM
+      2: Multi-layer, Building Environment Parameterization (BEP) scheme (works only
+        with the MYJ and BouLac PBL)
+      3: Multi-layer, Building Environment Model (BEM) scheme (works only with MYJ
+        and BouLac PBL)
+  ua_phys:
+    description: Option to activate UA Noah LSM changes to use a different snowcover
+      physics. Aimed toward improving treatment of snow as it relates to the vegetation
+      canopy.  (new since V3.5)
+    type: bool
+    options:
+      true: 'ON'
+      false: 'OFF'
+  num_soil_layers:
+    description: number of soil layers in land surface model (set before running real.exe)
+    type: int
+    default: 5
+    options:
+      5: (default) thermal diffusion scheme for temp only
+      4: Noah land-surface model
+      6: RUC land-surface model
+      9: RUC land-surface model
+      10: CLM4 land-surface model
+      2: Pleim-Xu land-surface model
+      3: SSiB land-surface model
+  bl_pbl_physics:
+    description: boundary layer option
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: (default) no boundary-layer
+      1: YSU scheme; use sf_sfclay_physics =1
+      2: Mellor-Yamada-Janjic (Eta) TKE scheme; use sf_sfclay_physics=2
+      4: QNSE-EDMF; use sf_sfclay_physics=4
+      5: MYNN 2.5 level TKE; use sf_sfclay_physics=1, 2, or 5
+      6: MYNN 3rd level TKE; use sf_sfclay_physics=5
+      7: ACM2 (Pleim) scheme (ARW only); use sf_sfclay_physics=1 or 7
+      8: Bougeault and Lacarrere (BouLac) TKE; use sf_sfclay_physics=1 or 2
+      9: Bretherton-Park/UW TKE scheme; use sf_sfclay_physics=1 or 2. (new since V3.3)
+      10: TEMF scheme (ARW only); use  sf_sfclay_physics=10. (new since V3.3)
+      11: Shin-Hong 'scale-aware' PBL scheme. (new since V3.7)
+      12: GBM TKE-type scheme (ARW only); use  sf_sfclay_physics=1. (new since V3.5)
+      99: MRF scheme (to be removed in the future)
+  mfshconv:
+    description: turns on day-time EDMF for QNSE (0=off)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    options:
+      0: 'OFF'
+      1: 'ON'
+  bldt:
+    description: minutes between boundary-layer physics calls (0=call every time step)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: ''
+  topo_wind:
+    description: turns on topographic surface wind correction, and  requires extra
+      input from geogrid. YSU PBL only.  (new since V3.4)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    options:
+      0: 'off'
+      1: Jimenez method
+      2: UW method
+  bl_mynn_tkebudget:
+    description: Wehther to add MYNN tke budget terms to output  (new since V3.4.1)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: Do not add MYNN tke budget terms to output
+      1: adds MYNN tke budget terms to output
+  bl_mynn_tkeadvect:
+    description: MYNN tke advection
+    type: list
+    itemtype: bool
+    minlen: max_dom
+    default: false
+    options:
+      false: (default) off; does not advect tke in MYNN scheme (default).  (new since
+        V3.5)
+      true: do MYNN tke advection
+  icloud_bl:
+    description: option to couple the subgrid-scale clouds from the PBL scheme (MYNN
+      only) to the radiation scheme.  (new since V3.8)
+    type: int
+    default: 1
+    options:
+      0: no coupling
+      1: (default) activate coupling to radiation
+  bl_mynn_cloudmix:
+    description: 'option to activate mixing of qc and qi in MYNN (NOTE:  qnc and qni
+      are mixed when scalar_pblmix = 1).  (new since V3.8)'
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: (default) no mixing of qc and qi
+      1: activates mixing of qc and qi in MYNN
+  bl_mynn_mixlength:
+    description: option to change mixing length formulation in MYNN.  (new since V3.8)
+    type: int
+    default: 1
+    options:
+      0: original, as in Nakanishi and Niino 2009
+      1: (default) RAP/HRRR (including
+      2: experimental (includes cloudspecific mixing length and a scaleaware mixing
+        length; following Ito et al. 2015, BLM); this option has been well-tested
+        with the edmf options
+  bl_mynn_cloudpdf:
+    description: option to switch to diffrent cloud PDFs to represent subgrid clouds
+    type: int
+    default: 2
+    options:
+      0: original (Sommeria and Deardorf 1977)
+      1: Kuwano et al. 2010; similar to option 0, but uses resolved scale gradients,
+        as opposed to higher order moments
+      2: (default) from Chaboureau and Bechtold 2002 (JAS, with mods)
+  bl_mynn_edmf:
+    description: option to activate mass-flux scheme in MYNN.  (new since V3.8)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: (default) regular MYNN
+      1: for StEM
+      2: for TEMF
+  bl_mynn_edmf_mom:
+    description: option to activate momentum transport in MYNN mass-flux scheme (assuming
+      bl_mynn_edmf > 0)  (new since V3.8)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 1
+    options:
+      0: no momentum transport
+      1: (default) momentum transport activated
+  bl_mynn_edmf_tke:
+    description: option to activate TKE transport in MYNN mass-flux scheme. (assumumg
+      bl_mynn_edmf > 0). (new since V3.8)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: (default) no TKE transport
+      1: activate TKE transport
+  scalar_pblmix:
+    description: mix scalar fields (new since V3.6)
+    type: int
+    default: 0
+    options:
+      0: (default) off.
+      1: mix scalar fields consistent with PBL option (exch_h)
+  tracer_pblmix:
+    description: mix tracer fields (new since V3.6)
+    type: int
+    default: 0
+    options:
+      0: (default) off.
+      1: mix tracer fields consistent with PBL option (exch_h)
+  shinhong_tke_diag:
+    description: diagnostic TKE and mixing length from Shin-Hong PBL. (new since V3.7)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: ''
+  opt_thcnd:
+    description: option to treat thermal conductivity in Noah LSM . (new since V3.8)
+    type: int
+    default: 1
+    options:
+      1: (default) original
+      2: McCumber and Pielke for silt loam and sandy loam
+  sf_surface_mosaic:
+    description: option to mosaic landuse categories for Noah LSM.  (new since V3.6)
+    type: int
+    default: 0
+    options:
+      0: (default) use dominant category only
+      1: use mosaic landuse categories
+  mosaic_lu:
+    description: option to specify landuse parameters based on a mosaic approach,
+      when using the RUC land surfce model; default is 0 (off).  (new since V3.4)
+    type: int
+    default: 0
+    options:
+      0: 'OFF'
+      1: 'ON'
+  mosaic_soil:
+    description: option to specify soil parameters based on a masaic approach, when
+      using the RUC land surface model; default is 0 (off).  (new since V3.4)
+    type: int
+    default: 0
+    options:
+      0: 'OFF'
+      1: 'ON'
+  mosaic_cat:
+    description: (default) number of mosaic landuse categories in a grid cell.  (new
+      since V3.6)
+    type: int
+    example: ''
+  grav_settling:
+    description: gravitational settling of fog/cloud droplets (Now works for any PBL
+      scheme, since V3.5.1)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: (default) no settling of cloud droplets
+      1: settling from Dyunkerke 1991 (in atmosphere at at surface)
+      2: Fogdes (vegetation and wind speed dependent; Katata et al. 2008) at surface,
+        and Dyunkerke in the atmosphere
+  ysu_topdown_pblmix:
+    description: turns on top-down radiation-driven mixing (default is 0=no). (new
+      since V3.7)
+    type: int
+    default: 0
+    options:
+      0: 'OFF'
+      1: 'ON'
+  cu_physics:
+    description: cumulus parameterization option
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: (default) no cumulus parameterization
+      1: Kain-Fritsch (new Eta) scheme
+      2: Betts-Miller-Janjic scheme
+      3: Grell-Freitas ensemble scheme. (new since V3.5, replacing Grell-Devenyi scheme)
+      4: Scale-aware GFS Simplified Arakawa-Schubert (SAS) scheme. (new to ARW since
+        V3.3)
+      5: New Grell scheme (G3)
+      6: Tiedtke scheme (ARW only). (new since V3.3)
+      7: Zhang-McFarlane from CESM (works with MYJ and UW PBL). (new since V3.3)
+      10: Modified Kain-Fritsch scheme with trigger function based on PDFs (ARW-only).
+        (new since V3.7)
+      11: Multi-scale Kain-Fritsch scheme. (new since V3.7)
+      14: New GFS SAS from YSU (ARW only). (new since V3.3)
+      16: A newer Tiedke scheme. (new since V3.7)
+      93: Grell-Devenyi ensemble scheme. (option 3 before V3.5)
+      94: 2015 GFS Simplified Arakawa- Schubert scheme (HWRF)
+      95: Previous GFS Simplified Arakawa-Schubert scheme (HWRF)
+      99: previous Kain-Fritsch scheme
+  cudt:
+    description: minutes between cumulus physics calls; should be set to 0 when using
+      all cu_physics except Kain-Fritsch (0 = call every time step)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: ''
+  kfeta_trigger:
+    description: KF trigger option (cu_physics=1 only)
+    type: int
+    default: 1
+    options:
+      1: The way to determines whether a grid point is convective; used only with
+        cu_physics=1.   = 1, default, original.
+      2: moisture-advection based trigger (Ma and Tan 2009; ARW only). (new since
+        V3.3)
+      3: RH-dependent additional perturbation to option 1 (JMA)
+  ishallow:
+    description: =1 turns on shallow convection used with cu_physics=3 or 5 (default
+      is 0 = off)
+    type: int
+    default: 0
+    options:
+      1: turns on shallow convection used with cu_physics=3 or 5
+      0: 'OFF'
+  cu_diag:
+    description: Additional time-averaged diagnostics from cu_physics (use only with
+      cu_physics=3,5,and 93)
+    type: list
+    minlen: max_dom
+    itemtype: int
+    example: 0
+  shcu_physics:
+    description: independent shallow cumulus option (not tied to deep convection)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    options:
+      0: no independent shallow cumulus
+      2: Park and Bretherton shallow cumulus from CAM5. (new since V3.3)
+      3: GRIMS scheme. (new since V3.5)
+  maxiens:
+    description: 'Grell-Devenyi and G3 only. *Note:  The following option show recommended
+      #''s.  If you would like to use any other number, consult the code to understand
+      what you are doing.'
+    type: int
+    example: 1
+  maxens:
+    description: 'Grell-Devenyi only. *Note:  The following option show recommended
+      #''s.  If you would like to use any other number, consult the code to understand
+      what you are doing.'
+    type: int
+    example: 3
+  maxens2:
+    description: 'Grell-Devenyi only. *Note:  The following option show recommended
+      #''s.  If you would like to use any other number, consult the code to understand
+      what you are doing.'
+    type: int
+    example: 3
+  maxens3:
+    description: 'Grell-Devenyi only. *Note:  The following option show recommended
+      #''s.  If you would like to use any other number, consult the code to understand
+      what you are doing.'
+    type: int
+    example: 16
+  ensdim:
+    description: 'Grell-Devenyi only. *Note:  The following option show recommended
+      #''s.  If you would like to use any other number, consult the code to understand
+      what you are doing.'
+    type: int
+    example: 144
+  cugd_avedx:
+    description: number of grid boxes over which subsidence is spread.
+    type: int
+    default: 1
+    options:
+      1: (default) number of grid boxes over which subsidence is spread, for large
+        grid distances
+      3: for small grid distances (DX < 5 km)
+  nsas_dx_factor:
+    description: grid distance factor (New since V3.6)
+    type: int
+    default: 0
+    options:
+      0: default option
+      1: nsas grid distance dependent option
+  shallowcu_forced_ra:
+    description: radiative impact of shallow Cu by a prescribed maximum cloud fraction
+      [cu_physics = 10 only; default = false (off); if =true, radiative impact of
+      shallow cu with a cloud fraction value of 0.36 ]. For the KF-CuP Scheme.  (new
+      since V3.8) .
+    type: list
+    itemtype: bool
+    minlen: max_dom
+    default: false
+    options:
+      true: radiative impact of shallow cu with a cloud fraction value of 0.36 ].
+        For the KF-CuP Scheme.
+      false: 'OFF'
+  numbins:
+    description: number of perturbations for potential temperature and mixing ratio
+      in the CuP PDF (cu_physics = 10 only ; default is 1;.should be an odd number
+      - recommended value is 21). For the KF-CuP Scheme.  (new since V3.8) .
+    type: list
+    minlen: max_dom
+    itemtype: int
+    default: 1
+  thBinSize:
+    description: 'bin size of potential temperature perturbation increment:  0.01
+      K ( cu_physics = 10 only; default is 1). For the KF-CuP Scheme.  (new since
+      V3.8) .'
+    type: list
+    minlen: max_dom
+    itemtype: int
+    default: 1
+  rBinSize:
+    description: 'bin size of mixing ratio perturbation increment: 1.0e-4 kg/kg (cu_physics
+      = 10 only; default is 1). For the KF-CuP Scheme.  (new since V3.8) .'
+    type: list
+    minlen: max_dom
+    itemtype: int
+    default: 1
+  minDeepFreq:
+    description: 'minimum frequency required before deep convection is allowed:  0.333
+      (cu_physics = 10 only; default is 1). For the KF-CuP Scheme.  (new since V3.8)
+      .'
+    type: list
+    minlen: max_dom
+    itemtype: int
+    default: 1
+  minShallowFreq:
+    description: 'minimum frequency required before shallow convection is allowed:  1.0e-2
+      (cu_physics = 10 only; default is 1). For the KF-CuP Scheme.  (new since V3.8)
+      .'
+    type: list
+    minlen: max_dom
+    itemtype: int
+    default: 1
+  shcu_aerosols_opt:
+    description: whether to include aerosols in shcu (cu_physics = 10 only; run with
+      WRF-Chem). For the KF-CuP Scheme.  (new since V3.8) .
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: (default) none
+      2: prognostic
+  kf_edrates:
+    description: option to add entrainment/detrainment rates and convective timescale
+      output variables for KF-based cumulus schemes (cu_physics = 1, 11, and 99 only)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    example: 0
+    options:
+      0: (default) no output
+      1: additional output
+  convtrans_avglen_m:
+    description: averaging time for convective transport output variables (in minutes;
+      only use with cu_physics=3,5 and 93)
+    type: int
+    example: 30
+  cu_rad_feedback (max dom):
+    description: sub-grid cloud effect to the optical depth in radiation currently
+      it works only for GF, G3, GD, and KF schemes; also need to set cu_diag = 1 for
+      GF, G3, and GD schemes (default is false = off)
+    type: list
+    itemtype: bool
+    minlen: max_dom
+    default: false
+    options:
+      true: 'ON'
+      false: 'OFF'
+  isfflx:
+    description: "heat and moisture fluxes from the surface for real-data cases and\
+      \ when a PBL is used (only works with sf_sfclay_physics=1, 5, 7, or 11)  1 =\
+      \ fluxes are on 0 = fluxes are off It also controls surface fluxes when diff_opt\
+      \ = 2 and km_opt  = 3, and a PBL isn\u2019t used 0\_\_\_\_\_\_\_\_\_\_\_\_\_\
+      \_\_\_ =  constant fluxes defined by tke_drag_coefficient and tke_heat_flux\
+      \ 1\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ =  use model-computed u* and heat and moisture\
+      \ fluxes 2\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ =  use model-computed u* and specified\
+      \ heat flux by tke_heat_flux"
+    type: int
+    example: 1
+    options:
+      1: with fluxes from the surface
+      0: no flux from the surface with bl_pbl_physics=0 this uses
+  ideal_xland:
+    description: sets XLAND for ideal cases with no input land-use run-time switch
+      for wrf.exe physics_init. (new since V3.7)
+    type: int
+    options:
+      1: land
+      2: water
+  ifsnow:
+    description: snow-cover effects (only works for sf_surface_physics=1)
+    type: int
+    default: 1
+    options:
+      1: (default) with snow-cover effect;
+      0: without snow-cover effect
+  icloud:
+    description: (default) cloud effect to the optical depth in radiation (only works
+      with ra_sw_physics=1,4 and ra_lw_physics=1,4); since V3.6 this also controls
+      the cloud fraction options
+    type: int
+    default: 1
+    options:
+      1: (default) with cloud effect, and use cloud fraction option 1 (XuRandall mehod)
+      0: without cloud effect
+      2: with cloud effect, and use cloud fraction option 2, 0/1 based on threshold
+      3: with cloud effect, and use cloud fraction option 3, a Sundqvist method (Sundqvist
+        et al. 1989). (new since V3.7)
+  swrad_scat:
+    description: scattering tuning parameter; default 1 is 1.e-5 m-2 kg-1 (only for
+      ra_sw_physics=1).  Increase for more scattering.
+    type: int
+    default: 1
+  surface_input_source:
+    description: where landuse and soil category data come from
+    type: int
+    default: 1
+    options:
+      1: (default prior to V3.8) WPS/geogrid, but with dominant categories recomputed
+        in real
+      2: GRIB data from another model (only if arrays VEGCAT/SOILCAT exist)
+      3: (default begining in V3.8) use dominant land and soil categories from WPS/geogrid
+  pxlsm_smois_init:
+    description: Pleim-Xu land-surface model soil moisture initialization option
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 1
+    options:
+      0: from analysis
+      1: (default) from LANDUSE.TBL (SLMO, or moisture availability)
+  num_land_cat:
+    description: number of land categories in input data
+    type: int
+    default: 21
+    options:
+      24: (default prior to V3.8) for USGS
+      20: for MODIS
+      28: for USGS if including lake category
+      21: (default beginning with V3.8) for
+      40: NLCD2006 (North America only)
+  num_soil_cat:
+    description: number of soil categories in input data
+    type: int
+    example: 16
+  usemonalb:
+    description: Whether to use monthly albedo map instead of table values (recommended
+      for sst_update=1)
+    type: bool
+    default: false
+    options:
+      true: use monthly albedo map instead of table values (recommended for sst_update=1)
+      false: (default) use table values
+  rdmaxalb:
+    description: Source of  snow albedo data
+    type: bool
+    default: true
+    options:
+      true: (default) use snow albedo from geogrid
+      false: use snow albedo from table
+  rdlai2d:
+    description: Source of LAI (Leaf Area Index)
+    type: bool
+    default: false
+    options:
+      true: use LAI  (Leaf Area Index) from input data. If sst_update is 1, then LAI
+        will also appear in wrflowinp file.  (data available to use this option since
+        V3.6)
+      false: (default) use LAI from table
+  seaice_threshold:
+    description: If skin temp (TSK) is less than this value, water points are changed
+      to sea ice. If water point + 5-layer slab scheme, set to land point and permanent
+      ice; if water point + Noah scheme, set to land point, permanent ice, set temps
+      from 2 m to surface, and set smois and sh2o.   The default value was changed
+      to 100. From 271. in 3.5.1 to avoid mixed-up use with fractional seaice input.
+      Used by sf_surface_physics = 1,2,3,4,8. (default value of 100 since V3.5.1;
+      was 271 in earlier versions)
+    type: int
+    example: 100
+  sst_update:
+    description: option to use time-varying SST, seaice, vegetation fraction, and
+      albedo during a model simulation (set before running real.exe)
+    type: int
+    default: 0
+    options:
+      0: (default) no SST update
+      1: real.exe will create wrflowinp file(s) at the same time interval as the available
+        input data.  These files contain SST, XICE, ALBEDO, and VEGFRA.  Also set
+        auxinput4_inname = "wrflowinp_d<domain>", auxinput4_interval and (in V3.2)
+        io_form_auxinput4 in namelist section time_control
+  tmn_update:
+    description: update deep layer soil temperature, useful for long simulations (multiyear
+      runs; default is 0 = off)
+    type: int
+    default: 0
+    options:
+      0: 'OFF'
+      1: update deep layer soil temperature, useful for long simulations (multiyear
+        runs; default is 0 = off)
+  lagday:
+    description: days over which tnm (deep layer soil temp) is computed using skin
+      temperature
+    type: int
+    example: ''
+  sst_skin:
+    description: Calculation of SST
+    type: int
+    default: 0
+    options:
+      0: 'OFF'
+      1: calculate skin SST, useful for long simulations (multi-year runs; default
+        is 0 = off)
+  bucket_mm:
+    description: 'bucket reset values for water accumulation (unit in mm), useful
+      for long simulations (multi-year runs). (default: -1  = inactive)'
+    type: int
+    default: -1
+  bucket_j:
+    description: 'bucket reset value for energy accumulations (unit in Joules); useful
+      for long simulations (multiyear runs). (default: -1  = inactive)'
+    type: int
+    default: -1
+  slope_rad:
+    description: Whether to use slope-dependent radiation; for ra_sw_physics
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 1
+    options:
+      1: use slope-dependent radiation; for ra_sw_physics
+      0: (default) off
+  topo_shading:
+    description: Whether to apply neighboring-point shadow effects for ra_sw_physics
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 1
+    options:
+      1: applies neighboring-point shadow effects for ra_sw_physics
+      0: (default) off
+  shadlen:
+    description: maximum length of orographic shadow (in meters); use with topo_shading=1
+    type: int
+    example: 25000
+  sf_ocean_physics:
+    description: Whether to activate ocean model.  (replacing omlcall beginning with
+      V3.5)
+    type: int
+    options:
+      0: 'off'
+      1: activate a simple ocean mixed layer (oml) model
+      2: activate a 3D PWP ocean model. (new since V3.5)
+  omdt:
+    description: 3D PWP time step (minutes).  It can be set t the same as the WRF
+      time step in corresponding nested grids, but omdt should be no less than 1.0
+      minute.
+    type: int
+    example: 1
+  oml_hml0:
+    description: Whether to use initial ocean model mixing layer depth value (m) from
+      file. 50 m is default constant
+    type: int
+    default: 50
+  oml_gamma:
+    description: (K m-1) lapse rate in deep water. (below the mixed layer) for oml
+    type: real
+    example: ''
+  oml_relaxation_time:
+    description: 'relaxation time (seconds) of mixed layer ocean model back to original
+      values (e.g. value: 259200 sec - 3 days).  (new since V3.8)'
+    type: int
+    example: 0
+  ocean_levels:
+    description: number of vertical levels in 3D ocean model. (for sf_ocean_physics=2)
+    type: int
+    example: 30
+  isftcflx:
+    description: alternative Ck (exchange coefficient for temp and moisture), Cd (drag
+      coefficient for momentum) formulation for tropical storm application
+    type: int
+    default: 0
+    options:
+      0: (default) off for Ck
+      1: Donelan Cd + constant Z0q for Ck
+      2: Donelan Cd + Garratt Ck
+  fractional_seaice:
+    description: Seaice option
+    type: int
+    default: 0
+    options:
+      1: treats seaice as a fractional field; works with sf_sfclay_physics = 1,2,3,4,5,7
+        or 91. Also set seaice_threshold=0.
+      0: (default) either ice or no ice flag
+  seaice_albedo_opt:
+    description: option to set albedo over sea ice.  (new since V3.4)
+    type: int
+    options:
+      0: seaice albedo is a constant value from namelist option. seaice_albedo_default
+      1: seaice albedo is a function of air temp, skin temp, and snow
+      2: seaice albedo read in from input variable ALBSI
+  seaice_albedo_default:
+    description: default value of seaice albedo for seaice_albedo_opt=0. (Value of
+      0.65 changed from 0.8)
+    type: real
+    default: 0.65
+  seaice_snowdepth_opt:
+    description: method for treating snow depth on sea ice  (new since V3.5)
+    type: int
+    options:
+      0: snow depth on sea ice is bounded by seaice_snowdepth_min and seaice_snowdepth_max
+      1: snow depth on sea ice read in from input array SNOWSI (bounded by seaice_snowdepth_min
+        and seaice_snodepth_max)
+  seaice_snowdepth_max:
+    description: maximum allowed accumulation of snow (m) on sea ice
+    type: real
+    example: 10000000000.0
+  seaice_snowdepth_min:
+    description: minimum snow depth (m) on sea ice
+    type: real
+    example: 0.001
+  seaice_thickness_opt:
+    description: option for treating seaice thickness
+    type: int
+    options:
+      0: seaice thickness is uniform value taken from namelist variable seaice_thickness_default
+      1: seaice_thickness is read in from input variable ICEDEPTH
+  seaice_thickness_default:
+    description: default value of seaice thickness for seaice_thickness_opt=0
+    type: int
+    default: 3
+  prec_acc_dt:
+    description: 'bucket reset time interval between outputs for cumulus or grid-scale
+      precipitation (in minutes).  If set >0, this will output 3 new 2d fields:  prec_acc_c,
+      prec_acc_nc, and snow_acc_nc (descriptions of these can be found in the Registry.EM_COMMON
+      file)'
+    type: list
+    minlen: max_dom
+    itemtype: int
+    example: 0
+  traj_opt:
+    description: Trajectories options.  (new since V3.5)
+    type: int
+    default: 0
+    options:
+      0: 'OFF'
+      1: activate forward trajectories (default 0).  (new since V3.5)
+  num_traj:
+    description: (default) number of trajectories to be released
+    type: int
+    default: 1000
+  sf_lake_physics:
+    description: Options for the lake model. (new since V3.6).
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: Lake model OFF. Default
+      1: Lake model ON
+  lakedepth_default:
+    description: (default) lake depth (in meters).  If there is no lake depth information
+      in the input data, then lake depth is assumed to be 50m). Options for the lake
+      model.
+    type: list
+    minlen: max_dom
+    itemtype: int
+    default: 50
+  lake_min_elev:
+    description: (default) minimum elevation of lakes; may be used to determine whether
+      a water point is a lake in the absence of a lake category.  If the landuse type
+      includes 'lake' (i.e., Modis_lake andn USGS_LAKE); this variable is of no effects.  Options
+      for the lake model.
+    type: list
+    minlen: max_dom
+    itemtype: int
+    default: 5
+  use_lakedepth:
+    description: (default) option to use lake depth data. Lake depth data is available
+      beginning in the V3.6 geogrid program. If the lake depth data was not processed,
+      but this switch is set to 1, the program will stop and tell the user to go back
+      to geogrid program. Options for the lake model.
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 1
+    options:
+      1: Use lake depth data
+      0: Do not use lake depth data
+  lightning_option:
+    description: Lightning parameterization option to allow flash rate prediction
+      without chemistry. Requires do_radar_ref on.   (new since V3.5)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    options:
+      0: 'off'
+      1: PR92 based on maximum w, redistributes flashes within dBZ > 20 (for convection
+        resolved runs)
+      2: PR92 based on 20 dBZ top, redistributes flashes within dBZ > 20 (for convection
+        resolved runs)
+      3: Predicting the potential for lightning activity (based on Yair et al., 2010).
+        (New since V3.6.1)
+      11: PR92 based on level of neutral buoyancy from convective parameterization
+        (for scale where a CPS is used, intended for use at 10 < dx < 50 km
+  lightning_dt:
+    description: time interval (seconds) for calling lightning parameterization. Default
+      uses model time step.  (new since V3.5)
+    type: list
+    minlen: max_dom
+    itemtype: int
+    example: 0
+  lightning_start_seconds:
+    description: start time for calling lightning parameterization. Recommends at
+      least 10 minutes for spin-up.  (new since V3.5)
+    type: list
+    minlen: max_dom
+    itemtype: int
+    example: 10
+  flashrate_factor:
+    description: Factor to adjust the predicted number of flashes. Recommends 1.0
+      for lightning_option = 11 between dx=10 and 50 km. Manual tuning recommended
+      for all other options independently for each nest.  (new since V3.5)
+    type: list
+    minlen: max_dom
+    itemtype: real
+    example: 1.0
+  cellcount_method:
+    description: method for counting storm cells. Used by CRM options (lightning_options=1,2)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    options:
+      0: model determines method used
+      1: tile-wide, appropriate for large domains
+      2: domain-wide, appropriate for singstorm domains
+  cldtop_adjustment:
+    description: adjustment from LNB in km. Used by lightning_option=11. Default is
+      0, but recommends 2 km
+    type: list
+    minlen: max_dom
+    itemtype: int
+    default: 0
+  iccg_method:
+    description: 'IC:CG partitioning method (IC: intra-cloud; CG: cloud-to-ground)'
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: Default method depending on lightning option, currently all options use iccg_method=2
+        by default
+      1: Constant everywhere, set with namelist options iccg_prescribed (num|den)#,
+        default is 0./1. (all CG)
+      2: Coarsely prescribed 1995-1999 NLDN/OTD climatology based on Boccippio et
+        al. (2001)
+      3: Parameterization by Price and Rind (1993) based on cold-cloud depth
+      4: Gridded input via arrays iccg_in_(num|den) from wrfinput for monthly mapped
+        ratios. Points with 0/0 values use ratio defined by iccg_prescribed_(num|den)
+  iccg_prescribed_num:
+    description: Numerator of user-specified prescribed IC:CG
+    type: list
+    minlen: max_dom
+    itemtype: int
+    example: ''
+  iccg_prescribed_den:
+    description: Denominator of user-specified prescribed IC:CG
+    type: list
+    minlen: max_dom
+    itemtype: int
+    example: ''
+  windfarm_opt:
+    description: simulates the effets of wind turbines in the atmospheric evolution
+      (default is  0 = off). For Wind Turbine Drag Parameterization  (new since V3.3)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: 'OFF'
+      1: 'ON'
+  windfarm_ij:
+    description: whether to use lat-lon or i-j coordinate as wind turbine locations.
+      For Wind Turbine Drag Parameterization  (new since V3.3)
+    type: int
+    default: 0
+    options:
+      0: (default) the coordinates of the turbines are defined in terms of latlon.
+        For Wind Turbine Drag Parameterization
+      1: the coordinates of the turbines are defined in terms of grid points. For
+        Wind Turbine Drag Parameterization
+  hailcast_opt:
+    description: whether to use the hailcasting option (=1 to turn on)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: 'OFF'
+      1: 'ON'
+stoch:
+  rand_perturb:
+    description: Whether to turn on random perturbations
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: (default) no random perturbations
+      1: create random perturbation field
+  lengthscale_rand_pert:
+    description: (default) perturbation correlation lengthscale (in meters)
+    type: list
+    minlen: max_dom
+    itemtype: int
+    default: 500000
+  timescale_rand_pert:
+    description: (default) temporal decorrelation of random field (in seconds)
+    type: list
+    minlen: max_dom
+    itemtype: int
+    default: 21600
+  gridpt_stddev_rand_pert:
+    description: (default) standard deviation of random perturbation field at each
+      grid point
+    type: list
+    minlen: max_dom
+    itemtype: real
+    default: 0.03
+  stddev_cutoff_rand_pert:
+    description: (default) cutoff tails of perturbation pattern above this threshold
+      standard deviation
+    type: list
+    minlen: max_dom
+    itemtype: real
+    default: 3.0
+  rand_pert_vertstruc:
+    description: vertical structure for random perturbation field
+    type: int
+    default: 0
+    options:
+      0: (default) constant
+      1: random phase with tilt
+  nens:
+    description: (default) Seed for random number stream for both stochastic schemes.
+      For ensemble forecasts this parameter needs to be different for each member.
+      The seed is a function of initial start time to ensure different random number
+      streams for forecasts starting from different initial times. Changing this seed
+      changes the random number streams for all activated stochastic parameterization
+      schemes. For stochastically perturbed parameter scheme (SPP) (spp=1)
+    type: int
+    default: 1
+  iseed_rand_pert:
+    description: (default) seed for random number stream for rand_perturb.  Will be
+      combined with seed nens, signifying ensemble member number and initial start
+      time to ensure different random number streams are created for forecasts starting
+      from different initial times and for different ensemble members.
+    type: int
+    default: 17
+  sppt:
+    description: Whether to turn on stochastically perturbed physics tendencies (SPPT).
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: (default) off
+      1: 'on'
+  lengthscale_sppt:
+    description: (default) random perturbation lengthscale (in meters). For stochastically
+      perturbed physical tendencies (SPPT) (sppt=1).
+    type: list
+    minlen: max_dom
+    itemtype: int
+    default: 150000
+  timescale_sppt:
+    description: (default) temporal decorrelation of random field (in seconds). For
+      stochastically perturbed physical tendencies (SPPT) (sppt=1).
+    type: list
+    minlen: max_dom
+    itemtype: int
+    default: 21600
+  gridpt_stddev_sppt:
+    description: (default) standard deviation of random perturbation field at each
+      grid point. For stochastically perturbed physical tendencies (SPPT) (sppt=1).
+    type: list
+    minlen: max_dom
+    itemtype: real
+    default: 0.5
+  stddev_cutoff_sppt:
+    description: (default) cutoff tails of perturbation pattern above this threshold
+      standard deviation. For stochastically perturbed physical tendencies (SPPT)
+      (sppt=1).
+    type: list
+    minlen: max_dom
+    itemtype: real
+    default: 2.0
+  iseed_sppt:
+    description: (default) seed for random number stream for sppt.  Will be combined
+      with parameter nens, signifying ensemble member number and initial start time
+      to ensure different random number streams for forecasts starting from different
+      initial times and for different ensemble members. For stochastically perturbed
+      physical tendencies (SPPT) (sppt=1).
+    type: int
+    default: 53
+  skebs:
+    description: 'Whether to turn on the stochastic kinetic-energy backscatter scheme
+      (SKEBS). *Note: this replaces the namelist parameter stoch_forc_opt which was
+      used up to V3.6.  Latter is still maintained, but obsolete'
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: (default) no stochastic parameterization
+      1: stochastic kinetic-energy backscatter scheme (SKEBS) turned on
+  tot_backscat_psi:
+    description: (default) total backscattered dissipation rate for streamfunction;
+      controls amplitude of rotational wind perturbations (in m2/s2). For stochastic
+      kinetic-energy backscatter scheme (SKEBS) (skebs=1)
+    type: list
+    minlen: max_dom
+    itemtype: real
+    default: 1.0e-05
+  tot_backscat_t:
+    description: (default) total backscattered dissipation rate for potential temperature;
+      controls amplitude of potential temperature perturbations ( in m2/s2). For stochastic
+      kinetic-energy backscatter scheme (SKEBS) (skebs=1)
+    type: list
+    minlen: max_dom
+    itemtype: real
+    default: 1.0
+  ztau_psi:
+    description: (default) decorrelation time (in seconds) for streamfunction perturbations.  For
+      stochastic kinetic-energy backscatter scheme (SKEBS) (skebs=1)
+    type: int
+    default: 10800
+  ztau_t:
+    description: (default) decorrelation time (in seconds) for potential temperature
+      perturbations.  For stochastic kinetic-energy backscatter scheme (SKEBS) (skebs=1)
+    type: int
+    default: 10800
+  rexponent_psi:
+    description: (default for a kinetic-energy forcing spectrum with slope -5/3) spectral
+      slope for streamfunction perturbations.  For stochastic kinetic-energy backscatter
+      scheme (SKEBS) (skebs=1)
+    type: real
+    default: -1.83
+  rexponent_t:
+    description: (default for a potential energy forcing spectrum with slope 1.832)
+      spectral slope of potential temperature perturbations.  For stochastic kinetic-energy
+      backscatter scheme (SKEBS) (skebs=1)
+    type: real
+    default: -1.83
+  kminforc:
+    description: (default) minimal forcing wavenumber in longitude for streamfunction
+      perturbations.  For stochastic kinetic-energy backscatter scheme (SKEBS) (skebs=1)
+    type: int
+    default: 1
+  lminforc:
+    description: (default) minimal forcing wavenumber in latitude for streamfunction
+      perturbations.  For stochastic kinetic-energy backscatter scheme (SKEBS) (skebs=1)
+    type: int
+    default: 1
+  kminforct:
+    description: (default) minimal forcing wavenumber in longitude for potential temperature
+      perturbations.  For stochastic kinetic-energy backscatter scheme (SKEBS) (skebs=1)
+    type: int
+    default: 1
+  lminforct:
+    description: (default) minimal forcing wavenumber in latitude for potential temperature
+      perturbations.  For stochastic kinetic-energy backscatter scheme (SKEBS) (skebs=1)
+    type: int
+    default: 1
+  kmaxforc:
+    description: (default is maximal possible wavenumbers determined by number of
+      gridpoints in longitude) maximal forcing wavenumber in longitude for streamfunction
+      perturbations.  For stochastic kinetic-energy backscatter scheme (SKEBS) (skebs=1)
+    type: int
+    default: 1000000
+  lmaxforc:
+    description: (default is maximal possible wavenumbers determined by number of
+      gridpoints in latitude) maximal forcing wavenumber in latitude for streamfunction
+      perturbations.  For stochastic kinetic-energy backscatter scheme (SKEBS) (skebs=1)
+    type: int
+    default: 1000000
+  kmaxforct:
+    description: (default is maximal possible wavenumbers determined by number of
+      gridpoints in longitude) maximal forcing wavenumber in longitude for potential
+      temperature perturbations.  For stochastic kinetic-energy backscatter scheme
+      (SKEBS) (skebs=1)
+    type: int
+    default: 1000000
+  lmaxforct:
+    description: (default is maximal possible wavenumbers determined by number of
+      gridpoints in latitude) maximal forcing wavenumber in latitude for potential
+      temperature perturbations.  For stochastic kinetic-energy backscatter scheme
+      (SKEBS) (skebs=1)
+    type: int
+    default: 1000000
+  zsigma2_eps:
+    description: (default) noise variance in autoregressive process defining streamfunction
+      perturbations.  For stochastic kinetic-energy backscatter scheme (SKEBS) (skebs=1)
+    type: real
+    default: 0.0833
+  zsigma2_eta:
+    description: (default) noise variance in autoregressive process defining potential
+      temperature perturbations.  For stochastic kinetic-energy backscatter scheme
+      (SKEBS) (skebs=1)
+    type: real
+    default: 0.0833
+  skebs_vertstruc:
+    description: 'defines the vertical structure of random pattern generator. *Note:  this
+      replaces the namelist parameter stoch_vertstruc_opt which was used up to V3.6.  Latter
+      is still maintained, but obsolete'
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: (default) constand vertical structure of random pattern generator
+      1: random phase vertical structure with westward tilt
+  iseed_skebs:
+    description: (default) seed for random number stream for skebs.  Will be combined
+      with seed nens, signifying ensemble member number and initial start time to
+      ensure different random number streams for forecasts starting from different
+      initial times and for different ensemble members
+    type: int
+    default: 811
+  spp:
+    description: whether to turn on stochastically perturbed parameter scheme (SPP)
+      for GF convection schemes, MYNN boundary layer scheme, and RUC LSM
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: (default) off
+      1: 'on'
+  spp_conv:
+    description: whether to perturb parameters of GF convective scheme. For stochastically
+      perturbed parameter scheme (SPP) (spp=1)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: (default) off
+      1: 'on'
+  lengthscale_spp_conv:
+    description: (default) perturbation length scale (in meters). For stochastically
+      perturbed parameter scheme (SPP) (spp=1)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 150000
+  timescale_spp_conv:
+    description: (default) temporal decorrelation of random field (in seconds). For
+      stochastically perturbed parameter scheme (SPP) (spp=1)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 21600
+  gridpt_stddev_spp_conv:
+    description: (default) standard deviation of random perturbation feild at each
+      grid point. For stochastically perturbed parameter scheme (SPP) (spp=1)
+    type: list
+    minlen: max_dom
+    itemtype: real
+    default: 0.3
+  stddev_cutoff_spp_conv:
+    description: (default) cutoff tails of perturbation pattern above this threshold
+      standard deviation. For stochastically perturbed parameter scheme (SPP) (spp=1)
+    type: list
+    minlen: max_dom
+    itemtype: int
+    default: 3
+  iseed_spp_conv:
+    description: (default) seed for random number stream for spp_conv. For stochastically
+      perturbed parameter scheme (SPP) (spp=1)
+    type: int
+    default: 171
+  spp_pbl:
+    description: whether to perturb parameters of MYNN convection scheme. For stochastically
+      perturbed parameter scheme (SPP) (spp=1)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: (default) off
+      1: 'on'
+  lengthscale_spp_pbl:
+    description: (default) perturbation length scale (in meters). For stochastically
+      perturbed parameter scheme (SPP) (spp=1)
+    type: list
+    minlen: max_dom
+    itemtype: int
+    default: 700000
+  timescale_spp_pbl:
+    description: (default) temporal decorrelation of random field (in seconds). For
+      stochastically perturbed parameter scheme (SPP) (spp=1)
+    type: list
+    minlen: max_dom
+    itemtype: int
+    default: 21600
+  gridpt_stddev_spp_pbl:
+    description: (default) standard deviation of random perturbation field at each
+      gridpoint. For stochastically perturbed parameter scheme (SPP) (spp=1)
+    type: list
+    minlen: max_dom
+    itemtype: real
+    default: 0.15
+  stddev_cutoff_spp_pbl:
+    description: (default) cutoff tails of perturbation pattern above this threshold
+      standard deviation. For stochastically perturbed parameter scheme (SPP) (spp=1)
+    type: list
+    minlen: max_dom
+    itemtype: int
+    default: 2
+  iseed_spp_pbl:
+    description: (default) seed for random number stream for spp_pbl. For stochastically
+      perturbed parameter scheme (SPP) (spp=1)
+    type: int
+    default: 217
+  spp_lsm:
+    description: whether to perturb parameters of RUC LSM. For stochastically perturbed
+      parameter scheme (SPP) (spp=1)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: (default) off
+      1: 'on'
+  lengthscale_spp_lsm:
+    description: (default) perturbation length scale (in meters). For stochastically
+      perturbed parameter scheme (SPP) (spp=1)
+    type: list
+    minlen: max_dom
+    itemtype: int
+    default: 50000
+  timescale_spp_lsm:
+    description: (default) temporal decorrelation of random field (in seconds). For
+      stochastically perturbed parameter scheme (SPP) (spp=1)
+    type: list
+    minlen: max_dom
+    itemtype: int
+    default: 86400
+  gridpt_stddev_spp_lsm:
+    description: (default) standard deviation of random perturbation field at each
+      grid point. For stochastically perturbed parameter scheme (SPP) (spp=1)
+    type: list
+    minlen: max_dom
+    itemtype: real
+    default: 0.3
+  stddev_cutoff_spp_lsm:
+    description: (default) cutoff tails of perturbation pattern above this threshold
+      standard deviation. For stochastically perturbed parameter scheme (SPP) (spp=1)
+    type: list
+    minlen: max_dom
+    itemtype: int
+    default: 3
+  iseed_spp_lsm:
+    description: (default) seed for random number stream for spp_lsm. For stochastically
+      perturbed parameter scheme (SPP) (spp=1)
+    type: int
+    default: 317
+noah_mp:
+  dveg:
+    description: dynamic vegetation option
+    type: int
+    default: 4
+    options:
+      1: off [LAI (Leaf Area Index) from table; FVEG (veg fraction) = shdfac (model
+        variable for veg fraction)]
+      2: on (LAI predicted; FVEG calculated)
+      3: off (LAI from table; FVEG calculated)
+      4: (default) off (LAI from table; FVEG = maximum veg. fraction)
+      5: on (LAI predicted; FVEG = maximum veg. fraction). (new since V3.7)
+      6: on; use FVEG - SHDFAC from input
+      7: off; use input LAI; use FVEG - SHDFAC from input
+      8: off; use input LAI; calculate FVEG
+      9: off; use input LAI; use maximum
+      10: crop model on; use maximum vegetation fraction
+  opt_crs:
+    description: stomatal resistance option
+    type: int
+    default: 1
+    options:
+      1: (default) Ball-Berry
+      2: Jarvis
+  opt_sfc:
+    description: surface layer drag coefficient calculation
+    type: int
+    default: 1
+    options:
+      1: (default) Monin-Obukhov
+      2: original Noah
+      3: MYJ consistent (option removed in 3.7)
+      4: YSU consistent (option removed in 3.7)
+  opt_btr:
+    description: soil moisture factor for stomatal resistance
+    type: int
+    options:
+      1: Noah
+      2: CLM
+      3: SSiB
+  opt_run:
+    description: Noah-MP runoff and groundwater option
+    type: int
+    default: 3
+    options:
+      1: TOPMODEL with groundwater
+      2: TOPMODEL with equilibrium water table
+      3: (default) original surface and subsurface runoff (free drainage)
+      4: BATS  (Biosphere-Atmosphere Transfer Scheme) surface and subsurface runoff
+        (free drainage)
+  opt_frz:
+    description: supercooled liquid water option
+    type: int
+    default: 1
+    options:
+      1: (default) no iteration
+      2: Koren's iteration
+  opt_inf:
+    description: soil permeability option
+    type: int
+    default: 1
+    options:
+      1: (default) linear effect, more permeable
+      2: non-linear effect, less permeable
+  opt_rad:
+    description: radiative transfer option
+    type: int
+    default: 3
+    options:
+      1: modified two-stream
+      2: two-stream applied to grid cell
+      3: (default) two-stream applied to vegetated fraction
+  opt_alb:
+    description: ground surface albedo option
+    type: int
+    default: 2
+    options:
+      1: BATS
+      2: (default) CLASS (Canadian Land Surface Scheme)
+  opt_snf:
+    description: precipitation partitioning between snow and rain
+    type: int
+    default: 1
+    options:
+      1: (default) Jordan (1991)
+      2: BATS; snow when SFCTMP < TFRZ+2.2
+      3: show when SFCTMP < TFRZ
+      4: use WRF precipitation partitioning (new since V3.7)
+  opt_tbot:
+    description: soil temp lower boundary condition
+    type: int
+    default: 2
+    options:
+      1: zero heat flux
+      2: (default) TBOT at 8 m from input file
+  opt_stc:
+    description: snow/soil temperature time scheme
+    type: int
+    default: 1
+    options:
+      1: (default) semi-implicit
+      2: fully-implicit
+  opt_gla:
+    description: Noah-MP glacier treatment option.  (new since V3.8)
+    type: int
+    default: 1
+    options:
+      1: (default) includes phase change
+      2: slab ice (Noah)
+  opt_rsf:
+    description: Noah-MP surface evaporation resistence option.  (new since V3.8)
+    type: int
+    options:
+      1: Sakaguchi and Zeng 2009
+      2: Sellers 1992
+      3: semi-implicit where Ts uses snow cover fraction. (new since V3.7)
+      4: option 1 for non-snow; rsurf = rsurf_snow for snow (set in MPTABLE -added
+        in V3.8)
+fdda:
+  grid_fdda:
+    description: Grid Nudging
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: (default) off.
+      1: grid analysis nudging on.
+      2: spectral analysis nudging option.
+  gfdda_inname:
+    description: name of fdda input file that will be produced when running real.
+      (For Grid Nudging)
+    type: str
+    example: '"wrffdda_d<domain>"'
+  gfdda_interval_m:
+    description: time interval (in mins) between analysis times. (For Grid Nudging)
+    type: list
+    minlen: max_dom
+    itemtype: int
+    example: 360
+  gfdda_end_h:
+    description: time (hr) to stop nudging after the start of the forecast. (For Grid
+      Nudging)
+    type: list
+    minlen: max_dom
+    itemtype: int
+    example: 6
+  io_form_gfdda:
+    description: analysis data format. (For Grid Nudging)
+    type: int
+    options:
+      2: netCDF format. (For Grid Nudging)
+      4: PHD5 format. (For Grid Nudging)
+      5: GRIB1 format. (For Grid Nudging)
+      10: GRIB2 format. (For Grid Nudging)
+      11: pnetCDF format. (For Grid Nudging)
+  fgdt:
+    description: calculation frequency (in mins) for anlaysis nudging; 0=every time
+      step (which is recommended). (For Grid Nudging)
+    type: list
+    minlen: max_dom
+    itemtype: int
+    example: 0
+  if_no_pbl_nudging_uv:
+    description: nudging in the PBL for u and v. (For Grid Nudging)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: (default) nudging in the PBL. (For Grid Nudging)
+      1: no nudging of u and v in the PBL. (For Grid Nudging)
+  if_no_pbl_nudging_t:
+    description: nudging in the PBL for T. (For Grid Nudging)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: (default) nudging in the PBL. (For Grid Nudging)
+      1: no nudging of temp in the PBL. (For Grid Nudging)
+  if_no_pbl_nudging_q:
+    description: nudging in the PBL for q. (For Grid Nudging)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: (default) nudging in the PBL. (For Grid Nudging)
+      1: no nudging of qvapor in the PBL. (For Grid Nudging)
+  if_zfac_uv:
+    description: Whether to nudge u and v in all layers. (For Grid Nudging)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: (default) nudge u and v in all layers. (For Grid Nudging)
+      1: limit nudging to levels above k_zfac_uv. (For Grid Nudging)
+  k_zfac_uv:
+    description: model level below which nudging is switched off for u and v. (For
+      Grid Nudging)
+    type: int
+    example: 10
+  if_zfac_t:
+    description: Whether to nudge temp in all layers. (For Grid Nudging)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: (default) nudge temp in all layers. (For Grid Nudging)
+      1: limit nudging to levels above k_zfac_t. (For Grid Nudging)
+  k_zfac_t:
+    description: model level below which nudging is switched off for temp. (For Grid
+      Nudging)
+    type: int
+    example: 10
+  if_zfac_q:
+    description: Whether to nudge qvapor in all layers. (For Grid Nudging)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: (default) nudge qvapor in all layers. (For Grid Nudging)
+      1: limit nudging to levels above k_zfac_q. (For Grid Nudging)
+  k_zfac_q:
+    description: model level below which nudging is switched off for qvapor. (For
+      Grid Nudging)
+    type: int
+    example: 10
+  guv:
+    description: nudging coefficient for u and v (s-1). (For Grid Nudging)
+    type: list
+    minlen: max_dom
+    itemtype: real
+    example: 0.0003
+  gt:
+    description: nudging coefficient for temp (s-1). (For Grid Nudging)
+    type: list
+    minlen: max_dom
+    itemtype: real
+    example: 0.0003
+  gq:
+    description: nudging coefficient for qvaopr (s-1). (For Grid Nudging)
+    type: list
+    minlen: max_dom
+    itemtype: real
+    example: 0.0003
+  if_ramping:
+    description: Whether nudging ends as a step function. (For Grid Nudging)
+    type: int
+    default: 0
+    options:
+      0: (default) nudging ends as a step function. (For Grid Nudging)
+      1: ramping nudging down at the end of the period. (For Grid Nudging)
+  dtramp_min:
+    description: time (min) for ramping function. (For Grid Nudging)
+    type: int
+    example: 0
+  grid_sfdda:
+    description: surface fdda switch. (For Grid Nudging)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: (default) off
+      1: nudging selected surface fields
+      2: FASDAS (flux-adjusted surface data assimilation system). (new since V3.8)
+  sgfdda_inname:
+    description: defined name for surface nuding input file (from program obsgrid).
+      (For Grid Nudging)
+    type: str
+    example: '"wrfsfdda_d<domain >"'
+  sgfdda_interval_m:
+    description: time interval (in mins) between surface analsysis times. (For Grid
+      Nudging)
+    type: list
+    minlen: max_dom
+    itemtype: int
+    example: 360
+  sgfdda_end_h:
+    description: time (in hours) to stop surface nudging after start of the forecast.
+      (For Grid Nudging)
+    type: list
+    minlen: max_dom
+    itemtype: int
+    example: 6
+  io_form_sgfdda:
+    description: surface analysis format (2=netCDF). (For Grid Nudging)
+    type: int
+    example: 2
+  guv_sfc:
+    description: nudging coefficient for u and v (s-1). (For Grid Nudging)
+    type: list
+    minlen: max_dom
+    itemtype: real
+    example: 0.0003
+  gt_sfc:
+    description: nudging coefficient for temp (s-1). (For Grid Nudging)
+    type: list
+    minlen: max_dom
+    itemtype: real
+    example: 0.0003
+  gq_sfc:
+    description: nudging coefficient for qvapor (s-1). (For Grid Nudging)
+    type: list
+    minlen: max_dom
+    itemtype: real
+    example: 0.0003
+  rinblw:
+    description: radius of influence used to determine the confidence (or weights)
+      for the analysis, which is based on the distance between the grid point to the
+      nearest obs.  The analysis without nearby observation is used at a reduced weight.
+      (For Grid Nudging)
+    type: list
+    minlen: max_dom
+    itemtype: real
+    example: 0.0
+  fgdtzero:
+    description: nudging tendencies (For Spectral Nudging)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      1: nudging tendencies are set to zero in between fdda calls. (For Spectral Nudging)
+      0: (default) not active
+  if_no_pbl_nudging_ph:
+    description: nudging of ph in the PBL. (For Spectral Nudging)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      1: no nudging of ph in the PBL. (For Spectral Nudging)
+      0: (default) nudging of ph in the PBL
+  if_zfac_ph:
+    description: Whether to nudge ph in all layers. (For Spectral Nudging)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: (default) nudge ph in all layers. (For Spectral Nudging)
+      1: limit nudging to levels above k_zfac_ph
+  k_zfac_ph:
+    description: model level below which nudging is switched off for water ph. (For
+      Spectral Nudging) . (For Spectral Nudging)
+    type: int
+    example: 10
+  gph:
+    description: nudging coefficient for ph (s-1). (For Spectral Nudging)
+    type: list
+    minlen: max_dom
+    itemtype: real
+    example: 0.0003
+  dk_zfac_uv:
+    description: depth in k between k_zfac_uv to dk_zfac_uv where nuding increases
+      linearly to full strength. (For Spectral Nudging)
+    type: list
+    minlen: max_dom
+    itemtype: int
+    example: 1
+  dk_zfac_t:
+    description: depth in k between k_zfac_t to dk_zfac_t where nuding increases linearly
+      to full strength. (For Spectral Nudging)
+    type: list
+    minlen: max_dom
+    itemtype: int
+    example: 1
+  dk_zfac_ph:
+    description: depth in k between k_zfac_ph to dk_zfac_ph where nuding increases
+      linearly to full strength. (For Spectral Nudging)
+    type: list
+    minlen: max_dom
+    itemtype: int
+    example: 1
+  xwavenum:
+    description: top wave number to nudge in xdirection (0 is default). (For Spectral
+      Nudging)
+    type: int
+    example: 3
+  ywavenum:
+    description: top wave number to nudge in ydirection (0 is default). (For Spectral
+      Nudging)
+    type: int
+    example: 3
+  obs_nudge_opt:
+    description: obs-nudging fdda on for each domain (default is 0=off); also must
+      set auxinput11_interval and auxinput11_end_h under  time_control.  (For Obs
+      Nudging)
+    type: list
+    minlen: max_dom
+    itemtype: int
+    example: 1
+  max_obs:
+    description: max number of observations used on a domain during any given time
+      windown (default is 0). (For Obs Nudging)
+    type: int
+    default: 0
+  fdda_start:
+    description: obs nudging start time (min) . (For Obs Nudging)
+    type: list
+    minlen: max_dom
+    itemtype: real
+    example: 0.0
+  fdda_end:
+    description: obs nudging end time (min). (For Obs Nudging)
+    type: list
+    minlen: max_dom
+    itemtype: real
+    example: 0.0
+  obs_nudge_wind:
+    description: Whether to nudge wind
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      1: nudge wind on. (For Obs Nudging)
+      0: (default) off.
+  obs_coef_wind:
+    description: nudging coefficient for wind (s-1). (For Obs Nudging)
+    type: list
+    minlen: max_dom
+    itemtype: real
+    example: ''
+  obs_nudge_temp:
+    description: set to =1 to nudge temperatures (default is 0=off). (For Obs Nudging)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      1: 'ON'
+      0: 'OFF'
+  obs_coef_temp:
+    description: nudging coefficient for temp (s-1). (For Obs Nudging)
+    type: list
+    minlen: max_dom
+    itemtype: real
+    example: ''
+  obs_nudge_mois:
+    description: set to =1 to nudge water vapor mixing ratio (default is 0=off). (For
+      Obs Nudging)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      1: 'ON'
+      0: 'OFF'
+  obs_coef_mois:
+    description: nudging coefficient for water vapor mixing ratio (s-1). (For Obs
+      Nudging)
+    type: list
+    minlen: max_dom
+    itemtype: real
+    example: 0.0006
+  obs_rinxy:
+    description: horizontal radius of influence (km;  . (For Obs Nudging)
+    type: list
+    minlen: max_dom
+    itemtype: real
+    example: 0.0
+  obs_rinsig:
+    description: vertical radius of influence in eta  . (For Obs Nudging)
+    type: real
+    example: 0.0
+  obs_twindo:
+    description: half-period time window over which an observation will be used for
+      nudging (hrs). (For Obs Nudging)
+    type: list
+    minlen: max_dom
+    itemtype: real
+    example: 0.666667
+  obs_npfi:
+    description: frequency in coarse grid timesteps for diagnostic prints. . (For
+      Obs Nudging)
+    type: int
+    example: 0
+  obs_ionf:
+    description: frequency in coarse grid timesteps for obs input and err calc. (For
+      Obs Nudging)
+    type: list
+    minlen: max_dom
+    itemtype: int
+    example: 1
+  obs_idynin:
+    description: for dynamic initialization using a ramp-down function to gradually
+      turn off the FDDA before the pure forecast (default is 0=off). (For Obs Nudging)
+    type: int
+    default: 0
+    options:
+      1: 'ON'
+      0: 'OFF'
+  obs_dtramp:
+    description: time period (mins) over which the nudging is ramped down from one
+      to zero. (For Obs Nudging)
+    type: int
+    example: 0
+  obs_prt_max:
+    description: maximum allowed obs entries in diagnostic printout. (For Obs Nudging)
+    type: int
+    example: 1000
+  obs_prt_freq:
+    description: frequency in obs index for diagnostic printout. (For Obs Nudging)
+    type: list
+    minlen: max_dom
+    itemtype: int
+    example: 1000
+  obs_ipf_in4dob:
+    description: Whether to print obs input diagnostics (default is false=off). (For
+      Obs Nudging)
+    type: bool
+    default: false
+    options:
+      true: print obs input diagnostics (default is false=off). (For Obs Nudging)
+      false: Do not print
+  obs_ipf_errob:
+    description: Whether to print obs error diagnostics (default is false=off). (For
+      Obs Nudging)
+    type: bool
+    default: false
+    options:
+      true: print obs error diagnostics (default is false=off). (For Obs Nudging)
+      false: Do not print
+  obs_ipf_nudob:
+    description: Whether to print obs nudge diagnostics (default is false=off). (For
+      Obs Nudging)
+    type: bool
+    default: false
+    options:
+      true: print obs nudge diagnostics (default is false=off). (For Obs Nudging)
+      false: Do not print
+  obs_ipf_init:
+    description: Whether to enable obs printed warning messages. (For Obs Nudging)
+    type: bool
+    default: true
+    options:
+      true: (default) enable obs printed warning messages. (For Obs Nudging)
+      false: Do not enabke
+  obs_no_pbl_nudge_uv:
+    description: Wind nudging within the PBL
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      1: no wind-nudging within the PBL. (For Obs Nudging)
+      0: (default) wind-nudging within thePBL
+  obs_no_pbl_nudge_t:
+    description: Temperature nudging within the PBL
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      1: no temperature-nudging within the PBL. (For Obs Nudging)
+      0: (default) temperature-nudging within the PBL
+  obs_no_pbl_nudge_q:
+    description: Moisture nudging within the PBL
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      1: no moisture-nudging within the PBL. (For Obs Nudging)
+      0: (default) no moisture-nudging within the PBL
+  obs_nudgezfullr1_uv:
+    description: Vertical influence full weight height for LML obs, regime 1, winds.
+      (For Obs Nudging)
+    type: int
+    example: 50
+  obs_nudgezrampr1_uv:
+    description: vertical influence ramp-to-zero height for LML obs, regime 1, winds.
+      (For Obs Nudging)
+    type: int
+    example: 50
+  obs_nudgezfullr2_uv:
+    description: Vertical influence full weight height for LML obs, regime 2, winds.
+      (For Obs Nudging)
+    type: int
+    example: 50
+  obs_nudgezrampr2_uv:
+    description: vertical influence ramp-to-zero height for LML obs, regime 2, winds.
+      (For Obs Nudging)
+    type: int
+    example: 50
+  obs_nudgezfullr4_uv:
+    description: Vertical influence full weight height for LML obs, regime 4, winds.
+      (For Obs Nudging)
+    type: int
+    example: -5000
+  obs_nudgezrampr4_uv:
+    description: Vertical influence ramp-to-zero height for LML obs, regime 4, winds.
+      (For Obs Nudging)
+    type: int
+    example: 50
+  obs_nudgezfullr1_t:
+    description: Vertical influence full weight height for LML obs, regime 1, temperature.
+      (For Obs Nudging)
+    type: int
+    example: 50
+  obs_nudgezrampr1_t:
+    description: Vertical influence ramp-to-zero height for LML obs, regime 1, temperature.
+      (For Obs Nudging)
+    type: int
+    example: 50
+  obs_nudgezfullr2_t:
+    description: Vertical influence full weight height for LML obs, regime 2, temperature.
+      (For Obs Nudging)
+    type: int
+    example: 50
+  obs_nudgezrampr2_t:
+    description: Vertical influence ramp-to-zero height for LML obs, regime 2, temperature.
+      (For Obs Nudging)
+    type: int
+    example: 50
+  obs_nudgezfullr4_t:
+    description: Vertical influence full weight height for LML obs, regime 4, temperature.
+      (For Obs Nudging)
+    type: int
+    example: -5000
+  obs_nudgezrampr4_t:
+    description: Vertical influence ramp-to-zero height for LML obs, regime 4, temperature.
+      (For Obs Nudging)
+    type: int
+    example: 50
+  obs_nudgezfullr1_q:
+    description: Vertical influence full weight height for LML obs, regime 1, temperature.
+      (For Obs Nudging)
+    type: int
+    example: 50
+  obs_nudgezrampr1_q:
+    description: Vertical influence ramp-to-zero height for LML obs, regime 1, temperature.
+      (For Obs Nudging)
+    type: int
+    example: 50
+  obs_nudgezfullr2_q:
+    description: Vertical influence full weight height for LML obs, regime 2, temperature.
+      (For Obs Nudging)
+    type: int
+    example: 50
+  obs_nudgezrampr2_q:
+    description: Vertical influence ramp-to-zero height for LML obs, regime 2, temperature.
+      (For Obs Nudging)
+    type: int
+    example: 50
+  obs_nudgezfullr4_q:
+    description: Vertical influence full weight height for LML obs, regime 4, temperature.
+      (For Obs Nudging)
+    type: int
+    example: -5000
+  obs_nudgezrampr4_q:
+    description: Vertical influence ramp-to-zero height for LML obs, regime 4, temperature.
+      (For Obs Nudging)
+    type: int
+    example: 50
+  obs_nudgefullmin:
+    description: minimum depth (m) through which vertical influence function remains
+      1.0. (For Obs Nudging)
+    type: int
+    example: 50
+  obs_nudgezrampmin:
+    description: minimum depth (m) through which vert infl fcn decreases from 1 to
+      0. (For Obs Nudging)
+    type: int
+    example: 50
+  obs_nudgezmax:
+    description: max depth (m) in which vert infl function is non-zero. (For Obs Nudging)
+    type: int
+    example: 3000
+  obs_sfcfact:
+    description: scale factor applied to time window for surface obs. (For Obs Nudging)
+    type: real
+    example: 1.0
+  obs_sfcfacr:
+    description: scale factor applied to horiz radius of influence for surface obs.
+      (For Obs Nudging)
+    type: real
+    example: 1.0
+  obs_dpsmx:
+    description: max pressure change (cb) allowed within horiz radius of influence.
+      (For Obs Nudging)
+    type: real
+    example: 7.5
+  obs_sfc_scheme_horiz:
+    description: horizontal spreading scheme for surface obs. (For Obs Nudging)
+    type: int
+    default: 0
+    options:
+      0: (default) WRF scheme
+      1: original MM5 scheme
+  obs_sfc_scheme_vert:
+    description: vertical spreading scheme for surface obs. (For Obs Nudging)
+    type: int
+    default: 0
+    options:
+      0: (default) regime vif scheme
+      1: original scheme (simple scheme)
+  obs_max_sndng_gap:
+    description: max allowed pressure gap between soundings for interpolation (cb).
+      (For Obs Nudging)
+    type: int
+    example: 20
+  obs_scl_neg_qv_innov:
+    description: Whether to prevent nudging toward negative Qv.  (For Obs Nudging)  (new
+      since V3.6)
+    type: int
+    default: 0
+    options:
+      0: default behavior
+      1: prevent nudging toward negative Qv.
+dynamics:
+  rk_ord:
+    description: time-integration scheme option
+    type: int
+    default: 3
+    options:
+      2: Runge-Kutta 2nd order
+      3: (default/recommended) Runge-Kutta 3rd order
+  diff_opt:
+    description: turbulence and mixing option
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 1
+    options:
+      0: no turbulence or explicit spatial numerical filters (km_opt is ignored)
+      1: (default) evaluates 2nd order diffusion term on coordinate surfaces, uses
+        kvdif for vertical diffusion unless PBL option is used, may be used with km_opt
+        = 1 (recommended for real-data case) and 4
+      2: evaluates mixing terms in physical space (stress form) (x,y,z); turbulence
+        parameterization is chosen by specifying km_opt
+  km_opt:
+    description: eddy coefficient option
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 1
+    options:
+      1: (default) constant (use khdif and kvdif)
+      2: 1.5 order TKE closure (3D) ** Not recommended for DX > 2 km
+      3: Smagorinsky first order closure (3D) **Not recommended for DX > 2 km
+      4: horizontal Smagorinsky first order closure (recommended for realdata case)
+  diff_6th_opt:
+    description: 6th-order numerical diffusion
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: (default) no 6th-order diffusion
+      1: 6th-order numerical diffusion
+      2: 6th-order numerical diffusion, but prohibit up-gradient diffusion
+  diff_6th_factor:
+    description: 6th-order numerical diffusion nondimensional rate (max value 1.0
+      corresponds to complete removal of 2dx wave in one timestep)
+    type: list
+    minlen: max_dom
+    itemtype: real
+    example: 0.12
+  damp_opt:
+    description: upper-level damping flag
+    type: int
+    default: 0
+    options:
+      0: (default) no damping
+      1: with diffusive damping; maybe used for real-data cases (dampcoef nondimensional
+        ~0.01 to 0.1)
+      2: with Rayleigh damping (dampcoef inverse time scale [1/s], e.g. 0.003)
+      3: with Rayleigh damping (dampcoef inverse time scale [1/s], e.g. 0.2; for real-data
+        cases)
+  use_theta_m:
+    description: uses theta(1+1.61Qv); (default 0=off).  (new since V3.7)
+    type: int
+    default: 0
+    options:
+      0: 'OFF'
+      1: Use theta (1+1.61Qv)
+  use_q_diabatic:
+    description: includes QV and QC tendencies in advection;  this helps to produce
+      correct solution in an idealized 'moist benchmark' test case (Bryan, 2014).  In
+      real data testing, time step needs to be reduced to maintain a stable solution
+      (default 0=off).  (new since V3.7)
+    type: int
+    default: 0
+    options:
+      0: 'OFF'
+      1: includes QV and QC tendencies in advection;  this helps to produce correct
+        solution in an idealized 'moist benchmark' test case (Bryan, 2014).  In real
+        data testing, time step needs to be reduced to maintain a stable solution.
+  c_s:
+    description: (default) Smagorinsky coeff.  (new since V3.7)
+    type: list
+    minlen: max_dom
+    itemtype: real
+    default: 0.25
+  c_k:
+    description: (default) TKE coeff.  (new since V3.7)
+    type: list
+    minlen: max_dom
+    itemtype: real
+    default: 0.15
+  zdamp:
+    description: damping depth (m) from model top
+    type: list
+    minlen: max_dom
+    itemtype: real
+    example: 5000.0
+  dampcoef:
+    description: damping coefficient (see damp_opt)
+    type: list
+    minlen: max_dom
+    itemtype: real
+    example: 0.0
+  w_damping:
+    description: vertical velocity damping flag (for operational use)
+    type: int
+    default: 0
+    options:
+      0: (default) no damping
+      1: with damping
+  base_pres:
+    description: base state surface pressure (Pa); real only., not recommended to
+      change.
+    type: real
+    example: 100000.0
+  base_temp:
+    description: base state temperature (K); real only
+    type: real
+    example: 290.0
+  base_lapse:
+    description: real-data ONLY, lapse rate (K), not recommended to change
+    type: real
+    example: 50.0
+  iso_temp:
+    description: isothermal temperature in statosphere; enables model to be extended
+      to 5 mb; real only. (default value changed to 200 in V3.5)
+    type: real
+    default: 200.0
+  base_pres_strat:
+    description: real data, em ONLY, base state pressure (Pa) at bottom of the stratosphere,
+      US Standard atmosphere 55 hPa.  (New since V3.6.1).  (default value set to 0
+      mb in V3.7)
+    type: real
+    default: 0.0
+  base_lapse_strat:
+    description: (default) real-data; em ONLY, base state lapse rate (dT/d(lnP)) in
+      stratosphere, approx to US standard atmosphere -12K (new since V3.6.1)
+    type: real
+    example: -11.0
+  use_baseparm_fr_nml:
+    description: whether to use base state parameters from the namelist. for backward
+      compatibility; to use with old wrfinput file produced prior to V3.4
+    type: bool
+    example: false
+    options:
+      false: Do not use old wrfinput produced prior to V3.4
+      true: Use old wrfinput produced prior to V3.4
+  use_input_w:
+    description: whether to use vertical velocity from input file  (new since V3.3.1)
+    type: bool
+    example: false
+    options:
+      false: Do not use vertical velocity from input file
+      true: use vertical velocity from input file
+  khdif:
+    description: horizontal diffusion constant (m2/s)
+    type: list
+    minlen: max_dom
+    itemtype: real
+    example: 0.0
+  kvdif:
+    description: vertical diffusion constant (m2/s)
+    type: list
+    minlen: max_dom
+    itemtype: real
+    example: 0.0
+  smdiv:
+    description: divergence damping (0.1 is typical)
+    type: list
+    minlen: max_dom
+    itemtype: real
+    example: 0.1
+  emdiv:
+    description: external-mode filter coef for mass coordinate model (0.01 is typical
+      for real-data cases)
+    type: list
+    minlen: max_dom
+    itemtype: real
+    example: 0.01
+  epssm:
+    description: time off-centering for vertical sound waves
+    type: list
+    minlen: max_dom
+    itemtype: real
+    example: 0.1
+  non_hydrostatic:
+    description: Hydrostatic/Non-hydrostatic mode
+    type: list
+    itemtype: bool
+    minlen: max_dom
+    default: true
+    options:
+      true: (default) running the model in nonhydrostatic mode
+      false: running the model in hydrostatic mode
+  pert_coriolis:
+    description: Coriolis perturbation
+    type: list
+    itemtype: bool
+    minlen: max_dom
+    example: false
+    options:
+      true: Enabled
+      false: coriolis only acts on wind perturbation (only for idealized)
+  top_lid:
+    description: Vertical motion at top of domain
+    type: list
+    itemtype: bool
+    minlen: max_dom
+    example: false
+    options:
+      true: Enabled
+      false: zero vertical motion at top of domain (only for idealized)
+  mix_full_fields:
+    description: 'Whether to enable vertical diffusion may act on full fields(not
+      just on
+
+      perturbation from the 1D base profile. used with diff_opt = 2; value of true
+      is recommended, except for highly idealized numerical tests; damp_opt must not
+      be =1 if true is chosen; false means subtract 1D base-state profile before mixing
+      (only for idealized)'
+    type: bool
+    example: true
+    options:
+      true: Enabled
+      false: Disabled
+  mix_isotropic:
+    description: Whether vertical/hirizontal diffusion is anistropic
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: (default) anistropic vertical/horizontal diffusion
+      1: isotropic; for km_opt = 2, 3
+  mix_upper_bound:
+    description: non-dimensional upper limit for diffusion coefficients; for km_opt
+      = 2, 3
+    type: list
+    minlen: max_dom
+    itemtype: real
+    example: 0.1
+  h_mom_adv_order:
+    description: horizontal momentum advection order; 5 (default) = 5th, etc.
+    type: list
+    minlen: max_dom
+    itemtype: int
+    default: 5
+  v_mom_adv_order:
+    description: vertical momentum advection order; 3 (default) = 3rd, etc.
+    type: list
+    minlen: max_dom
+    itemtype: int
+    default: 3
+  h_sca_adv_order:
+    description: horizontal scalar advection order; 5 (default) = 5th, etc
+    type: list
+    minlen: max_dom
+    itemtype: int
+    default: 5
+  v_sca_adv_order:
+    description: vertical scalar advection order; 3 (default) = 3rd, etc.
+    type: list
+    minlen: max_dom
+    itemtype: int
+    default: 3
+  time_step_sound:
+    description: number of sound steps per timestep (if using a time_step much larger
+      than 6*DX (in km), increase number of sound steps (default is 0)
+    type: list
+    minlen: max_dom
+    itemtype: int
+    default: 0
+    example: 4
+  moist_adv_opt:
+    description: advection options for moisture
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 1
+    options:
+      0: simple
+      1: (default) positive-definite
+      2: monotonic
+      3: 5th-order WENO (Weighted Essentially Non-Oscillatory)
+      4: 5th-order WENO with positive definite (new since V3.4)
+  scalar_adv_opt:
+    description: advection options for scalars
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 1
+    options:
+      0: simple
+      1: (default) positive-definite
+      2: monotonic
+      3: 5th-order WENO
+      4: 5th-order WENO with positive definite
+  tke_adv_opt:
+    description: advection options for TKE
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 1
+    options:
+      0: simple
+      1: (default) positive-definite
+      2: monotonic
+      3: 5th-order WENO
+      4: 5th-order WENO with positive definite
+  chem_adv_opt:
+    description: advection options for chem variables
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 1
+    options:
+      0: simple
+      1: (default) positive definite
+      2: monotonic
+      3: 5th-order WENO
+      4: 5th-order WENO with positive definite
+  tracer_adv_opt:
+    description: advection options for tracer variables
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 1
+    options:
+      0: simple
+      1: (default) positive definite
+      2: monotonic
+      3: 5th-order WENO
+      4: 5th-order WENO with positive definite
+  momentum_adv_opt:
+    description: advection options for momentum
+    type: int
+    default: 1
+    options:
+      1: (default) standard
+      3: 5th-order WENO (new since V3.4)
+  tke_drag_coefficient:
+    description: surface drag coefficient (Cd, dimensionless) for diff_opt = 2 only
+    type: list
+    minlen: max_dom
+    itemtype: real
+    example: 0.0
+  tke_heat_flux:
+    description: surface thermal flux (H/rho*cp), K ms-1, for diff_opt = 2 only
+    type: list
+    minlen: max_dom
+    itemtype: real
+    example: 0.0
+  fft_filter_lat:
+    description: the latitude above which the polar filter is turned on (degrees)
+      for global model; -45 is a reasonable latitude to start using polar filters
+    type: real
+    example: 91.0
+  coupled_filtering:
+    description: Whether mu coupled scalar arrays are run through the polar filters.  (new
+      since V3.7)
+    type: bool
+    default: true
+    options:
+      true: (default) mu coupled scalar arrays are run through the polar filters.  (new
+        since V3.7)
+      false: Disabled
+  pos_def:
+    description: Whether to remove negative values of scalar arrays by setting minimum
+      value to zero.  (new since V3.7)
+    type: bool
+    default: false
+    options:
+      false: (default) remove negative values of scalar arrays by setting minimum
+        value to zero.  (new since V3.7)
+      true: Do not remove negative values of scalar arrays by setting minimum value
+        to zero.
+  swap_pole_with_next_j:
+    description: Whether to  replace the entire j=1. (jds-1) with the values from
+      j=2 (jds-2).  (new since V3.7)
+    type: bool
+    default: false
+    options:
+      true: Do not  replace the entire j=1. (jds-1) with the values from j=2 (jds-2).  (new
+        since V3.7)
+      false: (default) replace the entire j=1. (jds-1) with the values from j=2 (jds-2).  (new
+        since V3.7)
+  actual_distance_average:
+    description: Whether to average the field at each i location in the j-loop with
+      a number of grid points based on a map-factor ratio  (new since V3.7)
+    type: bool
+    default: false
+    options:
+      true: Do not  average the field at each i location in the j-loop with a number
+        of grid points based on a map-factor ratio  (new since V3.7)
+      false: (default) average the field at each i location in the j-loop with a number
+        of grid points based on a map-factor ratio  (new since V3.7)
+  gwd_opt:
+    description: gravity wave drag option; use when grid size > 10 km (default is
+      0=off)
+    type: int
+    default: 0
+    options:
+      0: 'OFF'
+      1: 'ON'
+  do_avgflx_em:
+    description: outputs time-averaged masscoupled advective velocities (default is
+      0 = off)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: 'OFF'
+      1: 'ON'
+  do_avgflx_cugd:
+    description: outputs time_averaged convective mass-fluxes from the Grell-Devenyi
+      ensemble scheme (default is 0 = off; only takes effect if do_avgflx_em =1, and
+      cu_physics = 93
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: 'OFF'
+      1: 'ON'
+  sfs_opt:
+    description: nonlinear backscatter and anisotrophy (NBA)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: (default) off
+      1: NBA, using diagnostic stress terms (km_opt = 2, 3 for scalars)
+      2: NBA, using tke-based stress terms (km_opt = 2, 3 needed)
+  m_opt:
+    description: adds output of Mij stress terms when NBA is not used (default is
+      0 = off)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: 'OFF'
+      1: 'ON'
+  tracer_opt:
+    description: activates 8 pre-defined tracers in the Registry (default is 0 = off)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: 'OFF'
+      1: 'ON'
+  rad_nudge:
+    description: option to nudge toward initial sounding in idealized TC case (default
+      is 0 = off)
+    type: int
+    default: 0
+    options:
+      0: 'OFF'
+      1: 'ON'
+bdy_control:
+  spec_bdy_width:
+    description: total number of rows for specified boundary value nudging (real only)
+    type: int
+    example: 5
+  spec_zone:
+    description: number of points in specified zone (specified b.c. option; real only)
+    type: int
+    example: 1
+  relax_zone:
+    description: number of points in relaxation zone (spec b.c. option; real only)
+    type: int
+    example: 4
+  specified:
+    description: specified boundary condition; only can be used for domain 1 (default
+      is false; real only)
+    type: list
+    itemtype: bool
+    minlen: max_dom
+    default: false
+    options:
+      true: specified boundary condition
+      false: DIsabled
+  spec_exp:
+    description: exponential multiplier for relaxation zone ramp for specified = true;
+      default is 0. = linear ramp; 0.33 = ~3*DX exp decay factor (real only)
+    type: real
+    default: 0.0
+  periodic_x:
+    description: periodic boundary conditions in xdirection (default is false)
+    type: list
+    itemtype: bool
+    minlen: max_dom
+    default: false
+    options:
+      true: 'ON'
+      false: 'OFF'
+  symmetric_xs:
+    description: symmetric boundary conditions at x start (west; default is false)
+    type: list
+    itemtype: bool
+    minlen: max_dom
+    default: false
+    options:
+      true: 'ON'
+      false: 'OFF'
+  symmetric_xe:
+    description: symmetric boundary conditions at x end (east; default is false)
+    type: list
+    itemtype: bool
+    minlen: max_dom
+    default: false
+    options:
+      true: 'ON'
+      false: 'OFF'
+  open _xs:
+    description: open boundary conditions at x start (west; default is false)
+    type: list
+    itemtype: bool
+    minlen: max_dom
+    default: false
+    options:
+      true: 'ON'
+      false: 'OFF'
+  open _xe:
+    description: open boundary conditions at x end (east; default is false)
+    type: list
+    itemtype: bool
+    minlen: max_dom
+    default: false
+    options:
+      true: 'ON'
+      false: 'OFF'
+  periodic_y:
+    description: periodic boundary conditions in ydirection (default is false)
+    type: list
+    itemtype: bool
+    minlen: max_dom
+    default: false
+    options:
+      true: 'ON'
+      false: 'OFF'
+  symmetric_ys:
+    description: symmetric boundary conditions at y start (south; default is false)
+    type: list
+    itemtype: bool
+    minlen: max_dom
+    default: false
+    options:
+      true: 'ON'
+      false: 'OFF'
+  symmetric_ye:
+    description: symmetric boundary conditions at y end (north; default is false)
+    type: list
+    itemtype: bool
+    minlen: max_dom
+    default: false
+    options:
+      true: 'ON'
+      false: 'OFF'
+  open_ys:
+    description: open boundary conditions at y start (south; default is false)
+    type: list
+    itemtype: bool
+    minlen: max_dom
+    default: false
+    options:
+      true: 'ON'
+      false: 'OFF'
+  open_ye:
+    description: open boundary conditions at y end (north; default is false)
+    type: list
+    itemtype: bool
+    minlen: max_dom
+    default: false
+    options:
+      true: 'ON'
+      false: 'OFF'
+  nested:
+    description: nested boundary conditions (must be set to .true for nests)
+    type: list
+    itemtype: bool
+    minlen: max_dom
+    example: false, true, true
+    options:
+      true: 'ON'
+      false: 'OFF'
+  polar:
+    description: polar boundary condition (v=0 at polarward-most v-point) for global
+      application (default is false)
+    type: list
+    itemtype: bool
+    minlen: max_dom
+    default: false
+    options:
+      true: 'ON'
+      false: 'OFF'
+  constant_bc:
+    description: constant boundary condition used with DFI (default is false)
+    type: bool
+    default: false
+    options:
+      true: 'ON'
+      false: 'OFF'
+  spec_bdy_final_mu:
+    description: Whether to call spec_bdy_final for mu (default is 0=off); this may
+      cause different restart results in V3.8.  (new since V3.7)
+    type: int
+    default: 0
+    options:
+      1: call spec_bdy_final for mu
+      0: 'OFF'
+  have_bcs_moist:
+    description: Whether to use microphysics variables in boundary file  (new since
+      V3.5.1)
+    type: list
+    itemtype: bool
+    minlen: max_dom
+    default: false
+    options:
+      false: do not use microphysics variables in boundary file in model run after
+        ndown (default)
+      true: use microphysics variables in boundary file
+  have_bcs_scalar:
+    description: Whether to use scalar variables in boundary file
+    type: list
+    itemtype: bool
+    minlen: max_dom
+    default: false
+    options:
+      false: do not use scalar variables in boundary file in model run after ndown
+        (default)
+      true: use scalar variables in boundary file
+namelist_quilt:
+  nio_tasks_per_group:
+    description: 'Quilting. # of processors used for IO quilting per IO group. (default)
+      no quilting'
+    type: int
+    default: 0
+  nio_groups:
+    description: default; may be set to higher value for nesting IO or history and
+      restart IO
+    type: int
+    default: 1
+grib2:
+  background_proc_id:
+    description: (default); background generating process identifier, typically defined
+      by the originating center to identify the background data that was used in creating
+      the data; this is octet 13 of Section 4 in the grib2 message
+    type: int
+    default: 255
+  forecast_proc_id:
+    description: (default) analysis or generating forecast process identifier, typically
+      defined by the originating center to identify the forecast process that was
+      used to generate the data; this is octet 14 of Section 4 in the grib2 message
+    type: int
+    default: 255
+  production_status:
+    description: (default) production status of processed data in the grib2 message;
+      see Code Table 1.3 of the grib2 manual; this is octect 20 of Section 1 in the
+      grib2 record.
+    type: int
+    default: 255
+  compression:
+    description: the compression method to encode the output grib2 message; only jpeg2000
+      and PNG are supported.
+    type: int
+    default: 40
+    options:
+      40: (default) for jpeg2000
+      41: PNG
+dfi_control:
+  dfi_opt:
+    description: Digital filter initialization
+    type: int
+    default: 0
+    options:
+      0: (default) no digital filter initialization
+      1: digital filter launch (DFL)
+      2: diabatic DFI (DDFI)
+      3: (recommended) twice DFI (TDFI)
+  dfi_nfilter:
+    description: Digital Filter Type
+    type: int
+    default: 7
+    options:
+      0: uniform filter
+      1: Lanczos filter
+      2: Hamming filter
+      3: Blackman filter
+      4: Kaiser filter
+      5: Potter filter
+      6: Dolph window filter
+      7: (default; recommended) Dolph filter
+      8: recursive high-order filter
+  dfi_write_filtered_input:
+    description: whether to write wrfinput file with filtered model state before beginning
+      forecast
+    type: bool
+    options:
+      true: write wrfinput file with filtered model state before beginning forecast
+      false: Do not write wrfinput file with filtered model state before beginning
+        forecast
+  dfi_write_dfi_history:
+    description: whether to write wrfout files during filtering integration
+    type: bool
+    options:
+      true: write wrfout files during filtering integration
+      false: Do not write wrfout files during filtering integration
+  dfi_cutoff_seconds:
+    description: cutoff period (s) for the filter; should not be longer than the filter
+      window
+    type: int
+    example: 3600
+  dfi_time_dim:
+    description: maximum number of time steps for filtering period; this value can
+      be larger than necessary
+    type: int
+    example: 1000
+  dfi_bckstop_year:
+    description: 4-digit year of stop time for backward DFI integration
+    type: int
+    example: 2001
+  dfi_bckstop_month:
+    description: 2-digit month of stop time for backward DFI integration
+    type: int
+    example: 6
+  dfi_bckstop_day:
+    description: 2-digit day of stop time for backward DFI integration
+    type: int
+    example: 11
+  dfi_bckstop_hour:
+    description: 2-digit hour of stop time for backward DFI integration
+    type: int
+    example: 11
+  dfi_bckstop_minute:
+    description: 2-digit minute of stop time for backward DFI integration
+    type: int
+    example: 0
+  dfi_bckstop_second:
+    description: 2-digit second of stop time for backward DFI integration
+    type: int
+    example: 0
+  dfi_fwdstop_year:
+    description: 4-digit year of stop time for forward DFI integration
+    type: int
+    example: 2001
+  dfi_fwdstop_month:
+    description: 2-digit month of stop time for forward DFI integration
+    type: int
+    example: 6
+  dfi_fwdstop_day:
+    description: 2-digit day of stop time for forward DFI integration
+    type: int
+    example: 11
+  dfi_fwdstop_hour:
+    description: 2-digit hour of stop time for forward DFI integration
+    type: int
+    example: 12
+  dfi_fwdstop_minute:
+    description: 2-digit minute of stop time for forward DFI integration
+    type: int
+    example: 30
+  dfi_fwdstop_second:
+    description: 2-digit second of stop time for forward DFI integration
+    type: int
+    example: 0
+  dfi_radar:
+    description: DFI radar data assimilation switch
+    type: int
+    example: 0
+    options:
+      0: 'OFF'
+      1: 'ON'
+scm:
+  scm_force:
+    description: Single column forcing options
+    type: int
+    default: 0
+    options:
+      0: (default) single column forcing turned off
+      1: single column forcing on
+  scm_force_dx:
+    description: DX for SCM forcing (m)
+    type: int
+    example: 4000
+  num_force_layers:
+    description: number of SCM input forcing layers
+    type: int
+    example: 8
+  scm_lu_index:
+    description: SCM landuse category (2 = dryland, cropland, and pasture; others
+      can be found in the LANDUSE.TBL)
+    type: int
+    example: 2
+  scm_isltyp:
+    description: SCM soil category (4 = silt loam; others can be found in the SOILPARM.TBL)
+    type: int
+    example: 4
+  scm_vegfra:
+    description: SCM vegetation fraction
+    type: real
+    example: 0.5
+  scm_canwat:
+    description: SCM canopy water (kg m-2)
+    type: real
+    example: 0.0
+  scm_lat:
+    description: SCM latitude
+    type: real
+    example: 36.605
+  scm_lon:
+    description: SCM longitude
+    type: real
+    example: -97.485
+  scm_th_adv:
+    description: Whether to turn on theta advection in SCM
+    type: bool
+    options:
+      true: turn on theta advection in SCM
+      false: theta advection in SCM OFF
+  scm_wind_adv:
+    description: Whether to turn on wind advection in SCM
+    type: bool
+    options:
+      true: turn on wind advection in SCM
+      false: wind advection in SCM OFF
+  scm_qv_adv:
+    description: Whether to turn on moisture advection in SCM
+    type: bool
+    options:
+      true: turn on moisture advection in SCM
+      false: moisture advection in SCM OFF
+  scm_vert_adv:
+    description: Whether to turn on vertical advection in SCM
+    type: bool
+    options:
+      true: turn on vertical advection in SCM
+      false: vertical advection in SCM OFF
+  scm_ql_adv:
+    description: Whether to turn on liquid advection in SCM (default is false = off)
+    type: bool
+    default: false
+    options:
+      true: turn on liquid advection in SCM
+      false: liquid advection in SCM if OFF
+  num_force_soil_layers:
+    description: number of SCM soil forcing layers
+    type: int
+    example: 5
+  scm_soilt_force:
+    description: Whether to turn on soil temperature forcing in SCM (default is false
+      = off)
+    type: bool
+    default: false
+    options:
+      true: turn on soil temperature forcing in SCM
+      false: soil temperature forcing in SCM OFF
+  scm_soilq_force:
+    description: Whether to turn on soil moisture forcing in SCM (default is false
+      = off)
+    type: bool
+    default: false
+    options:
+      true: Turn on oil moisture forcing in SCM
+      false: oil moisture forcing in SCM OFF
+  scm_force_th_largescale:
+    description: Whether to turn on large-scale theta forcing in SCM (default is false
+      = off)
+    type: bool
+    default: false
+    options:
+      true: turn on large-scale theta forcing in SCM
+      false: Large-scale theta forcing in SCM OFF
+  scm_force_qv_largescale:
+    description: Whether to turn on large-scale qv forcing in SCM (default is false
+      = off)
+    type: bool
+    default: false
+    options:
+      true: turn on large-scale qv forcing in SCM
+      false: large-scale qv forcing in SCM OFF
+  scm_force_ql_largescale:
+    description: Whether to turn on large-scale ql forcing in SCM (default is false
+      = off)
+    type: bool
+    default: false
+    options:
+      true: turn on large-scale ql forcing in SCM
+      false: large-scale ql forcing in SCM OFF
+  scm_force_wind_largescale:
+    description: Whether to turn on large-scale wind forcing in SCM (default is false
+      = off)
+    type: bool
+    default: false
+    options:
+      true: turn on large-scale wind forcing in SCM
+      false: large-scale wind forcing in SCM OFF
+tc:
+  insert_bogus_storm:
+    description: Whether to insert a bogus tropical storm
+    type: bool
+    options:
+      true: Insert a bogus tropical storm
+      false: Do not insert a bogus tropical storm
+  remove_storm:
+    description: Whether to remove the otiginal TC
+    type: bool
+    options:
+      true: Remove the original TC
+      false: Do not remove the original TC
+  num_storm:
+    description: number of bogus TC
+    type: int
+    example: 1
+  latc_loc:
+    description: center latitude of the bogus TC
+    type: real
+    example: -999.0
+  lonc_loc:
+    description: center longitude of the bogus TC
+    type: real
+    example: -999.0
+  vmax_meters_per_second:
+    description: wind max of bogus storm (m s-1)
+    type: list
+    minlen: max_dom
+    itemtype: real
+    example: -999.0
+  rmax:
+    description: maximum radius outward from storm center of bogus TC
+    type: real
+    example: -999.0
+  vmax_ratio:
+    description: ratio for representative maximum winds, 0.75 for 45 km grid, and
+      0.9 for 15 kim grid
+    type: list
+    minlen: max_dom
+    itemtype: real
+    example: -999.0
+  rankine_lid:
+    description: top pressure limit for the TC bogus scheme
+    type: real
+    example: -999.0
+diags:
+  p_lev_diags:
+    description: whether to output pressure level diagnostics
+    type: int
+    example: 0
+    options:
+      0: Do not output pressure level diagnostics
+      1: Output pressure level diagnostics
+  num_press_levels:
+    description: Number of pressure levels
+    type: int
+    example: 4
+  press_levels (max_plevs):
+    description: Pressure levels in Pa
+    type: real
+    example: 0.0
+  use_tot_or_hyd_p:
+    description: Whether to use total or hydrostatic pressure
+    type: int
+    example: 2
+    options:
+      1: use total pressure
+      2: use hydrostatic pressure
+  z_lev_diags:
+    description: Whether to switch to vertically interpolate diagnostics to z-levels;
+      (default is off)  (new since V3.7.1)
+    type: int
+    default: 0
+    options:
+      0: 'OFF'
+      1: Switch to vertically interpolate diagnostics to z-levels
+  num_z_levels:
+    description: number of height levels to interpolate to  (new since V3.7.1)
+    type: int
+    example: 0
+  z_levels:
+    description: list of height values (m) to interpolate data to; positive numbers
+      are for height above mean sea level (i.e., a flight level), negative numbers
+      are for level above ground  (new since V3.7.1)
+    type: int
+    example: 0
+  p_lev_missing:
+    description: pressure level missing value
+    type: int
+    example: -999
+afwa:
+  afwa_diag_opt:
+    description: (default) AFWA diagnostic opton (1 = on)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: 'OFF'
+      1: 'ON'
+  afwa_ptype_opt:
+    description: (default) precip type option (1 = on)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    options:
+      0: 'OFF'
+      1: 'ON'
+  afwa_vil_opt:
+    description: (default) vertical int liquid option (1 = on)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: 'OFF'
+      1: 'ON'
+  afwa_radar_opt:
+    description: (default) radar option (1 = on)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: 'OFF'
+      1: 'ON'
+  afwa_severe_opt:
+    description: (default) severe weather option (1 = on)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: 'OFF'
+      1: 'ON'
+  afwa_icing_opt:
+    description: (default) icing option (1 = on)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: 'OFF'
+      1: 'ON'
+  afwa_vis_opt:
+    description: (default) visibility option (1 = on)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: 'OFF'
+      1: 'ON'
+  afwa_cloud_opt:
+    description: (default) cloud option (1 = on)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: 'OFF'
+      1: 'ON'
+  afwa_therm_opt:
+    description: thermal indices option (default is 0=off)  (new since V3.6.1)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: 'OFF'
+      1: 'ON'
+  afwa_turb_opt:
+    description: turbulence option (default is 0=off)  (new since V3.6.1)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: 'OFF'
+      1: 'ON'
+  afwa_buoy_opt:
+    description: buoyancy option (default is 0=off)  (new since V3.6.1)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: 'OFF'
+      1: 'ON'
+  afwa_ptype_ccn_tmp:
+    description: (default) CCN temperature for precipitation type calculation
+    type: real
+    default: 264.15
+  afwa_ptype_tot_melt:
+    description: precipitation type calculation
+    type: int
+    default: 50
+    options:
+      50: (default) total melting energy for precipitation type calculation
+      1: (default) hail
+      0: graupel
+  progn:
+    description: switch to use mix-activate scheme (only for Morrison, WDM6, WDM5,
+      and NSSL_2MOMCCN/NSSL_2MOM  (new since V3.7)
+    type: list
+    itemtype: int
+    minlen: max_dom
+    default: 0
+    options:
+      0: Do not switch
+      1: switch to use mix-activate scheme
