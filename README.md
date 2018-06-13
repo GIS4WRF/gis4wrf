@@ -34,7 +34,7 @@ Copyright 2018 D. Meyer and M. Riechert.
 Released under [MIT License](LICENSE.txt).
 
 ## How to cite GIS4WRF
-Please refer to the [How to cite the GIS4WRF Plug-in page](https://doi.org/10.5281/zenodo.1288524).
+Please refer to the [How to cite the GIS4WRF Plug-in page](https://doi.org/10.5281/zenodo.1288570).
 
 ## References
 
@@ -43,7 +43,7 @@ Meyer, D., and M. Riechert (2018a). GIS4WRF: an integrated open source QGIS tool
     Research WRF Framework. Manuscript submitted for publication.
 
 Meyer, D., and M. Riechert (2018b). GIS4WRF (Version 0.8.0) [Software].
-    doi: 10.5281/zenodo.1288524.
+    doi: 10.5281/zenodo.1288570.
 
 Skamarock, W. C., Klemp, J. B., Dudhia, J., Gill, D. O., Barker, D. M., Duda, M. G., Huang, X.-Y.,
     Wang, W. and Powers, J. G. (2008) ‘A Description of the Advanced Research WRF Version 3’,
