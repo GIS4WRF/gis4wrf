@@ -34,7 +34,7 @@ Copyright 2018 D. Meyer and M. Riechert.
 Released under [MIT License](LICENSE.txt).
 
 ## How to cite GIS4WRF
-Please refer to the [How to cite the GIS4WRF Plug-in page](https://github.com/GIS4WRF/gis4wrf-docs#how-to-cite-gis4wrf).
+Please refer to the [How to cite the GIS4WRF Plug-in page](https://doi.org/10.5281/zenodo.1288524).
 
 ## References
 
