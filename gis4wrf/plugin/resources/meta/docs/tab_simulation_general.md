@@ -1,0 +1,3 @@
+# Simulation
+
+The *Simulation* tab contains tools to help you prepare your simulations. Here, you will find four subtabs: *General*, *Domain*, *Data*, and *Run*. In the *General* subtab you can create and open existing GIS4WRF projects. The *Domain*, *Data* and *Run* subtabs contain tools to help you with the steps to define and run a WRF simulation such as defining datasets to use in your simulation, configure namelists and run WPS and WRF programs. Details on how to use these tools and examples are included in the documentation and tutorials section.
