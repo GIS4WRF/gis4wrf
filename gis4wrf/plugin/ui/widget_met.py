@@ -217,7 +217,7 @@ class MetToolsDownloadManager(QWidget):
     
     def on_successful_download(self) -> None:
         self.msg_bar.success('Meteorological dataset downloaded successfully.')
-        Broadcast.met.emit()
+        Broadcast.met_datasets_updated.emit()
 
     def on_extent_radio_button_clicked(self):
         if self.radio_global.isChecked():
