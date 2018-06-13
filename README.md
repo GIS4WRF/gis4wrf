@@ -17,7 +17,7 @@ GIS4WRF requires the latest version of QGIS 3 installed on your system. Instruct
 
 To install the latest version of GIS4WRF, download the latest version at https://github.com/GIS4WRF/gis4wrf/releases and install it using the QGIS `Plugins | Install from ZIP` window found in QGIS under `Plugins` > `Manage and Install Plugins...` > `Install from ZIP` as shown below.
 
-![QGIS Plugins | Install from ZIP](https://github.com/GIS4WRF/gis4wrf-docs/images/qgis_plugins_install_from_zip.png)
+![QGIS Plugins | Install from ZIP](https://github.com/GIS4WRF/gis4wrf-docs/blob/master/images/qgis_plugins_install_from_zip.png)
 
 ## Documentation
 For up-to-date documentation, please refer to the [GIS4WRF documentation page](https://github.com/GIS4WRF/gis4wrf-docs).
