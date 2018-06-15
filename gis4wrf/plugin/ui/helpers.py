@@ -9,7 +9,11 @@ import shutil
 from pathlib import Path
 
 from PyQt5.QtCore import Qt, QUrl, QLocale, pyqtSlot, QThread, QObject, pyqtSignal
-from PyQt5.QtGui import QGuiApplication, QPalette, QDoubleValidator, QValidator, QIntValidator
+from PyQt5.QtGui import (
+    QGuiApplication, QPalette, QDoubleValidator, QValidator, QIntValidator,
+    QDesktopServices
+)
+from PyQt5.Qt import QWebPage
 from PyQt5.QtWidgets import (
     QWidget, QLabel, QLayout, QHBoxLayout, QVBoxLayout, QGridLayout, QComboBox, QMessageBox,
     QScrollArea, QLineEdit, QPushButton, QGroupBox, QRadioButton, QFileDialog, QTreeWidget, QTreeWidgetItem,
@@ -191,7 +195,10 @@ def create_browser_layout(web_page: str) -> QVBoxLayout:
     url = QUrl(path.as_uri())
     vbox = QVBoxLayout()
     vbox.setContentsMargins(2,2,2,2)
+    
     browser = QWebView()
+    browser.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding))
+    
     if platform.system() == 'Windows':
         # On Windows, QWebView does not adapt according to system scaling settings.
         # This leads to tiny fonts on high-dpi displays where scaling
@@ -201,8 +208,13 @@ def create_browser_layout(web_page: str) -> QVBoxLayout:
         dpi = screen.logicalDotsPerInchX()
         zoom = dpi / 96
         browser.setZoomFactor(zoom)
+    
+    # Open external links with the default browser.
+    browser.page().setLinkDelegationPolicy(QWebPage.DelegateExternalLinks)
+    browser.linkClicked.connect(QDesktopServices.openUrl)
+
     browser.load(url)
-    browser.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding))
+    
     vbox.addWidget(browser)
     return vbox
 
