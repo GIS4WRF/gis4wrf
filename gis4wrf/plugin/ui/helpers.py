@@ -4,11 +4,12 @@
 from typing import Union, Optional, List, Callable
 import os
 import sys
+import platform
 import shutil
 from pathlib import Path
 
 from PyQt5.QtCore import Qt, QUrl, QLocale, pyqtSlot, QThread, pyqtSignal
-from PyQt5.QtGui import QPalette, QDoubleValidator, QValidator, QIntValidator
+from PyQt5.QtGui import QGuiApplication, QPalette, QDoubleValidator, QValidator, QIntValidator
 from PyQt5.QtWidgets import (
     QWidget, QLabel, QLayout, QHBoxLayout, QVBoxLayout, QGridLayout, QComboBox, QMessageBox,
     QScrollArea, QLineEdit, QPushButton, QGroupBox, QRadioButton, QFileDialog, QTreeWidget, QTreeWidgetItem,
@@ -191,6 +192,15 @@ def create_browser_layout(web_page: str) -> QVBoxLayout:
     vbox = QVBoxLayout()
     vbox.setContentsMargins(2,2,2,2)
     browser = QWebView()
+    if platform.system() == 'Windows':
+        # On Windows, QWebView does not adapt according to system scaling settings.
+        # This leads to tiny fonts on high-dpi displays where scaling
+        # is typically 200%. The work-around below sets the right scaling
+        # via the browser's zoom factor.
+        screen = QGuiApplication.primaryScreen()
+        dpi = screen.logicalDotsPerInchX()
+        zoom = dpi / 96
+        browser.setZoomFactor(zoom)
     browser.load(url)
     browser.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding))
     vbox.addWidget(browser)
