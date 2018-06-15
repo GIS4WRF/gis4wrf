@@ -46,8 +46,9 @@ class MetToolsDownloadManager(QWidget):
         hbox.addWidget(QLabel('Dataset: '))
         self.cbox_dataset = QComboBox()
         self.cbox_dataset.addItem('-')
-        for dataset_name in met_datasets.keys():
+        for index, (dataset_name, dataset_label) in enumerate(met_datasets.items()):
             self.cbox_dataset.addItem(dataset_name, dataset_name)
+            self.cbox_dataset.setItemData(index + 1, dataset_label, Qt.ToolTipRole)
         self.cbox_dataset.currentIndexChanged.connect(self.on_dataset_changed)
         hbox.addWidget(self.cbox_dataset)
         
