@@ -123,8 +123,11 @@ def rda_submit_request(request_data: dict, auth: tuple) -> str:
     # to invalid input and the user should be alerted immediately.
     response = requests.post('https://rda.ucar.edu/apps/request', auth=auth, headers=headers, json=request_data)
     response.raise_for_status()
-    response_fmt = [x.split(':') for x in response.text.splitlines()]
-    request_id = [x[1].strip() for x in response_fmt if x[0].strip() == 'Index'][0]
+    try:
+        response_fmt = [x.split(':') for x in response.text.splitlines()]
+        request_id = [x[1].strip() for x in response_fmt if x[0].strip() == 'Index'][0]
+    except:
+        raise RuntimeError('RDA error: ' + response.text.strip())
     return request_id
 
 def rda_check_status(request_id: str, auth: tuple) -> str:

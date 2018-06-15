@@ -8,7 +8,7 @@ import platform
 import shutil
 from pathlib import Path
 
-from PyQt5.QtCore import Qt, QUrl, QLocale, pyqtSlot, QThread, pyqtSignal
+from PyQt5.QtCore import Qt, QUrl, QLocale, pyqtSlot, QThread, QObject, pyqtSignal
 from PyQt5.QtGui import QGuiApplication, QPalette, QDoubleValidator, QValidator, QIntValidator
 from PyQt5.QtWidgets import (
     QWidget, QLabel, QLayout, QHBoxLayout, QVBoxLayout, QGridLayout, QComboBox, QMessageBox,
@@ -276,12 +276,13 @@ class WaitDialog(IgnoreKeyPressesDialog):
         self.setFixedWidth(parent.width() * 0.5)
         self.show()
 
-_THREADS = [] # type: List[QThread]
-
-class TaskThread(QThread):
+class Task(QObject):
+    ''' Non-threaded alternative to TaskThread, useful for debugging. '''
+    started = pyqtSignal()
     progress = pyqtSignal(int, str)
     succeeded = pyqtSignal(object)
     failed = pyqtSignal(tuple)
+    finished = pyqtSignal()
 
     def __init__(self, fn, yields_progress: bool=False) -> None:
         super().__init__()
@@ -290,10 +291,8 @@ class TaskThread(QThread):
         self.result = None
         self.exc_info = None
 
-        # need to keep reference alive while thread is running
-        _THREADS.append(self)
-
-    def run(self):
+    def start(self):
+        self.started.emit()
         try:
             if self.yields_progress:
                 for percent, status in self.fn():
@@ -304,6 +303,31 @@ class TaskThread(QThread):
         except:
             self.exc_info = sys.exc_info()
             self.failed.emit(self.exc_info)
+        finally:
+            self.finished.emit()
+
+_THREADS = [] # type: List[QThread]
+
+class TaskThread(QThread):
+    progress = pyqtSignal(int, str)
+    succeeded = pyqtSignal(object)
+    failed = pyqtSignal(tuple)
+    # QThread provides started & finished signals.
+
+    def __init__(self, fn, yields_progress: bool=False) -> None:
+        super().__init__()
+        
+        task = Task(fn, yields_progress)
+        task.progress.connect(self.progress)
+        task.succeeded.connect(self.succeeded)
+        task.failed.connect(self.failed)
+        self.task = task
+
+        # need to keep reference alive while thread is running
+        _THREADS.append(self)
+
+    def run(self):
+        self.task.start()
 
 def reraise(exc_info) -> None:
     raise exc_info[0].with_traceback(*exc_info[1:])

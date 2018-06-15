@@ -26,7 +26,9 @@ class GribMetadata(object):
 
 @export
 def read_grib_folder_metadata(folder: str) -> Tuple[GribMetadata, List[GribMetadata]]:
-    paths = [os.path.join(folder, filename) for filename in os.listdir(folder)]
+    paths = [os.path.join(folder, filename)
+             for filename in os.listdir(folder)
+             if not filename.endswith('.aux.xml')]
     return read_grib_files_metadata(paths)
 
 @export

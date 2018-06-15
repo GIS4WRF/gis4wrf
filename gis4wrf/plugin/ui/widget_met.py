@@ -93,9 +93,9 @@ class MetToolsDownloadManager(QWidget):
         self.widget_extent.hide()
         self.top = add_grid_lineedit(grid_extent, 0, 'North Latitude',
                                      LAT_VALIDATOR, '°', required=True)
-        self.left = add_grid_lineedit(grid_extent, 1, 'East Longitude',
+        self.right = add_grid_lineedit(grid_extent, 1, 'East Longitude',
                                       LON_VALIDATOR, '°', required=True)
-        self.right = add_grid_lineedit(grid_extent, 2, 'West Longitude',
+        self.left = add_grid_lineedit(grid_extent, 2, 'West Longitude',
                                        LON_VALIDATOR, '°', required=True)
         self.bottom = add_grid_lineedit(grid_extent, 3, 'South Latitude',
                                         LAT_VALIDATOR, '°', required=True)
