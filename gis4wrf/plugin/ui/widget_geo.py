@@ -48,7 +48,7 @@ class GeoToolsDownloadManager(QWidget):
 
     def populate_tree(self) -> None:
         for name, label in geo_datasets.items():
-            item = QListWidgetItem('{}: {}'.format(name, label))
+            item = QListWidgetItem('{}: {}'.format(label, name))
             item.setData(Qt.UserRole, name)
             if is_geo_dataset_downloaded(name, self.options.geog_dir):
                 item.setFlags(Qt.NoItemFlags)
