@@ -1,16 +1,8 @@
 # GIS4WRF (https://doi.org/10.5281/zenodo.1288569)
 # Copyright (c) 2018 D. Meyer and M. Riechert. Licensed under MIT.
 
-from typing import Optional, Tuple, List, Callable, Union, Iterable
-from io import StringIO
-import os
-import sys
-import glob
-import subprocess
-import threading
 from pathlib import Path
 
-from PyQt5.QtCore import QMetaObject, Qt, QLocale, pyqtSlot, pyqtSignal, QModelIndex, QThread
 from PyQt5.QtGui import (
     QDoubleValidator, QIntValidator, QPalette, QGuiApplication, QTextOption, QSyntaxHighlighter,
     QTextCharFormat, QColor, QFont
@@ -22,13 +14,8 @@ from PyQt5.QtWidgets import (
     QDialogButtonBox, QMessageBox, QTextBrowser
 )
 
-from qgis.gui import QgisInterface
 
-from gis4wrf.core import Project, read_namelist, verify_namelist
 
-from gis4wrf.plugin.constants import PLUGIN_NAME
-from gis4wrf.plugin.options import get_options
-from gis4wrf.plugin.ui.helpers import MessageBar
 
 ROOT_DIR = Path(__file__).parents[2]
 CHANGELOG_PATH = ROOT_DIR.joinpath('CHANGELOG.txt')

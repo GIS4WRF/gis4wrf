@@ -2,7 +2,6 @@
 # Copyright (c) 2018 D. Meyer and M. Riechert. Licensed under MIT.
 
 from typing import List, Tuple, Set, Dict, Optional
-from collections import defaultdict
 import os
 import re
 

@@ -3,7 +3,7 @@
 
 from typing import Mapping, Tuple, List, Optional, Dict, Callable, Any
 from collections import namedtuple
-from enum import Enum, auto
+from enum import Enum
 from functools import partial
 import os
 
@@ -17,8 +17,8 @@ try:
 except ImportError:
     wrf = None
 
-from gis4wrf.core.util import export, gdal, gdal_array, get_temp_dir, get_temp_vsi_path, read_vsi_string, remove_vsis, remove_dir
-from gis4wrf.core.crs import CRS, LonLat, Coordinate2D
+from gis4wrf.core.util import export, gdal, gdal_array, get_temp_dir, get_temp_vsi_path, remove_dir, remove_vsis
+from gis4wrf.core.crs import CRS, LonLat
 from gis4wrf.core.constants import ProjectionTypes
 from gis4wrf.core.readers.categories import LANDUSE, LANDUSE_FIELDS
 from gis4wrf.core.transforms.categories_to_gdal import get_gdal_categories

@@ -5,7 +5,7 @@ from typing import List, Dict, Optional
 from collections import namedtuple
 import os
 
-from PyQt5.QtCore import QMetaObject, Qt, QLocale, pyqtSlot, pyqtSignal
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QDoubleValidator, QIntValidator, QPalette#, QHeaderView
 from PyQt5.QtWidgets import (
     QWidget, QTabWidget, QPushButton, QLayout, QVBoxLayout, QDialog, QGridLayout, QGroupBox, QSpinBox,
@@ -15,7 +15,7 @@ from PyQt5.QtWidgets import (
 )
 
 import gis4wrf.core
-from gis4wrf.core import WRFNetCDFVariable, WRFNetCDFExtraDim
+from gis4wrf.core import WRFNetCDFVariable
 import gis4wrf.plugin.geo
 from gis4wrf.plugin.ui.helpers import add_grid_lineedit, add_grid_combobox, dispose_after_delete
 

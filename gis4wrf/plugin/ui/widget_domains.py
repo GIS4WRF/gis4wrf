@@ -1,18 +1,17 @@
 # GIS4WRF (https://doi.org/10.5281/zenodo.1288569)
 # Copyright (c) 2018 D. Meyer and M. Riechert. Licensed under MIT.
 
-from typing import Optional
 from math import ceil
 
-from PyQt5.QtCore import QMetaObject, Qt, QLocale, pyqtSlot, pyqtSignal
-from PyQt5.QtGui import QDoubleValidator, QIntValidator, QPalette
+from PyQt5.QtCore import QMetaObject, Qt, pyqtSignal, pyqtSlot
+from PyQt5.QtGui import QDoubleValidator, QIntValidator
 from PyQt5.QtWidgets import (
     QWidget, QTabWidget, QPushButton, QLayout, QVBoxLayout, QDialog, QGridLayout, QGroupBox, QSpinBox,
     QLabel, QHBoxLayout, QComboBox, QScrollArea, QFileDialog, QRadioButton, QLineEdit
 )
 
-from qgis.core import QgsRectangle, QgsMapSettings, QgsCoordinateReferenceSystem, QgsMapLayer, QgsProject
-from qgis.gui import QgisInterface, QgsMapCanvas
+from qgis.core import QgsCoordinateReferenceSystem, QgsProject, QgsRectangle
+from qgis.gui import QgisInterface
 
 from gis4wrf.core import LonLat, Coordinate2D, CRS, Project
 from gis4wrf.plugin.geo import update_domain_outline_layers, update_domain_grid_layers, get_qgis_crs, rect_to_bbox

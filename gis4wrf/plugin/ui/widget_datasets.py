@@ -5,8 +5,7 @@ from operator import xor
 import os
 import re
 
-from PyQt5.QtCore import QMetaObject, Qt, QLocale, pyqtSlot, pyqtSignal
-from PyQt5.QtGui import QDoubleValidator, QIntValidator, QPalette
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtWidgets import (
     QWidget, QTabWidget, QPushButton, QLayout, QVBoxLayout, QDialog, QGridLayout, QGroupBox, QSpinBox,
     QLabel, QHBoxLayout, QComboBox, QScrollArea, QFileDialog, QRadioButton, QLineEdit, QTableWidget,
@@ -14,7 +13,7 @@ from PyQt5.QtWidgets import (
     QSizePolicy
 )
 
-from qgis.gui import QgisInterface, QgsMessageBar
+from qgis.gui import QgisInterface
 
 from gis4wrf.core import (
     read_geogrid_tbl, add_derived_metadata_to_geogrid_tbl,

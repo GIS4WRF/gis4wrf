@@ -2,10 +2,9 @@
 # Copyright (c) 2018 D. Meyer and M. Riechert. Licensed under MIT.
 
 from typing import List, Tuple, Callable, Optional, Union
-import os
 from threading import Timer
 
-from osgeo import gdal, ogr, osr
+from osgeo import gdal
 from qgis.core import (
     QgsCoordinateReferenceSystem, QgsGeometry, QgsVectorLayer, QgsFeature,
     QgsVectorDataProvider, QgsProject, QgsMapLayer, QgsLayerTree, QgsLayerTreeGroup,
@@ -17,7 +16,7 @@ from qgis.core import (
 from qgis.gui import QgsMapCanvas
 
 import gis4wrf.core
-from gis4wrf.core import Coordinate2D, BoundingBox2D, CRS
+from gis4wrf.core import BoundingBox2D
 from gis4wrf.plugin.ui.helpers import dispose_after_delete
 
 

@@ -2,7 +2,6 @@
 # Copyright (c) 2018 D. Meyer and M. Riechert. Licensed under MIT.
 
 from typing import List, Dict
-from pathlib import Path
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout, QListWidget, QListWidgetItem, QProgressBar

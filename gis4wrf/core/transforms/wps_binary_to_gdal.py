@@ -6,9 +6,8 @@ import os
 import re
 from functools import partial
 
-import numpy as np
 
-from gis4wrf.core.util import export, gdal, get_temp_vsi_path, read_vsi_string, remove_vsis, get_temp_dir, remove_dir
+from gis4wrf.core.util import export, gdal, get_temp_dir, get_temp_vsi_path, remove_dir, remove_vsis
 from gis4wrf.core.crs import CRS, LonLat
 from gis4wrf.core.readers.wps_binary_index import read_wps_binary_index_file
 from .categories_to_gdal import get_gdal_categories

@@ -5,7 +5,6 @@ from typing import Union
 import os
 import sys
 from pathlib import Path
-import platform
 import random
 import tempfile
 import shutil

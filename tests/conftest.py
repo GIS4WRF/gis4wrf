@@ -2,7 +2,6 @@
 # Copyright (c) 2018 D. Meyer and M. Riechert. Licensed under MIT.
 
 import os
-import sys
 from collections import namedtuple
 
 import numpy as np

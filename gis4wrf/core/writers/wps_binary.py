@@ -2,24 +2,19 @@
 # Copyright (c) 2018 D. Meyer and M. Riechert. Licensed under MIT.
 
 from typing import Optional, Tuple, Dict, Any, Iterable, Union
-from decimal import Decimal
 import math
 import os
 import sys
 import shutil
-import errno
 import tempfile
-import pathlib
-import xml.etree.ElementTree as ET
-from itertools import product
 from collections import namedtuple
 
 import numpy as np
 import numpy.ma as ma
 
 from gis4wrf.core.constants import WRF_EARTH_RADIUS
-from gis4wrf.core.util import export, gdal, gdal_array, ogr, osr
-from gis4wrf.core.crs import CRS, Coordinate2D, LonLat
+from gis4wrf.core.util import export, gdal, gdal_array, osr
+from gis4wrf.core.crs import CRS, Coordinate2D
 
 # Maximum number of rows or columns that a WPS binary format file can have.
 MAX_SIZE = 999999

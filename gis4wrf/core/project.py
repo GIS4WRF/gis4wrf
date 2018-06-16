@@ -7,14 +7,12 @@ import glob
 import shutil
 import json
 from json import JSONEncoder
-import random
 from math import ceil
-from collections import namedtuple
 from datetime import datetime
 import string
 import itertools
 
-from gis4wrf.core.util import export, gdal, ogr, osr, get_temp_vsi_path, read_vsi_string, link_or_copy
+from gis4wrf.core.util import export, gdal, get_temp_vsi_path, link_or_copy, ogr, read_vsi_string
 from gis4wrf.core.constants import PROJECT_JSON_VERSION
 from gis4wrf.core.crs import CRS, LonLat, BoundingBox2D, Coordinate2D
 from gis4wrf.core.readers.geogrid_tbl import read_geogrid_tbl, GeogridTbl

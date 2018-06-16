@@ -9,7 +9,6 @@ from pathlib import Path
 import tarfile
 
 from gis4wrf.core.util import export
-from .datasets import geo_datasets
 from .util import download_file
 
 # TODO we may want to host the datasets somewhere else, the UCAR website is often down

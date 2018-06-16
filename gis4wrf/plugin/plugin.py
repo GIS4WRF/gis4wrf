@@ -2,8 +2,6 @@
 # Copyright (c) 2018 D. Meyer and M. Riechert. Licensed under MIT.
 
 from typing import List, Callable
-import os
-import shutil
 import webbrowser
 
 from PyQt5.QtCore import Qt
@@ -12,7 +10,6 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QAction, QWidget
 from qgis.gui import QgisInterface
 
-import gis4wrf.core
 
 # Initialize Qt resources from auto-generated file resources.py
 import gis4wrf.plugin.resources

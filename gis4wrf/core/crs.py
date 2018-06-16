@@ -1,7 +1,6 @@
 # GIS4WRF (https://doi.org/10.5281/zenodo.1288569)
 # Copyright (c) 2018 D. Meyer and M. Riechert. Licensed under MIT.
 
-import numpy as np
 from gis4wrf.core.constants import WRF_EARTH_RADIUS
 from gis4wrf.core.util import osr, ogr, export, as_float, Number
 

@@ -6,10 +6,8 @@ from io import StringIO
 import os
 import signal
 import sys
-import glob
 import subprocess
 import re
-import traceback
 
 from PyQt5.QtCore import (
     QMetaObject, Qt, QLocale, pyqtSlot, pyqtSignal, QModelIndex, QThread

@@ -3,8 +3,7 @@
 
 import os
 
-from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout, QFileDialog, QTableWidget, QMessageBox
-from qgis.gui import QgsMessageBar
+from PyQt5.QtWidgets import QFileDialog, QMessageBox, QPushButton, QVBoxLayout, QWidget
 
 from gis4wrf.plugin.constants import *
 from gis4wrf.plugin.ui.helpers import ensure_folder_empty

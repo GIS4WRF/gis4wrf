@@ -4,10 +4,7 @@
 import os
 import shutil
 import tempfile
-import io
 import platform
-import time
-import requests
 
 from gis4wrf.core.util import export, remove_dir
 from gis4wrf.core.constants import WPS_DIST, WRF_DIST

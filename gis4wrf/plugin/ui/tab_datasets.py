@@ -1,9 +1,8 @@
 # GIS4WRF (https://doi.org/10.5281/zenodo.1288569)
 # Copyright (c) 2018 D. Meyer and M. Riechert. Licensed under MIT.
 
-from PyQt5.QtWidgets import QTabWidget, QWidget
+from PyQt5.QtWidgets import QTabWidget
 
-from qgis.gui import QgisInterface
 
 from gis4wrf.plugin.ui.helpers import WhiteScroll
 from gis4wrf.plugin.ui.widget_geo import GeoToolsDownloadManager

@@ -1,7 +1,6 @@
 # GIS4WRF (https://doi.org/10.5281/zenodo.1288569)
 # Copyright (c) 2018 D. Meyer and M. Riechert. Licensed under MIT.
 
-from datetime import datetime
 
 from PyQt5.QtCore import Qt, QDate, QTime, QDateTime
 from PyQt5.QtGui import QDoubleValidator
@@ -11,7 +10,6 @@ from PyQt5.QtWidgets import (
     QListWidget, QListWidgetItem, QProgressBar, QMessageBox
 )
 
-from qgis.core import QgsMapLayer
 
 from gis4wrf.core import (
     met_datasets, get_met_products, is_met_dataset_downloaded, get_met_dataset_path, download_met_dataset,

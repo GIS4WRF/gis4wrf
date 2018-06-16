@@ -8,7 +8,7 @@ import platform
 import shutil
 from pathlib import Path
 
-from PyQt5.QtCore import Qt, QUrl, QLocale, pyqtSlot, QThread, QObject, pyqtSignal
+from PyQt5.QtCore import QLocale, QObject, QThread, QUrl, Qt, pyqtSignal
 from PyQt5.QtGui import (
     QGuiApplication, QPalette, QDoubleValidator, QValidator, QIntValidator,
     QDesktopServices
@@ -25,7 +25,7 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtWebKitWidgets import QWebView
 # from PyQt5.QtWebEngineWidgets import QWebEngineView
 
-from qgis.gui import QgsMessageBar, QgisInterface
+from qgis.gui import QgisInterface
 from qgis.core import QgsMapLayer
 
 from gis4wrf.plugin.constants import PLUGIN_NAME

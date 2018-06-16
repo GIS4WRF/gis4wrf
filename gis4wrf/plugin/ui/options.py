@@ -3,9 +3,7 @@
 
 from typing import Tuple, Callable
 import os
-import platform
 
-from PyQt5.QtCore import QMetaObject, Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import ( 
     QHBoxLayout, QVBoxLayout, QLabel, QLineEdit, QToolButton, QFileDialog, QAction, QGroupBox,
@@ -19,7 +17,7 @@ from gis4wrf.core import get_wps_dist_url, get_wrf_dist_url, download_and_extrac
 from gis4wrf.core.util import export
 from gis4wrf.plugin.options import get_options
 from gis4wrf.plugin.constants import PLUGIN_NAME, GIS4WRF_LOGO_PATH
-from gis4wrf.plugin.ui.helpers import FormattedLabel, create_browser_layout, TaskThread, wrap_error, reraise, WaitDialog
+from gis4wrf.plugin.ui.helpers import FormattedLabel, TaskThread, WaitDialog, reraise, wrap_error
 
 @export
 class OptionsFactory(QgsOptionsWidgetFactory):

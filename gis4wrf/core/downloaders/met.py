@@ -7,7 +7,6 @@ from typing import List, Iterable, Tuple, Union
 import time
 import requests
 from pathlib import Path
-import shutil
 from datetime import datetime
 
 from .util import download_file, requests_retry_session

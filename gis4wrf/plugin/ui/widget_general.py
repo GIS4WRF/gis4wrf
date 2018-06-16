@@ -1,12 +1,9 @@
 # GIS4WRF (https://doi.org/10.5281/zenodo.1288569)
 # Copyright (c) 2018 D. Meyer and M. Riechert. Licensed under MIT.
 
-from typing import Optional
-from math import ceil
 from pathlib import Path
 
-from PyQt5.QtCore import QMetaObject, Qt, QLocale, pyqtSlot, pyqtSignal
-from PyQt5.QtGui import QDoubleValidator, QIntValidator, QPalette
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import (
     QWidget, QTabWidget, QPushButton, QLayout, QVBoxLayout, QDialog, QGridLayout, QGroupBox, QSpinBox,
     QLabel, QHBoxLayout, QComboBox, QScrollArea, QFileDialog, QRadioButton, QLineEdit, QTableWidget,
@@ -16,7 +13,7 @@ from PyQt5.QtWidgets import (
 from gis4wrf.core import Project
 
 from gis4wrf.plugin.options import get_options
-from gis4wrf.plugin.ui.helpers import FormattedLabel, create_browser_layout
+from gis4wrf.plugin.ui.helpers import create_browser_layout
 
 class GeneralWidget(QWidget):
     create_project = pyqtSignal(str)
