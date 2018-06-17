@@ -32,7 +32,7 @@ geo_datasets = {
     "greenfrac": "Monthly green fraction (8' 38.4'' of arc)",
     "greenfrac_fpar_modis": "MODIS Monthly Leaf Area Index/FPAR (30'' of arc)",
     "sandfrac_5m": "Sand fraction (5' of arc)",
-    "soiltemp_1deg": "Sand fraction (1° of arc)",
+    "soiltemp_1deg": "Soil temperature (1° of arc)",
     "lai_modis_10m": "MODIS Leaf Area Index (10' of arc)",
     "lai_modis_30s": "MODIS Leaf Area Index (30'' of arc)",
 
