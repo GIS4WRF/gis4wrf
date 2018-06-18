@@ -98,16 +98,19 @@ class QGISPlugin():
         webbrowser.open('https://github.com/GIS4WRF/gis4wrf/issues')
 
     def check_version(self) -> None:
+        def get_latest_delayed() -> str:
+            # When QGIS is started, display messages after QGIS 
+            # is fully loaded by waiting for 2 mins as plugins
+            # are activated whilst QGIS is loading.
+            time.sleep(120)
+            return get_latest_gis4wrf_version()
+
         def on_succeeded(latest: str) -> None:
             installed = get_installed_gis4wrf_version()
             if is_newer_version(latest, installed):
                 QMessageBox.information(self.iface.mainWindow(), PLUGIN_NAME,
                    'Your ' + PLUGIN_NAME + ' version is outdated, please update.\n' + \
                    'Installed: ' + installed + ', Latest: ' + latest, QMessageBox.Ok)
-
-        def get_latest_delayed() -> str:
-            time.sleep(120)
-            return get_latest_gis4wrf_version()
         
         thread = TaskThread(get_latest_delayed)
         thread.succeeded.connect(on_succeeded)
