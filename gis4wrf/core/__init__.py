@@ -6,6 +6,7 @@ from gis4wrf.core.downloaders.datasets import *
 from gis4wrf.core.downloaders.dist import *
 from gis4wrf.core.downloaders.geo import *
 from gis4wrf.core.downloaders.met import *
+from gis4wrf.core.downloaders.plugin_version import *
 from gis4wrf.core.readers.geogrid_tbl import *
 from gis4wrf.core.readers.grib_metadata import *
 from gis4wrf.core.readers.namelist import *
