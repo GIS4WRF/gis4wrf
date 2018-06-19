@@ -3,24 +3,30 @@
 
 from typing import List, Callable
 import webbrowser
+import time
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QFileDialog, QMessageBox
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QAction, QWidget
 from qgis.gui import QgisInterface
 
+from gis4wrf.core import (
+    get_latest_gis4wrf_version, get_installed_gis4wrf_version, is_newer_version)
 
 # Initialize Qt resources from auto-generated file resources.py
 import gis4wrf.plugin.resources
+
+from gis4wrf.plugin.ui.helpers import TaskThread
 
 from gis4wrf.plugin.ui.options import OptionsFactory
 from gis4wrf.plugin.ui.dock import MainDock
 from gis4wrf.plugin.ui.dialog_about import AboutDialog
 
 from gis4wrf.plugin.geo import add_default_basemap, load_wps_binary_layer
-from gis4wrf.plugin.constants import ( PLUGIN_NAME, GIS4WRF_LOGO_PATH, ADD_WRF_NETCDF_LAYER_ICON_PATH, 
-ADD_BINARY_LAYER_ICON_PATH, ABOUT_ICON_PATH, BUG_ICON_PATH)
+from gis4wrf.plugin.constants import (
+    PLUGIN_NAME, GIS4WRF_LOGO_PATH, ADD_WRF_NETCDF_LAYER_ICON_PATH, 
+    ADD_BINARY_LAYER_ICON_PATH, ABOUT_ICON_PATH, BUG_ICON_PATH)
 
 
 class QGISPlugin():
@@ -47,6 +53,8 @@ class QGISPlugin():
 
         self.options_factory = OptionsFactory()
         self.iface.registerOptionsWidgetFactory(self.options_factory)
+
+        self.check_version()
 
     def unload(self) -> None:
         """Removes the plugin menu item and icon from QGIS GUI.
@@ -88,6 +96,25 @@ class QGISPlugin():
 
     def report_bug(self) -> None:
         webbrowser.open('https://github.com/GIS4WRF/gis4wrf/issues')
+
+    def check_version(self) -> None:
+        def get_latest_delayed() -> str:
+            # When QGIS is started, display messages after QGIS 
+            # is fully loaded by waiting for 2 mins as plugins
+            # are activated whilst QGIS is loading.
+            time.sleep(120)
+            return get_latest_gis4wrf_version()
+
+        def on_succeeded(latest: str) -> None:
+            installed = get_installed_gis4wrf_version()
+            if is_newer_version(latest, installed):
+                QMessageBox.information(self.iface.mainWindow(), PLUGIN_NAME,
+                   'Your ' + PLUGIN_NAME + ' version is outdated, please update.\n' + \
+                   'Installed: ' + installed + ', Latest: ' + latest, QMessageBox.Ok)
+        
+        thread = TaskThread(get_latest_delayed)
+        thread.succeeded.connect(on_succeeded)
+        thread.start()
 
     def add_action(self, icon_path: str, text: str, callback: Callable,
                    enabled_flag: bool=True, add_to_menu: bool=True,
