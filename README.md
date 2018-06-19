@@ -1,7 +1,7 @@
 <p align="center"><img src="https://github.com/GIS4WRF/gis4wrf-docs/blob/master/images/gis4wrf.png"></p>
 
 # GIS4WRF
-GIS4WRF is a free and open source QGIS plug-in to help researchers and practitioners with their [Advanced Research Weather Research and Forecasting]() modelling workflows. GIS4WRF can be used to pre-process input data, run simulations, and visualize or post-process results on Windows, Linux, and macOS.
+GIS4WRF is a free and open source QGIS plug-in to help researchers and practitioners with their [Advanced Research Weather Research and Forecasting](https://www.mmm.ucar.edu/weather-research-and-forecasting-model) modelling workflows. GIS4WRF can be used to pre-process input data, run simulations, and visualize or post-process results on Windows, Linux, and macOS.
 
 ## Table of Contents
 - [Installation](#installation)
