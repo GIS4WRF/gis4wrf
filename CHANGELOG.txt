@@ -1,2 +1,7 @@
+0.8.1
+- Add GIS4WRF to QGIS plugin repository.
+- Automatically notify users when a new version becomes available.
+- General cleanup.
+
 0.8.0
 - First public version.
