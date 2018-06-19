@@ -2,6 +2,7 @@
 name=GIS4WRF
 version=0.8.1
 author=D. Meyer and M. Riechert
+email=gis4wrf@users.noreply.github.com
 description=Toolkit for pre- and post-processing, visualizing, and running simulations in WRF
 about=GIS4WRF is an evolving cross-platform and open-source QGIS Python plug-in for the Advanced Research WRF (Weather Research and Forecasting) modelling framework. It enables users to carry out several geo-related tasks (e.g. re-/mapping land surface data), define model domains, configure model parameters, run simulations, and visualize and post-process model output files within a single graphical user interface in QGIS.
 qgisMinimumVersion=3.0
