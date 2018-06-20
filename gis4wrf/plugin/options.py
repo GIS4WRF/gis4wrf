@@ -4,6 +4,7 @@
 from typing import Optional
 import os
 import platform
+import subprocess
 
 from qgis.core import QgsSettings
 
@@ -71,6 +72,17 @@ class Options(object):
     def after_load_save(self) -> None:
         for path in [self.working_dir, self.datasets_dir, self.geog_dir, self.projects_dir, self.distributions_dir]:
             os.makedirs(path, exist_ok=True)
+        
+        if platform.system() == 'Windows':
+            # Try to enable NTFS compression for geographical data.
+            # This data is stored in WPS Binary format which is uncompressed
+            # and can typically be shrunken by a factor of 10.
+            # Calling `compact /C` marks the folder such that any new files
+            # will be compressed, existing files are not affected.
+            # Note that the call to `compact` can fail, e.g. if the file system
+            # is not NTFS. We ignore such errors silently.
+            subprocess.run(['compact', '/C', self.geog_dir],
+                           stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     
     @property
     def working_dir(self) -> str:
