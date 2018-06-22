@@ -51,5 +51,5 @@ Meyer, D., and M. Riechert 2018a. GIS4WRF: an integrated open source QGIS toolki
     Research WRF Framework. Manuscript submitted for publication.
 
 D. Meyer, and M. Riechert, 2018b: GIS4WRF. 
-    doi:10.5281/zenodo.1288570.
+    doi:10.5281/zenodo.1288569.
 ```
