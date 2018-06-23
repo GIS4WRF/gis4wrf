@@ -50,6 +50,6 @@ The full citation of GIS4WRF using the American Meterological Society (AMS) styl
 Meyer, D., and M. Riechert 2018a. GIS4WRF: an integrated open source QGIS toolkit for the Advanced 
     Research WRF Framework. Manuscript submitted for publication.
 
-D. Meyer, and M. Riechert, 2018b: GIS4WRF. 
+Meyer, D., and M. Riechert, 2018b. GIS4WRF. 
     doi:10.5281/zenodo.1288569.
 ```
