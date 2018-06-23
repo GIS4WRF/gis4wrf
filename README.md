@@ -44,7 +44,7 @@ Their respective full citation can be found below under [Reference list](#refere
 
 ### Reference list
 
-The full citation of GIS4WRF using the American Meterological Society (AMS) style can be found below. Please adapt using your chosen style.
+The full citation of GIS4WRF using the American Meteorological Society (AMS) style can be found below. Please adapt using your chosen style.
 
 ```
 Meyer, D., and M. Riechert 2018a. GIS4WRF: an integrated open source QGIS toolkit for the Advanced 
