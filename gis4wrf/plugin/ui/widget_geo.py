@@ -11,7 +11,8 @@ from gis4wrf.core import (
     download_and_extract_geo_dataset, is_geo_dataset_downloaded, get_geo_dataset_path
 )
 from gis4wrf.plugin.options import get_options
-from .helpers import TaskThread, reraise, MessageBar
+from .helpers import reraise, MessageBar
+from .thread import TaskThread
 from .broadcast import Broadcast
 
 class GeoToolsDownloadManager(QWidget):

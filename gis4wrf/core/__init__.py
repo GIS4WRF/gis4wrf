@@ -23,5 +23,6 @@ from gis4wrf.core.transforms.project_to_wrf_namelist import *
 from gis4wrf.core.transforms.wps_binary_to_gdal import *
 from gis4wrf.core.transforms.wps_namelist_to_project import *
 from gis4wrf.core.transforms.wrf_netcdf_to_gdal import *
-from gis4wrf.core.project import *
 from gis4wrf.core.crs import *
+from gis4wrf.core.program import *
+from gis4wrf.core.project import *

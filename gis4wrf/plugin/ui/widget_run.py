@@ -4,35 +4,29 @@
 from typing import Optional, Tuple, List, Callable, Union, Iterable, Any
 from io import StringIO
 import os
-import signal
-import sys
-import subprocess
-import re
 
 from PyQt5.QtCore import (
     QMetaObject, Qt, QLocale, pyqtSlot, pyqtSignal, QModelIndex, QThread
 )
 from PyQt5.QtGui import (
-    QDoubleValidator, QIntValidator, QPalette, QGuiApplication, QTextOption, QSyntaxHighlighter,
+    QDoubleValidator, QIntValidator, QPalette, QTextOption, QSyntaxHighlighter,
     QTextCharFormat, QColor, QFont
 )
 from PyQt5.QtWidgets import (
     QWidget, QTabWidget, QPushButton, QLayout, QVBoxLayout, QDialog, QGridLayout, QGroupBox, QSpinBox,
     QLabel, QHBoxLayout, QComboBox, QScrollArea, QFileDialog, QRadioButton, QLineEdit, QTableWidget,
     QTableWidgetItem, QTreeWidget, QTreeWidgetItem, QHeaderView, QPlainTextEdit, QSizePolicy,
-    QDialogButtonBox, QMessageBox, QSizePolicy, QTextBrowser
+    QMessageBox, QSizePolicy
 )
-
-from PyQt5.Qt import QTextCursor
 
 from qgis.gui import QgisInterface
 
-from gis4wrf.core import Project, read_namelist, verify_namelist, get_namelist_schema
+from gis4wrf.core import Project, get_namelist_schema
 
 from gis4wrf.plugin.constants import PLUGIN_NAME
 from gis4wrf.plugin.options import get_options
-from gis4wrf.plugin.ui.helpers import MessageBar, IgnoreKeyPressesDialog
-from gis4wrf.plugin.ui.browser_nml_schema import NmlSchemaBrowser
+from gis4wrf.plugin.ui.helpers import MessageBar
+from gis4wrf.plugin.ui.thread import ProgramThread
 from gis4wrf.plugin.ui.dialog_nml_editor import NmlEditorDialog
 
 class RunWidget(QWidget):
@@ -48,20 +42,20 @@ class RunWidget(QWidget):
         self.msg_bar = MessageBar(iface)
 
         self.wps_box, [open_namelist_wps, prepare_only_wps, run_geogrid, run_ungrib, run_metgrid, open_output_wps] = \
-            self.create_gbox('WPS', [
+            self.create_gbox_with_btns('WPS', [
                 'Open Configuration',
                 'Prepare only',
                 ['Run Geogrid', 'Run Ungrib', 'Run Metgrid'],
                 'Visualize Output'
             ])
         self.wrf_box, [open_namelist_wrf, prepare_only_wrf, run_real, run_wrf, open_output_wrf] = \
-            self.create_gbox('WRF', [
+            self.create_gbox_with_btns('WRF', [
                 'Open Configuration',
                 'Prepare only',
                 ['Run Real', 'Run WRF'],
                 'Visualize Output'
             ])
-        self.control_box, [kill_program] = self.create_gbox('Program control', [
+        self.control_box, [kill_program] = self.create_gbox_with_btns('Program control', [
             'Kill Program'
         ])
         self.control_box.setVisible(False)
@@ -170,8 +164,7 @@ class RunWidget(QWidget):
 
     def on_kill_program_clicked(self) -> None:
         self.dont_report_program_status = True
-        pid = self.thread.pid
-        os.kill(pid, signal.SIGTERM)
+        self.thread.kill_program()
 
     def run_program(self, path: str, cwd: str) -> None:
         self.dont_report_program_status = False
@@ -210,7 +203,7 @@ class RunWidget(QWidget):
         dialog = NmlEditorDialog(path, nml_schema)
         dialog.exec_()
 
-    def create_gbox(self, gbox_name: str, btn_names: List[Union[str,List[str]]]) \
+    def create_gbox_with_btns(self, gbox_name: str, btn_names: List[Union[str,List[str]]]) \
             -> Tuple[QGroupBox, List[QPushButton]]:
         vbox = QVBoxLayout()
         btns = []
@@ -256,9 +249,13 @@ class RunWidget(QWidget):
     def run_program_in_background(self, path: str, cwd: str, on_done: Callable[[str,Union[bool,str,None]],None]) -> None:
         self.stdout_textarea.clear()
 
+        # WRF/WPS does not use exit codes to indicate success/failure,
+        # therefore in addition we look for a pattern in the program output.
+        wrf_error_pattern = 'ERROR'
+
         # Using QThread and signals (instead of a plain Python thread) is necessary
         # so that the on_done callback is run on the UI thread, instead of the worker thread.
-        thread = ProgramThread(path, cwd)
+        thread = ProgramThread(path, cwd, wrf_error_pattern)
         # TODO add support for MPI
 
         def on_output(out: str) -> None:
@@ -279,7 +276,7 @@ class RunWidget(QWidget):
         thread.output.connect(on_output)
         thread.finished.connect(on_finished)
         thread.start()
-        # so that we can read the pid later on
+        # so that we can kill the program later if requested
         self.thread = thread
 
 class LogSeverityHighlighter(QSyntaxHighlighter):
@@ -302,55 +299,4 @@ class LogSeverityHighlighter(QSyntaxHighlighter):
                 else:
                     self.setFormat(idx, len(word), fmt)
                 break
-
-class ProgramThread(QThread):
-    output = pyqtSignal(str)
-
-    def __init__(self, path: str, cwd: str) -> None:
-        super().__init__()
-        self.path = path
-        self.cwd = cwd
-        self.pid = -1
-        self.error = None
-        self.exc_info = None
-
-    def run(self):
-        try:
-            for msg_type, msg_val in run_program(self.path, self.cwd):
-                if msg_type == 'pid':
-                    self.pid = msg_val
-                elif msg_type == 'log':
-                    self.output.emit(msg_val)
-                elif msg_type == 'error':
-                    self.error = msg_val
-                else:
-                    raise RuntimeError('Invalid output received: {}'.format(msg_type))
-        except:
-            self.exc_info = sys.exc_info()
-
-def run_program(path: str, cwd: str) -> Iterable[Tuple[str,Any]]:
-    startupinfo = None
-    if os.name == 'nt':
-        # hides the console window
-        startupinfo = subprocess.STARTUPINFO()
-        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-    process = subprocess.Popen([path], cwd=cwd,
-                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                             bufsize=1, universal_newlines=True,
-                             startupinfo=startupinfo)
-    yield ('pid', process.pid)
-    stdout = ''
-    while True:
-        line = process.stdout.readline()
-        if line != '':
-            stdout += line
-            yield ('log', line.rstrip())
-        else:
-            break
-    process.wait()
-    if process.returncode != 0:
-        yield ('log', 'Exit code: {}'.format(process.returncode))
-
-    error = process.returncode != 0 or 'ERROR' in stdout
-    yield ('error', error)
 
