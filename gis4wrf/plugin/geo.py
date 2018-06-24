@@ -35,7 +35,7 @@ def rect_to_bbox(rect: QgsRectangle) -> BoundingBox2D:
 
 def update_domain_outline_layers(canvas: QgsMapCanvas, project: gis4wrf.core.Project,
                                  zoom_out=True) -> None:
-    gdal_ds = gis4wrf.core.get_gdal_from_domains(project)
+    gdal_ds = gis4wrf.core.convert_project_to_ogr_outlines(project)
     gdal_layer = gdal_ds.GetLayer(0) # type: ogr.Layer
     gdal_srs = gdal_layer.GetSpatialRef() # type: osr.SpatialReference
     proj4 = gdal_srs.ExportToProj4()
@@ -84,7 +84,7 @@ def update_domain_outline_layers(canvas: QgsMapCanvas, project: gis4wrf.core.Pro
             zoom_out_to_layer(canvas, layer)
 
 def update_domain_grid_layers(project: gis4wrf.core.Project) -> None:
-    vrts = gis4wrf.core.get_gdal_grid_vrt_from_domains(project)
+    vrts = gis4wrf.core.convert_project_to_gdal_checkerboards(project)
     vrt_and_titles = [(vrt, 'Domain {}'.format(i + 1), None) for i, vrt in enumerate(vrts)]
     load_layers(vrt_and_titles, 'WRF Domains (Grid)', visible=False, expanded=False)
 

@@ -15,6 +15,9 @@ from gis4wrf.core.readers.wrf_netcdf import *
 from gis4wrf.core.writers.geogrid_tbl import *
 from gis4wrf.core.writers.wps_binary import *
 from gis4wrf.core.writers.namelist import *
+from gis4wrf.core.writers.shapefile import *
+from gis4wrf.core.transforms.project_to_gdal_checkerboards import *
+from gis4wrf.core.transforms.project_to_ogr_outlines import *
 from gis4wrf.core.transforms.project_to_wps_namelist import *
 from gis4wrf.core.transforms.project_to_wrf_namelist import *
 from gis4wrf.core.transforms.wps_binary_to_gdal import *

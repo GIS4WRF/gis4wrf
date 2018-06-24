@@ -9,6 +9,7 @@ import random
 import tempfile
 import shutil
 import time
+import xml.etree.ElementTree as ET
 
 import numpy as np
 
@@ -55,6 +56,16 @@ def read_vsi_string(path: str, remove: bool=True) -> str:
 def remove_vsis(paths) -> None:
     for path in paths:
         gdal.Unlink(path)
+
+def fix_pixelfunction_vrt(vrt: str) -> str:
+    ''' Work-around for https://github.com/OSGeo/gdal/issues/501. '''
+    root = ET.fromstring(vrt)
+    bands = root.findall("./VRTRasterBand[@subClass='VRTDerivedRasterBand']")
+    for band in bands:
+        if band.find('PixelFunctionLanguage') is None:
+            lang = ET.SubElement(band, 'PixelFunctionLanguage')
+            lang.text = 'Python'
+    return ET.tostring(root, encoding='unicode')
 
 def link(src_path: str, link_path: str) -> None:
     assert os.path.isfile(src_path)
