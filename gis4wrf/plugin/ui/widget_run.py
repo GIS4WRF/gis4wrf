@@ -59,7 +59,8 @@ class RunWidget(QWidget):
             'Kill Program'
         ])
         self.control_box.setVisible(False)
-        self.stdout_box, self.stdout_textarea = self.create_stdout_box()
+        self.stdout_box, self.stdout_textarea, self.stdout_highlighter = \
+            self.create_stdout_box()
 
         vbox = QVBoxLayout()
         vbox.addWidget(self.wps_box)
@@ -224,27 +225,33 @@ class RunWidget(QWidget):
         gbox.setLayout(vbox)
         return gbox, btns
 
-    def create_stdout_box(self) -> Tuple[QGroupBox,QPlainTextEdit]:
+    def create_stdout_box(self) -> Tuple[QGroupBox,QPlainTextEdit,QSyntaxHighlighter]:
+        gbox = QGroupBox('Program output')
+        
         vbox = QVBoxLayout()
+        gbox.setLayout(vbox)
+
         text_area = QPlainTextEdit()
+        vbox.addWidget(text_area)
+        text_area.setReadOnly(True)
+        text_area.setWordWrapMode(QTextOption.NoWrap)
+        
         palette = text_area.palette() # type: QPalette
         palette.setColor(QPalette.Active, QPalette.Base, QColor('#1E1E1E'))
         palette.setColor(QPalette.Inactive, QPalette.Base, QColor('#1E1E1E'))
         text_area.setPalette(palette)
+        
         font = QFont('Monospace', 9)
         font.setStyleHint(QFont.TypeWriter)
         fmt = QTextCharFormat()
         fmt.setFont(font)
         fmt.setForeground(QColor(212, 212, 212))
         text_area.setCurrentCharFormat(fmt)
-        text_area.setReadOnly(True)
-        text_area.setWordWrapMode(QTextOption.NoWrap)
+        
         doc = text_area.document()
-        self.stdout_highlighter = LogSeverityHighlighter(doc)
-        vbox.addWidget(text_area)
-        gbox = QGroupBox('Program output')
-        gbox.setLayout(vbox)
-        return gbox, text_area
+        highlighter = LogSeverityHighlighter(doc)
+        
+        return gbox, text_area, highlighter
 
     def run_program_in_background(self, path: str, cwd: str, on_done: Callable[[str,Union[bool,str,None]],None]) -> None:
         self.stdout_textarea.clear()
