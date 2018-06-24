@@ -25,7 +25,6 @@ LON_VALIDATOR = QDoubleValidator(-180.0, 180.0, DECIMALS)
 LAT_VALIDATOR = QDoubleValidator(-90.0, 90.0, DECIMALS)
 
 # TODO display bbox as vector layer if not global extent
-# TODO update simulation-data subtab after downloading new data
 
 class MetToolsDownloadManager(QWidget):
     def __init__(self, iface) -> None:

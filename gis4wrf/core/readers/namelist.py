@@ -101,9 +101,12 @@ def verify_namelist_var(var_name: str, var_val: Union[str,int,float,bool,list],
                         var_name, val_regex, list_val))
 
 @export
-def verify_namelist(namelist: dict, schema_name: str) -> None:
+def verify_namelist(namelist: dict, schema_or_name: Union[dict,str]) -> None:
     # TODO collect and return all validation errors
-    schema = get_namelist_schema(schema_name)
+    if isinstance(schema_or_name, str):
+        schema = get_namelist_schema(schema_or_name)
+    else:
+        schema = schema_or_name
     if not isinstance(namelist, dict):
         raise TypeError('namelist object must be a dictionary')
     for group_name, group in namelist.items():
