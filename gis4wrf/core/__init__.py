@@ -11,7 +11,7 @@ from gis4wrf.core.readers.geogrid_tbl import *
 from gis4wrf.core.readers.grib_metadata import *
 from gis4wrf.core.readers.namelist import *
 from gis4wrf.core.readers.wps_binary_index import *
-from gis4wrf.core.readers.wrf_netcdf import *
+from gis4wrf.core.readers.wrf_netcdf_metadata import *
 from gis4wrf.core.writers.geogrid_tbl import *
 from gis4wrf.core.writers.wps_binary import *
 from gis4wrf.core.writers.namelist import *
@@ -22,5 +22,6 @@ from gis4wrf.core.transforms.project_to_wps_namelist import *
 from gis4wrf.core.transforms.project_to_wrf_namelist import *
 from gis4wrf.core.transforms.wps_binary_to_gdal import *
 from gis4wrf.core.transforms.wps_namelist_to_project import *
+from gis4wrf.core.transforms.wrf_netcdf_to_gdal import *
 from gis4wrf.core.project import *
 from gis4wrf.core.crs import *
