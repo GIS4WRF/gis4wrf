@@ -51,7 +51,7 @@ class GeoToolsDownloadManager(QWidget):
             'ID', 'Description', 'Resolution in °' ]))
         self.tree_widget.setRootIsDecorated(False)
         self.tree_widget.setSortingEnabled(True)
-        for id, (description, resolution) in  geo_datasets.items():
+        for id, (description, resolution) in geo_datasets.items():
             item = QTreeWidgetItem(self.tree_widget)
             item.setText(0, id)
             item.setData(0, Qt.UserRole, id)
@@ -61,8 +61,9 @@ class GeoToolsDownloadManager(QWidget):
             item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
             if is_geo_dataset_downloaded(id, self.options.geog_dir):
                 item.setFlags(Qt.NoItemFlags)
-                item.setToolTip(0, 'Dataset downloaded in: {}'.format(
-                    get_geo_dataset_path(id, self.options.geog_dir)))
+                for col in range(3):
+                    item.setToolTip(col, 'Dataset downloaded in: {}'.format(
+                        get_geo_dataset_path(id, self.options.geog_dir)))
 
     def on_select_mandatory_lores_button_clicked(self):
         self.select_datasets(geo_datasets_mandatory_lores)
