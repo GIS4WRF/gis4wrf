@@ -80,6 +80,7 @@ else:
     if not DATA_HOME:
         DATA_HOME = os.path.join(os.path.expanduser('~'), '.local', 'share')
 INSTALL_PREFIX = os.path.join(DATA_HOME, 'gis4wrf', 'python')
+LOG_PATH = os.path.join(INSTALL_PREFIX, 'pip.log')
 
 def bootstrap() -> Iterable[Tuple[str,Any]]:
     ''' Yields a stream of log information. '''
@@ -184,7 +185,7 @@ def bootstrap() -> Iterable[Tuple[str,Any]]:
         # This is all necessary due to limitations of pip's --prefix option.
         args = [python, '-m', 'pip', 'install', '--prefix', INSTALL_PREFIX] + req_specs
         yield ('log', ' '.join(args))
-        for line in run_subprocess(args):
+        for line in run_subprocess(args, LOG_PATH):
             yield ('log', line)
         yield ('install_done', None)
 
@@ -192,7 +193,7 @@ def bootstrap() -> Iterable[Tuple[str,Any]]:
         for dep, _ in cannot_update:
             yield ('cannot_update', cannot_update)
 
-def run_subprocess(args: List[str]) -> Iterable[str]:
+def run_subprocess(args: List[str], log_path: str) -> Iterable[str]:
     startupinfo = None
     if os.name == 'nt':
         # hides the console window
@@ -202,12 +203,14 @@ def run_subprocess(args: List[str]) -> Iterable[str]:
                                stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                                bufsize=1, universal_newlines=True,
                                startupinfo=startupinfo)
-    while True:
-        line = process.stdout.readline()
-        if line != '':
-            yield line
-        else:
-            break
+    with open(log_path, 'w') as fp:
+        while True:
+            line = process.stdout.readline()
+            if line != '':
+                fp.write(line)
+                yield line
+            else:
+                break
     process.wait()
 
     if process.returncode != 0:
