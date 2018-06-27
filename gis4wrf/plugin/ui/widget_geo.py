@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout, QProgressBar, QTr
 
 from gis4wrf.core import (
     geo_datasets, geo_datasets_mandatory_hires, geo_datasets_mandatory_lores,
-    download_and_extract_geo_dataset, is_geo_dataset_downloaded, get_geo_dataset_path
+    download_and_extract_geo_dataset, is_geo_dataset_downloaded, get_geo_dataset_path, dd_to_dms
 )
 from gis4wrf.plugin.options import get_options
 from .helpers import TaskThread, reraise, MessageBar
@@ -59,11 +59,16 @@ class GeoToolsDownloadManager(QWidget):
             item.setText(1, description)
             item.setText(2, str(resolution))
             item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
+            item.setToolTip(1, description)
+            if isinstance(resolution, str):
+                item.setToolTip(2, resolution)
+            else:
+                item.setToolTip(2, str(dd_to_dms(resolution)))
             if is_geo_dataset_downloaded(id, self.options.geog_dir):
                 item.setFlags(Qt.NoItemFlags)
-                for col in range(3):
-                    item.setToolTip(col, 'Dataset downloaded in: {}'.format(
-                        get_geo_dataset_path(id, self.options.geog_dir)))
+                item.setToolTip(0, 'Dataset downloaded in: {}'.format(
+                    get_geo_dataset_path(id, self.options.geog_dir)))
+
 
     def on_select_mandatory_lores_button_clicked(self):
         self.select_datasets(geo_datasets_mandatory_lores)

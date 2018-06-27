@@ -128,7 +128,7 @@ def add_derived_metadata_to_geogrid_tbl(tbl: GeogridTbl, geog_path: str) -> None
                 res = '{} m'.format(dx)
 
             group_options[GeogridTblKeys.RESOLUTION] = res
-
+@export
 def dd_to_dms(value: float) -> Tuple[int,int,float]:
     ''' Convert decimal degrees to degrees, minutes, seconds.
     See https://anothergisblog.blogspot.co.uk/2011/11/convert-decimal-degree-to-degrees.html.
