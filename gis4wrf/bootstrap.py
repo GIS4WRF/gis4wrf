@@ -145,6 +145,7 @@ def bootstrap() -> Iterable[Tuple[str,Any]]:
         # which may lead to multiple pkg-0.20.3.dist-info folders for different versions
         # and that would lead to false positives with pkg_resources.get_distribution().
         shutil.rmtree(INSTALL_PREFIX, ignore_errors=True)
+        os.makedirs(INSTALL_PREFIX, exist_ok=True)
 
         # Determine packages to install.
         # Since we just cleaned all packages installed by us, including those that didn't need
