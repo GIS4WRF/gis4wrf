@@ -52,7 +52,7 @@ Below are the instructions on how to install QGIS on Ubuntu 16.x, 17.x, and 18.x
     sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key CAEB3DC3BDF7FB45 &&
     sudo add-apt-repository -s -y ppa:ubuntugis/ubuntugis-unstable &&
     sudo apt-get update &&
-    sudo apt-get install -y qgis python-qgis &&
+    sudo apt-get install -y qgis python-qgis gfortran &&
     sudo apt-get install -y python3-pyqt5.qtwebkit &&
     sudo apt-get install -y python3-pip &&
     sudo pip3 install f90nml pyyaml netCDF4 wrf-python
@@ -67,7 +67,7 @@ Below are the instructions on how to install QGIS on Ubuntu 16.x, 17.x, and 18.x
     sudo add-apt-repository -s 'deb https://qgis.org/debian artful main' &&
     sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key CAEB3DC3BDF7FB45 &&
     sudo apt-get update &&
-    sudo apt-get install -y qgis python-qgis &&
+    sudo apt-get install -y qgis python-qgis gfortran &&
     sudo apt-get install -y python3-pyqt5.qtwebkit &&
     sudo apt-get install -y python3-pip &&
     sudo pip3 install f90nml pyyaml netCDF4 wrf-python
@@ -82,7 +82,7 @@ Below are the instructions on how to install QGIS on Ubuntu 16.x, 17.x, and 18.x
     sudo add-apt-repository -s 'deb https://qgis.org/debian bionic main' &&
     sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key CAEB3DC3BDF7FB45 &&
     sudo apt-get update &&
-    sudo apt-get install -y qgis python-qgis &&
+    sudo apt-get install -y qgis python-qgis gfortran &&
     sudo apt-get install -y python3-pyqt5.qtwebkit &&
     sudo apt-get install -y python3-pip &&
     sudo pip3 install f90nml pyyaml netCDF4 wrf-python
