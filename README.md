@@ -47,19 +47,15 @@ Below are the instructions on how to install QGIS on Ubuntu 16.x, 17.x, and 18.x
 
     Copy, paste and execute the following in your Terminal prompt:
     ```bash
-    sudo apt-get install -y software-properties-common
-    # Add QGIS repositories
-    sudo add-apt-repository -s 'deb https://qgis.org/ubuntugis xenial main'
-    sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key CAEB3DC3BDF7FB45
-    sudo add-apt-repository -s -y ppa:ubuntugis/ubuntugis-unstable
-    sudo apt-get update
-    # Install QGIS
-    sudo apt-get install -y qgis python-qgis
-    # Missing dependencies for QGIS
-    sudo apt-get install -y python3-pyqt5.qtwebkit
-    # Missing dependencies for GIS4WRF
-    sudo apt-get install -y python3-pip
-    sudo pip3 install f90nml=='1.0.2' pyyaml=='3.12' netCDF4=='1.2.9'
+    sudo apt-get install -y software-properties-common &&
+    sudo add-apt-repository -s 'deb https://qgis.org/ubuntugis xenial main' &&
+    sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key CAEB3DC3BDF7FB45 &&
+    sudo add-apt-repository -s -y ppa:ubuntugis/ubuntugis-unstable &&
+    sudo apt-get update &&
+    sudo apt-get install -y qgis python-qgis &&
+    sudo apt-get install -y python3-pyqt5.qtwebkit &&
+    sudo apt-get install -y python3-pip &&
+    sudo pip3 install f90nml pyyaml netCDF4 wrf-python
     ```
     After QGIS has been installed, go to [How to install GIS4WRF](#how-to-install-gis4wrf).
 
@@ -67,18 +63,14 @@ Below are the instructions on how to install QGIS on Ubuntu 16.x, 17.x, and 18.x
 
     Copy, paste and execute the following in your Terminal prompt:
     ```bash
-    sudo apt-get install -y software-properties-common
-    # Add QGIS repositories
-    sudo add-apt-repository -s 'deb https://qgis.org/debian artful main'
-    sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key CAEB3DC3BDF7FB45
-    sudo apt-get update
-    # Install QGIS
-    sudo apt-get install -y qgis python-qgis
-    # Missing dependencies for QGIS
-    sudo apt-get install -y python3-pyqt5.qtwebkit
-    # Missing dependencies for GIS4WRF
-    sudo apt-get install -y python3-pip
-    sudo pip3 install f90nml=='1.0.2' pyyaml=='3.12' netCDF4=='1.2.9'
+    sudo apt-get install -y software-properties-common &&
+    sudo add-apt-repository -s 'deb https://qgis.org/debian artful main' &&
+    sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key CAEB3DC3BDF7FB45 &&
+    sudo apt-get update &&
+    sudo apt-get install -y qgis python-qgis &&
+    sudo apt-get install -y python3-pyqt5.qtwebkit &&
+    sudo apt-get install -y python3-pip &&
+    sudo pip3 install f90nml pyyaml netCDF4 wrf-python
     ```
     After QGIS has been installed, go to [How to install GIS4WRF](#how-to-install-gis4wrf).
 
@@ -86,18 +78,14 @@ Below are the instructions on how to install QGIS on Ubuntu 16.x, 17.x, and 18.x
 
     Copy, paste and execute the following in your Terminal prompt:
     ```bash
-    sudo apt-get install -y software-properties-common
-    # Add QGIS repositories
-    sudo add-apt-repository -s 'deb https://qgis.org/debian bionic main'
-    sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key CAEB3DC3BDF7FB45
-    sudo apt-get update
-    # Install QGIS
-    sudo apt-get install -y qgis python-qgis
-    # Missing dependencies for QGIS
-    sudo apt-get install -y python3-pyqt5.qtwebkit
-    # Missing dependencies for GIS4WRF
-    sudo apt-get install -y python3-pip
-    sudo pip3 install f90nml=='1.0.2' pyyaml=='3.12' netCDF4=='1.2.9'
+    sudo apt-get install -y software-properties-common &&
+    sudo add-apt-repository -s 'deb https://qgis.org/debian bionic main' &&
+    sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key CAEB3DC3BDF7FB45 &&
+    sudo apt-get update &&
+    sudo apt-get install -y qgis python-qgis &&
+    sudo apt-get install -y python3-pyqt5.qtwebkit &&
+    sudo apt-get install -y python3-pip &&
+    sudo pip3 install f90nml pyyaml netCDF4 wrf-python
     ```
     After QGIS has been installed, go to [How to install GIS4WRF](#how-to-install-gis4wrf).
 
