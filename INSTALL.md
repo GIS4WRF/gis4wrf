@@ -3,6 +3,15 @@ We currently support Windows, macOS and Ubuntu however, do let us know if you wo
 
 *Tip: for the best experience and easiest installation, install on Windows.*
 
+## Table of Contents
+- [Installation](#installation)
+    - [Table of Contents](#table-of-contents)
+    - [How to install QGIS](#how-to-install-qgis)
+        - [Windows](#windows)
+        - [macOS](#macos)
+        - [Ubuntu](#ubuntu)
+    - [How to install GIS4WRF](#how-to-install-gis4wrf)
+
 ## How to install QGIS
 QGIS is supported on Windows, macOS and various Linux distributions. Here we specifically detail the installation instructions for installing QGIS on Windows, macOS and Ubuntu.
 
