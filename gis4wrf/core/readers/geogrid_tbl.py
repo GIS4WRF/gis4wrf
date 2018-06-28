@@ -112,22 +112,31 @@ def add_derived_metadata_to_geogrid_tbl(tbl: GeogridTbl, geog_path: str) -> None
             meta = read_wps_binary_index_file(dataset_path)
 
             if meta.proj_id == 'regular_ll':
-                degrees, minutes, seconds = dd_to_dms(meta.dx)
-                seconds = round(seconds, 2)
-                res_parts = []
-                if degrees > 0:
-                    res_parts.append('{}°'.format(degrees))
-                if minutes > 0:
-                    res_parts.append('{}′'.format(minutes))
-                if seconds > 0:
-                    if seconds == int(seconds):
-                        seconds = int(seconds) # avoid trailing .0
-                    res_parts.append('{}″'.format(seconds))
-                res = ' '.join(res_parts)
+                res = formatted_dd_to_dms(meta.dx)
             else:
-                res = '{} m'.format(dx)
+                res = '{} m'.format(meta.dx)
 
             group_options[GeogridTblKeys.RESOLUTION] = res
+
+@export
+def formatted_dd_to_dms(value: float) -> str:
+    ''' Given a value in decimal degrees, converts using the `dd_to_dms` function and returns
+    formatted and rounded value in degrees, minutes, seconds.
+    '''
+    degrees, minutes, seconds = dd_to_dms(value)
+    seconds = round(seconds, 2)
+    res_parts = []
+    if degrees > 0:
+        res_parts.append('{}°'.format(degrees))
+    if minutes > 0:
+        res_parts.append('{}′'.format(minutes))
+    if seconds > 0:
+        if seconds == int(seconds):
+            seconds = int(seconds) # avoid trailing .0
+        res_parts.append('{}″'.format(seconds))
+    res = ' '.join(res_parts)
+    return res
+
 @export
 def dd_to_dms(value: float) -> Tuple[int,int,float]:
     ''' Convert decimal degrees to degrees, minutes, seconds.

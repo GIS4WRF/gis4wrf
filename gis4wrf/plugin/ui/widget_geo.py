@@ -8,7 +8,8 @@ from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout, QProgressBar, QTr
 
 from gis4wrf.core import (
     geo_datasets, geo_datasets_mandatory_hires, geo_datasets_mandatory_lores,
-    download_and_extract_geo_dataset, is_geo_dataset_downloaded, get_geo_dataset_path, dd_to_dms
+    download_and_extract_geo_dataset, is_geo_dataset_downloaded, get_geo_dataset_path,
+    dd_to_dms, formatted_dd_to_dms
 )
 from gis4wrf.plugin.options import get_options
 from .helpers import TaskThread, reraise, MessageBar
@@ -37,7 +38,7 @@ class GeoToolsDownloadManager(QWidget):
         self.progress_bar.setRange(0, 0)
         self.progress_bar.setTextVisible(False)
         self.progress_bar.hide()
-        
+
         vbox = QVBoxLayout()
         vbox.addWidget(self.tree_widget)
         vbox.addWidget(self.select_mandatory_hires_button)
@@ -48,26 +49,32 @@ class GeoToolsDownloadManager(QWidget):
 
     def populate_tree(self) -> None:
         self.tree_widget.setHeaderItem(QTreeWidgetItem([
-            'ID', 'Description', 'Resolution in °' ]))
+            'ID', 'Description', 'Resolution' ]))
         self.tree_widget.setRootIsDecorated(False)
         self.tree_widget.setSortingEnabled(True)
         for id, (description, resolution) in geo_datasets.items():
             item = QTreeWidgetItem(self.tree_widget)
+
             item.setText(0, id)
             item.setData(0, Qt.UserRole, id)
             item.setCheckState(0, Qt.Unchecked)
-            item.setText(1, description)
-            item.setText(2, str(resolution))
-            item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
-            item.setToolTip(1, description)
-            if isinstance(resolution, str):
-                item.setToolTip(2, resolution)
-            else:
-                item.setToolTip(2, str(dd_to_dms(resolution)))
             if is_geo_dataset_downloaded(id, self.options.geog_dir):
                 item.setFlags(Qt.NoItemFlags)
                 item.setToolTip(0, 'Dataset downloaded in: {}'.format(
                     get_geo_dataset_path(id, self.options.geog_dir)))
+            else:
+                item.setToolTip(0, id)
+
+            item.setText(1, description)
+            item.setToolTip(1, description)
+
+            if isinstance(resolution, str):
+                item.setText(2, resolution)
+            else:
+                item.setText(2, formatted_dd_to_dms(resolution))
+                item.setToolTip(2, '{}°'.format(resolution))
+
+            item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
 
 
     def on_select_mandatory_lores_button_clicked(self):
