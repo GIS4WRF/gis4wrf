@@ -18,16 +18,16 @@ GIS4WRF is a free and open source [QGIS](https://qgis.org/) plug-in to help rese
 If you familiar with QGIS and have already installed the latest version of QGIS 3 on your system, you can find GIS4WRF ready to be installed from the `Plugins` > `Manage and Install Plugins...` menu. If you are not familiar with QGIS or are encountering issue with the installation, please refer to the [installation guide](INSTALL.md). 
 
 ## Documentation
-Documentation on how to use GIS4WRF can be found directly in the GIS4WRF under the `Home` tab. At each release of GIS4WRF, we bundle the most up-to-date documentation found in the [GIS4WRF documentation repository](https://github.com/GIS4WRF/gis4wrf-docs). If you find a mistake in the documentation, would like to contribute, or simply browse the documentation, please refer to the [GIS4WRF documentation repository](https://github.com/GIS4WRF/gis4wrf-docs).
+Documentation on how to use GIS4WRF can be found directly in GIS4WRF under the `Home` tab. At each release of GIS4WRF, we bundle the most up-to-date documentation found in the [GIS4WRF documentation repository](https://github.com/GIS4WRF/gis4wrf-docs). If you find a mistake in the documentation, would like to contribute or simply browse the documentation, please refer to the [GIS4WRF documentation repository](https://github.com/GIS4WRF/gis4wrf-docs).
 
 ## How to reference GIS4WRF
-We ask to please acknowledge our work by citing and referencing both, the GIS4WRF paper and the software as follows:
+We ask to please acknowledge our work by citing and referencing both, the GIS4WRF paper and the GIS4WRF software as follows:
 
 - For in-text citations, please cite both the paper and the software.
 
     E.g.: *"We used GIS4WRF (Meyer and Riechert, 2018a, 2018b) for ..."*
 
-- For the full citation in the reference list adapat using your chosen style from the example below.
+- For the full citation in the reference list, adapt using your chosen style from the example below.
 
     E.g. — reference list using the American Meteorological Society (AMS) style:
 
