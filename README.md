@@ -20,7 +20,9 @@ GIS4WRF is a free and open source [QGIS](https://qgis.org/) plug-in to help rese
     - [Copyright and Licence](#copyright-and-licence)
 
 ## Installation
-We currently support Windows, macOS and Ubuntu however, do let us know if you would like us to support other Linux distributions by [opening an issue](issues)! The installation of GIS4WRF requires users to have **QGIS 3** installed on their system — here, simply referred to as QGIS. Please make sure that you follow the same steps in the same order as described in [How to install GIS4WRF](#how-to-install-gis4wrf) and in [How to install QGIS](#how-to-install-qgis) to avoid problems. You will, most likely, only need to follow these steps once; after QGIS and GIS4WRF have been installed, you will be notified when updates become available directly in QGIS. For the best experience and easiest installation, install on Windows.
+We currently support Windows, macOS and Ubuntu however, do let us know if you would like us to support other Linux distributions by [opening an issue](issues)! The installation of GIS4WRF requires users to have **QGIS 3** installed on their system — here, simply referred to as QGIS. Please make sure that you follow the same steps in the same order as described in [How to install QGIS](#how-to-install-qgis) and [How to install GIS4WRF](#how-to-install-gis4wrf) to avoid problems. You will, most likely, only need to follow these steps once; after QGIS and GIS4WRF have been installed, you will be notified when updates become available directly in QGIS.
+
+*Tip: for the best experience and easiest installation, install on Windows.*
 
 ### How to install QGIS
 QGIS is supported on Windows, macOS and various Linux distributions. Here we specifically detail the installation instructions for installing QGIS on Windows, macOS and Ubuntu.
@@ -29,7 +31,7 @@ QGIS is supported on Windows, macOS and various Linux distributions. Here we spe
 Download the latest version of ***QGIS Standalone Installer*** from the [QGIS download page](https://www.qgis.org/en/site/forusers/download#windows) and install it using the guided installation. After QGIS has been installed, go to [How to install GIS4WRF](#how-to-install-gis4wrf).
 
 #### macOS
-On macOS, install QGIS using the  [Homebrew package manager](https://brew.sh/). If you do not have homebrew installed on your machine please see [How to install Homebrew](https://brew.sh/). 
+On macOS, install QGIS using the  [Homebrew package manager](https://brew.sh/). If you do not have homebrew installed on your machine please see [How to install Homebrew](https://brew.sh/).
 
 To install QGIS, copy and paste the following in the Terminal prompt:
 
@@ -125,7 +127,7 @@ We ask to please acknowledge our work by citing and referencing both, the GIS4WR
 
 
 ### Contributing
-If you would like to update the current documentation, clone this repository, make your changes, and create a pull request with a **clear description** of your changes. If your changes are merged, you will appear as one of our [Contributors](graphs/contributors).
+If you would like to update the current documentation, clone this repository, make your changes, and create a pull request with a **clear description** of your changes. If your changes are merged, you will appear as one of our [Contributors](../graphs/contributors).
 
 ### Documentation
 For up-to-date documentation, please refer to the [GIS4WRF documentation page](https://github.com/GIS4WRF/gis4wrf-docs).
