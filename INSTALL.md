@@ -43,7 +43,7 @@ Below are the instructions on how to install QGIS on Ubuntu 16.x, 17.x, and 18.x
     sudo apt-get install -y qgis python-qgis gfortran &&
     sudo apt-get install -y python3-pyqt5.qtwebkit &&
     sudo apt-get install -y python3-pip &&
-    sudo pip3 install f90nml pyyaml netCDF4 wrf-python
+    pip3 install --user f90nml pyyaml netCDF4 wrf-python
     ```
     After QGIS has been installed, go to [How to install GIS4WRF](#how-to-install-gis4wrf).
 
@@ -58,7 +58,7 @@ Below are the instructions on how to install QGIS on Ubuntu 16.x, 17.x, and 18.x
     sudo apt-get install -y qgis python-qgis gfortran &&
     sudo apt-get install -y python3-pyqt5.qtwebkit &&
     sudo apt-get install -y python3-pip &&
-    sudo pip3 install f90nml pyyaml netCDF4 wrf-python
+    pip3 install --user f90nml pyyaml netCDF4 wrf-python
     ```
     After QGIS has been installed, go to [How to install GIS4WRF](#how-to-install-gis4wrf).
 
@@ -73,7 +73,7 @@ Below are the instructions on how to install QGIS on Ubuntu 16.x, 17.x, and 18.x
     sudo apt-get install -y qgis python-qgis gfortran &&
     sudo apt-get install -y python3-pyqt5.qtwebkit &&
     sudo apt-get install -y python3-pip &&
-    sudo pip3 install f90nml pyyaml netCDF4 wrf-python
+    pip3 install --user f90nml pyyaml netCDF4 wrf-python
     ```
     After QGIS has been installed, go to [How to install GIS4WRF](#how-to-install-gis4wrf).
 
