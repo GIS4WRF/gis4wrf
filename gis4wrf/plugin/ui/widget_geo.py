@@ -12,8 +12,9 @@ from gis4wrf.core import (
     dd_to_dms, formatted_dd_to_dms
 )
 from gis4wrf.plugin.options import get_options
-from .helpers import TaskThread, reraise, MessageBar
-from .broadcast import Broadcast
+from gis4wrf.plugin.ui.helpers import reraise, MessageBar
+from gis4wrf.plugin.ui.thread import TaskThread
+from gis4wrf.plugin.ui.broadcast import Broadcast
 
 class GeoToolsDownloadManager(QWidget):
     def __init__(self, iface) -> None:

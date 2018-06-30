@@ -3,6 +3,7 @@
 
 from typing import Union, Optional, List, Callable
 import os
+import signal
 import sys
 import platform
 import shutil
@@ -28,7 +29,11 @@ from PyQt5.QtWebKitWidgets import QWebView
 from qgis.gui import QgisInterface
 from qgis.core import QgsMapLayer
 
+# NOTE: Do not import anything from gis4wrf.core or other gis4wrf.plugin module depending on core here.
+#       The helpers module is used in the bootstrapping UI.
+
 from gis4wrf.plugin.constants import PLUGIN_NAME
+
 
 DIM_VALIDATOR = QIntValidator()
 DIM_VALIDATOR.setBottom(0)
@@ -256,6 +261,9 @@ def wrap_error(parent, fn):
         return
 
 def dispose_after_delete(layer: QgsMapLayer, dispose: Callable[[],None]) -> None:
+    # Lazy import to work around restriction explained at top of this file.
+    from gis4wrf.plugin.ui.thread import TaskThread
+
     # There is no signal indicating that the layer has been fully removed.
     # Therefore in the willBeDeleted signal we need to give control back to
     # the main event loop and run the dispose operation asynchronously. Note that
@@ -287,59 +295,6 @@ class WaitDialog(IgnoreKeyPressesDialog):
         self.setMaximumHeight(0)
         self.setFixedWidth(parent.width() * 0.5)
         self.show()
-
-class Task(QObject):
-    ''' Non-threaded alternative to TaskThread, useful for debugging. '''
-    started = pyqtSignal()
-    progress = pyqtSignal(int, str)
-    succeeded = pyqtSignal(object)
-    failed = pyqtSignal(tuple)
-    finished = pyqtSignal()
-
-    def __init__(self, fn, yields_progress: bool=False) -> None:
-        super().__init__()
-        self.fn = fn
-        self.yields_progress = yields_progress
-        self.result = None
-        self.exc_info = None
-
-    def start(self):
-        self.started.emit()
-        try:
-            if self.yields_progress:
-                for percent, status in self.fn():
-                    self.progress.emit(percent, status)
-            else:
-                self.result = self.fn()
-            self.succeeded.emit(self.result)
-        except:
-            self.exc_info = sys.exc_info()
-            self.failed.emit(self.exc_info)
-        finally:
-            self.finished.emit()
-
-_THREADS = [] # type: List[QThread]
-
-class TaskThread(QThread):
-    progress = pyqtSignal(int, str)
-    succeeded = pyqtSignal(object)
-    failed = pyqtSignal(tuple)
-    # QThread provides started & finished signals.
-
-    def __init__(self, fn, yields_progress: bool=False) -> None:
-        super().__init__()
-        
-        task = Task(fn, yields_progress)
-        task.progress.connect(self.progress)
-        task.succeeded.connect(self.succeeded)
-        task.failed.connect(self.failed)
-        self.task = task
-
-        # need to keep reference alive while thread is running
-        _THREADS.append(self)
-
-    def run(self):
-        self.task.start()
 
 def reraise(exc_info) -> None:
     raise exc_info[0].with_traceback(*exc_info[1:])
