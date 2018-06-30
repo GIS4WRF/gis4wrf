@@ -9,7 +9,7 @@ GIS4WRF is a free and open source [QGIS](https://qgis.org/) plug-in to help rese
 | macOS     | 10.12 (Sierra), 10.13 (High Sierra)   | NO                                         |
 | Ubuntu    | 17.x, 18.x                            | NO                                         |
 
-*Tip: if you would like us to support other Linux distributions, fix a bug, or simply ask to add a new feature, do let us know by [opening an issue](issues).*
+*Tip: if you would like us to support other Linux distributions, fix a bug, or simply add a new feature, do let us know by [opening an issue](issues).*
 
 ## Table of Contents
 - [GIS4WRF](#gis4wrf)
