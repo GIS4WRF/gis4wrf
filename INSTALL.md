@@ -1,5 +1,5 @@
 # Installation
-The installation of GIS4WRF requires users to have **QGIS 3** installed on their system — here, simply referred to as QGIS. Please make sure that you follow the same steps in the same order as described in [How to install QGIS](#how-to-install-qgis) and [How to install GIS4WRF](#how-to-install-gis4wrf) to avoid problems. You will, most likely, only need to follow these steps once; after QGIS and GIS4WRF have been installed, you will be notified when updates become available directly in QGIS.
+The installation of GIS4WRF requires users to have **QGIS 3** installed on their systems. Please make sure that you follow the same steps in the same order as described in [How to install QGIS](#how-to-install-qgis) and [How to install GIS4WRF](#how-to-install-gis4wrf) to avoid problems. You will, most likely, only need to follow these steps once; after QGIS and GIS4WRF have been installed, you will be notified when updates become available directly in QGIS.
 
 *Tip: for the best experience and easiest installation, install on Windows.*
 
@@ -20,16 +20,6 @@ Download the latest version of ***QGIS Standalone Installer*** from the [QGIS do
 
 ### macOS
 Download the latest version of ***QGIS macOS Installer*** from the [QGIS download page](https://qgis.org/en/site/forusers/download.html#mac) open it and follow the instructions contained in the `readme` file. After QGIS has been installed, go to [How to install GIS4WRF](#how-to-install-gis4wrf).
-
-https://qgis.org/en/site/forusers/download.html#mac
-On macOS, install QGIS using the  [Homebrew package manager](https://brew.sh/). If you do not have homebrew installed on your machine please see [How to install Homebrew](https://brew.sh#install).
-
-To install QGIS, copy and paste the following in the Terminal prompt:
-
-```bash
-TODO: link to QGIS formulae
-```
-After QGIS has been installed, go to [How to install GIS4WRF](#how-to-install-gis4wrf).
 
 ### Ubuntu
 Below are the instructions on how to install QGIS on Ubuntu 17.x and 18.x. The installation of QGIS on Ubuntu is slightly different for the three releases. If you are running an older version of Ubuntu, you must upgrade to the most recent version. If do not know what version of Ubuntu you are running, run `lsb_release -a | grep Release` in you Terminal prompt.
