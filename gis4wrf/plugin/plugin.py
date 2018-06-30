@@ -17,7 +17,7 @@ from gis4wrf.core import (
 # Initialize Qt resources from auto-generated file resources.py
 import gis4wrf.plugin.resources
 
-from gis4wrf.plugin.ui.helpers import TaskThread
+from gis4wrf.plugin.ui.thread import TaskThread
 
 from gis4wrf.plugin.ui.options import OptionsFactory
 from gis4wrf.plugin.ui.dock import MainDock

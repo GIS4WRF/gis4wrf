@@ -21,6 +21,7 @@ from gis4wrf.core.util import export, gdal, gdal_array, get_temp_dir, get_temp_v
 from gis4wrf.core.crs import CRS, LonLat
 from gis4wrf.core.constants import ProjectionTypes
 from gis4wrf.core.readers.categories import LANDUSE, LANDUSE_FIELDS
+from gis4wrf.core.readers.wrf_netcdf_metadata import get_wrf_nc_time_steps
 from gis4wrf.core.transforms.categories_to_gdal import get_gdal_categories
 
 WRFNetCDFVariable = namedtuple('WRFNetCDFVariable', ['name', 'label', 'extra_dim_name'])
@@ -101,7 +102,6 @@ class GDALFormat(Enum):
     def is_vrt(self):
         return self in [self.HDF5_VRT, self.NETCDF_VRT]
 
-# TODO move to transforms package
 @export
 def convert_wrf_nc_var_to_gdal_dataset(
     path: str, var_name: str, extra_dim_index: Optional[int],
@@ -259,6 +259,7 @@ def convert_wrf_nc_var_to_gdal_dataset(
 
 @export
 def get_supported_wrf_nc_variables(path: str) -> Dict[str,WRFNetCDFVariable]:
+    ''' Returns all variables supported by `convert_wrf_nc_var_to_gdal_dataset`.'''
     extra_dims = get_wrf_nc_extra_dims(path)
     ds = nc.Dataset(path)
     variables = {}
@@ -348,22 +349,6 @@ def get_wrf_nc_extra_dims(path: str) -> Dict[str,WRFNetCDFExtraDim]:
     # TODO add num_st_layers, num_sm_layers, z-dimension00**
 
     return extra_dims
-
-@export
-def get_wrf_nc_time_steps(path: str) -> List[str]:
-    ds = nc.Dataset(path)
-    steps = []
-    # Each time step is stored as a sequence of 1-byte chars, e.g.:
-    # array([b'2', b'0', b'0', b'5', b'-', b'0', b'8', b'-', b'2', b'8', b'_',
-    #   b'0', b'0', b':', b'0', b'0', b':', b'0', b'0'],
-    #  dtype='|S1')
-    # ... which we convert to a plain string '2005-08-28_00:00:00'
-    # and replace the underscore with a space: '2005-08-28 00:00:00'.
-    for val in ds.variables['Times']:
-        time = ''.join([c.decode() for c in val])
-        time = time.replace('_', ' ')
-        steps.append(time)
-    return steps
 
 def get_landuse_categories(ds: nc.Dataset) -> Tuple[gdal.ColorTable,List[str]]:
     attrs = ds.__dict__ # type: dict
