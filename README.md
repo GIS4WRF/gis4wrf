@@ -1,9 +1,15 @@
 <p align="center"><img src="https://github.com/GIS4WRF/gis4wrf-docs/blob/master/images/gis4wrf.png"></p>
 
 # GIS4WRF
-GIS4WRF is a free and open source [QGIS](https://qgis.org/) plug-in to help researchers and practitioners with their [Advanced Research Weather Research and Forecasting](https://www.mmm.ucar.edu/weather-research-and-forecasting-model) modelling workflows. GIS4WRF can be used to pre-process input data, run simulations, and visualize or post-process results on Windows, macOS and Ubuntu.
+GIS4WRF is a free and open source [QGIS](https://qgis.org/) plug-in to help researchers and practitioners with their [Advanced Research Weather Research and Forecasting](https://www.mmm.ucar.edu/weather-research-and-forecasting-model) modelling workflows. GIS4WRF can be used to pre-process input data, run simulations, and visualize or post-process results. We currently support GIS4WRF for Windows, macOS and Ubuntu and provide pre-built WPS and WRF binaries for Windows systems only. Please refer to the table below for a overview of currently-supported OS platforms.
 
-*Tip: if you would like us to support other Linux distributions, fix a bug, or simply add a new feature, do let us know by [opening an issue](issues).*
+| OS Name   | OS Version                            | Downloadable WPS & WRF Pre-built Binaries? |
+|-----------|---------------------------------------|--------------------------------------------|
+| Windows   | 7, 8, 10                              | YES                                        |
+| macOS     | 10.12 (Sierra), 10.13 (High Sierra)   | NO                                         |
+| Ubuntu    | 17.x, 18.x                            | NO                                         |
+
+*Tip: if you would like us to support other Linux distributions, fix a bug, or simply ask to add a new feature, do let us know by [opening an issue](issues).*
 
 ## Table of Contents
 - [GIS4WRF](#gis4wrf)
@@ -16,7 +22,6 @@ GIS4WRF is a free and open source [QGIS](https://qgis.org/) plug-in to help rese
     - [Copyright and Licence](#copyright-and-licence)
 
 ## Installation
-
 If you are already familiar with QGIS and have the latest version of QGIS 3 on your system, you can find GIS4WRF ready to be installed from the `Plugins` > `Manage and Install Plugins...` menu. If you are not familiar with QGIS or are encountering issues with the installation, please refer to the [installation guide](INSTALL.md).
 
 ## Documentation
