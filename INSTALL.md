@@ -22,7 +22,7 @@ Download the latest version of ***QGIS Standalone Installer*** from the [QGIS do
 Download the latest version of ***QGIS macOS Installer*** from the [QGIS download page](https://qgis.org/en/site/forusers/download.html#mac) open it and follow the instructions contained in the `readme` file. After QGIS has been installed, go to [How to install GIS4WRF](#how-to-install-gis4wrf).
 
 ### Ubuntu
-Below are the instructions on how to install QGIS on Ubuntu 17.x and 18.x. The installation of QGIS on Ubuntu is slightly different for the three releases. If you are running an older version of Ubuntu, you must upgrade to the most recent version. If do not know what version of Ubuntu you are running, run `lsb_release -a | grep Release` in you Terminal prompt.
+Below are the instructions on how to install QGIS on Ubuntu 17.x and 18.x. The installation of QGIS on Ubuntu is slightly different for the two releases. If you are running an older version of Ubuntu, you must upgrade to the most recent version. If do not know what version of Ubuntu you are running, run `lsb_release -a | grep Release` in you Terminal prompt.
 
 - Ubuntu 17.x
 
