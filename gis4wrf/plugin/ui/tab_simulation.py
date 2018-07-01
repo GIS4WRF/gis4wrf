@@ -11,6 +11,7 @@ from gis4wrf.core import Project
 
 from gis4wrf.plugin.constants import PLUGIN_NAME
 from gis4wrf.plugin.options import get_options
+from gis4wrf.plugin.broadcast import Broadcast
 from gis4wrf.plugin.ui.helpers import WhiteScroll, ensure_folder_empty
 from gis4wrf.plugin.ui.widget_general import GeneralWidget
 from gis4wrf.plugin.ui.widget_domains import DomainWidget
@@ -52,6 +53,7 @@ class SimulationTab(QTabWidget):
         self.set_project_in_tabs()
 
         self.currentChanged.connect(self.on_tab_changed)
+        Broadcast.options_updated.connect(self.update_project)
 
     def open_data_tab(self):
         self.setCurrentIndex(2)
@@ -62,19 +64,29 @@ class SimulationTab(QTabWidget):
     def set_project_in_tabs(self) -> None:
         project = self.project
         if project.path:
-            self.project.geog_data_path = self.options.geog_dir
-            self.project.met_data_path = self.options.met_dir
-            try:
-                # TODO allow to re-initialize after WPS/WRF paths changed via plugin config
-                self.project.init_config_files_if_needed(
-                    self.options.geogrid_tbl_path, self.options.wrf_namelist_path)
-            except FileNotFoundError:
+            if not self.options.wps_dir or not self.options.wrf_dir:
                 msg_bar = self.iface.messageBar() # type: QgsMessageBar
-                msg_bar.pushWarning(PLUGIN_NAME, 'WPS configuration files not found, functionality will be restricted.')
+                msg_bar.pushWarning(PLUGIN_NAME, 'WPS/WRF not found, functionality will be reduced.')
+            self.update_project()
         self.general_tab.project = project
         self.domain_tab.project = project
         self.datasets_tab.project = project
         self.run_tab.project = project
+
+    def update_project(self) -> None:
+        if not self.project:
+            return
+        
+        self.project.geog_data_path = self.options.geog_dir
+        self.project.met_data_path = self.options.met_dir
+
+        try:
+            self.project.init_config_files_if_needed(
+                self.options.geogrid_tbl_path, self.options.wrf_namelist_path)
+        except FileNotFoundError:
+            pass
+        
+        Broadcast.project_updated.emit()
 
     def on_create_project(self, path: str) -> None:
         if not ensure_folder_empty(path, self.iface):
