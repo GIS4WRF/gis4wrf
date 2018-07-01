@@ -8,6 +8,7 @@ import platform
 from qgis.core import QgsSettings
 
 from gis4wrf.core.util import export
+from gis4wrf.plugin.broadcast import Broadcast
 
 WORKING_DIR_DEFAULT_NAME = 'gis4wrf'
 
@@ -67,6 +68,7 @@ class Options(object):
         settings.setValue(Keys.RDA_USERNAME, self._rda_username)
         settings.setValue(Keys.RDA_PASSWORD, self._rda_password)
         self.after_load_save()
+        Broadcast.options_updated.emit()
 
     def after_load_save(self) -> None:
         for path in [self.working_dir, self.datasets_dir, self.geog_dir, self.projects_dir, self.distributions_dir]:

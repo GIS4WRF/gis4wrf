@@ -96,6 +96,8 @@ class Project(object):
             (wrf_namelist_path, self.wrf_namelist_path)
         ]
         for src_path, dst_path in files:
+            if not src_path or not os.path.exists(src_path):
+                continue
             if not os.path.exists(dst_path):
                 shutil.copyfile(src_path, dst_path)
 
@@ -221,7 +223,9 @@ class Project(object):
 
     def fill_domains(self):
         ''' Updated computed fields in each domain object like cell size. '''
-        domains = self.data['domains']
+        domains = self.data.get('domains')
+        if domains is None:
+            raise RuntimeError('Domains not configured yet')
 
         innermost_domain = domains[0]
         outermost_domain = domains[-1]
