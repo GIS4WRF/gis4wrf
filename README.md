@@ -32,7 +32,7 @@ After installation, you can configure GIS4WRF directly in QGIS from the `Setting
 <p align="center">Fig 3. GIS4WRF — Configuration</p>
 
 ## Documentation Overview
-Documentation on how to use GIS4WRF can be found directly in GIS4WRF under the `Home` tab. At each release of GIS4WRF, we bundle the most up-to-date documentation found in the [GIS4WRF documentation repository](https://github.com/GIS4WRF/gis4wrf-docs). If you find a mistake in the documentation, would like to contribute or you would like to simply browse the documentation outside of QGIS, please refer to the [GIS4WRF documentation repository](https://github.com/GIS4WRF/gis4wrf-docs).
+Documentation on how to use GIS4WRF can be found directly in GIS4WRF under the `Home` tab. At each release of GIS4WRF, we bundle the most up-to-date documentation found in the [GIS4WRF documentation repository](https://github.com/GIS4WRF/gis4wrf-docs). If you find a mistake in the documentation, would like to contribute or you would like to simply browse the documentation outside of QGIS, please refer to the [GIS4WRF documentation repository](https://github.com/GIS4WRF/gis4wrf-docs#gis4wrf-documentation).
 
 
 ## How to reference GIS4WRF
