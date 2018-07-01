@@ -25,7 +25,8 @@ ZIP_FILE = PKG_DIR + '.zip'
 
 # All entries will be interpreted with wildcards around them
 ZIP_EXCLUDES = [
-    '__pycache__'
+    '__pycache__',
+    '.gif'
 ]
 
 # Create QT resources file
@@ -73,19 +74,17 @@ def download_and_unzip(url, path):
     with zipfile.ZipFile(io.BytesIO(response.content)) as zip_ref:
         zip_ref.extractall(path)
 
-PATH_TO_THEME = Path.cwd().joinpath('gis4wrf', 'plugin','resources', 'meta')
-
 ## We use the modified gis4wrf modified bootstrap theme for MkDocs
-print('Downloading gis4wrf bootstrap theme to: '+ str(PATH_TO_THEME))
-download_and_unzip('https://github.com/GIS4WRF/mkdocs-bootstrap/archive/gis4wrf_theme.zip', PATH_TO_THEME)
+print('Downloading gis4wrf bootstrap theme to: '+ str(THIS_DIR))
+download_and_unzip('https://github.com/GIS4WRF/mkdocs-bootstrap/archive/gis4wrf_theme.zip', THIS_DIR)
 
-PATH_TO_DOCS = PATH_TO_THEME.joinpath('docs')
+PATH_TO_DOCS = os.path.join(THIS_DIR, 'mkdocs')
 print('Downloading docs to: '+ str(PATH_TO_DOCS))
 download_and_unzip('https://github.com/GIS4WRF/gis4wrf-docs/archive/master.zip', PATH_TO_DOCS)
-# TODO: enable this bit for automatically download and generate the documentation.
+# TODO: enable this bit for automatically download and generate the documentation of tutorials.
 # download_and_unzip('https://github.com/dmey/gis4wrf-tutorials/archive/master.zip', PATH_TO_DOCS)
 
-subprocess.run(["mkdocs", "build"], cwd=str(PATH_TO_DOCS.parent), check=True)
+subprocess.run(["mkdocs", "build"], cwd=str(THIS_DIR), check=True)
 
 # Copy CHANGELOG.txt, ATTRIBUTION.txt, and LICENSE.txt into gis4wrf plugin directory
 print('Copying CHANGELOG.txt to the package directory: '+ PKG_DIR)

@@ -4,5 +4,5 @@ You can find the documentation for using GIS4WRF under`Documentation` by clickin
 
 <br />
 <p align="center">
-    <img src="../../../gis4wrf_logo.svg">
+    <img src="../../../../../gis4wrf/plugin/resources/gis4wrf_logo.svg">
 </p>
