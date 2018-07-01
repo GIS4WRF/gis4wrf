@@ -196,7 +196,7 @@ class RadioWithButtonWidget(QGroupBox):
 # TODO: implement use remote url if internet connection is
 # available, else default to the local page
 def create_browser_layout(web_page: str) -> QVBoxLayout:
-    path = THIS_DIR.parents[1] / 'resources' / 'meta' / 'site' / web_page
+    path = THIS_DIR.parents[1] / 'resources' / 'site' / web_page
     url = QUrl(path.as_uri())
     vbox = QVBoxLayout()
     vbox.setContentsMargins(2,2,2,2)

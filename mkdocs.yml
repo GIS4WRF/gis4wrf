@@ -1,6 +1,8 @@
 site_name: GIS4WRF
 use_directory_urls: false
 theme_dir: 'mkdocs-bootstrap-gis4wrf_theme/mkdocs_bootstrap'
+docs_dir: 'mkdocs'
+site_dir: 'gis4wrf/plugin/resources/site'
 pages:
 - Home: 'tab_home.md'
 - 'hidden': 'tab_simulation_general.md'
