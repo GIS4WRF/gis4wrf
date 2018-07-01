@@ -96,9 +96,13 @@ class RunWidget(QWidget):
         self._project = val
 
     def prepare_wps_run(self) -> None:
+        if not self.options.wps_dir:
+            raise RuntimeError('WPS is not available!')
         self.project.prepare_wps_run(self.options.wps_dir)
 
     def prepare_wrf_run(self) -> None:
+        if not self.options.wrf_dir:
+            raise RuntimeError('WRF is not available!')
         self.project.prepare_wrf_run(self.options.wrf_dir)
 
     def on_open_namelist_wps_clicked(self) -> None:

@@ -25,7 +25,7 @@ from gis4wrf.plugin.options import get_options
 from gis4wrf.plugin.geo import load_wps_binary_layer
 from gis4wrf.plugin.ui.helpers import add_grid_lineedit, add_grid_combobox, clear_layout, create_lineedit, StringValidator
 from gis4wrf.plugin.constants import PLUGIN_NAME
-from .broadcast import Broadcast
+from gis4wrf.plugin.broadcast import Broadcast
 
 class DatasetsWidget(QWidget):
     tab_active = pyqtSignal()
@@ -53,6 +53,7 @@ class DatasetsWidget(QWidget):
 
         Broadcast.geo_datasets_updated.connect(self.populate_geog_data_tree)
         Broadcast.met_datasets_updated.connect(self.populate_met_data_tree)
+        Broadcast.project_updated.connect(self.populate_geog_data_tree)
 
     @property
     def project(self) -> Project:
@@ -249,8 +250,10 @@ class DatasetsWidget(QWidget):
         tree = self.tree_geog_data
         tree.clear()
 
-        # FIXME guard if incorrect WPS path
-        tbl = self.geogrid_tbl = self.project.read_geogrid_tbl()
+        try:
+            tbl = self.geogrid_tbl = self.project.read_geogrid_tbl()
+        except FileNotFoundError:
+            return
         if tbl is None:
             return
         add_derived_metadata_to_geogrid_tbl(tbl, self.options.geog_dir)
