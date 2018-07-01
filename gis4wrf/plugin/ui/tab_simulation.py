@@ -66,7 +66,7 @@ class SimulationTab(QTabWidget):
         if project.path:
             if not self.options.wps_dir or not self.options.wrf_dir:
                 msg_bar = self.iface.messageBar() # type: QgsMessageBar
-                msg_bar.pushWarning(PLUGIN_NAME, 'PATH to WPS/WRF not set, functionality will be reduced. You can set the PATH under Settings > Options... > GIS4WRF')
+                msg_bar.pushWarning(PLUGIN_NAME, 'Path to WPS/WRF not set, functionality will be reduced. You can set the path under Settings > Options... > GIS4WRF')
             self.update_project()
         self.general_tab.project = project
         self.domain_tab.project = project
