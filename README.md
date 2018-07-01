@@ -1,40 +1,39 @@
 <p align="center"><img src="https://github.com/GIS4WRF/gis4wrf-docs/blob/master/images/gis4wrf.png"></p>
 
 # GIS4WRF
-GIS4WRF is a free and open source [QGIS](https://qgis.org/) plug-in to help researchers and practitioners with their [Advanced Research Weather Research and Forecasting](https://www.mmm.ucar.edu/weather-research-and-forecasting-model) modelling workflows. GIS4WRF can be used to pre-process input data, run simulations, and visualize or post-process results. We currently support GIS4WRF for Windows, macOS and Ubuntu and provide pre-built WPS and WRF binaries for Windows systems only.
+GIS4WRF is a free and open source [QGIS](https://qgis.org/) plug-in to help researchers and practitioners with their [Advanced Research Weather Research and Forecasting](https://www.mmm.ucar.edu/weather-research-and-forecasting-model) modelling workflows. GIS4WRF can be used to pre-process input data, run simulations, and visualize or post-process results (Fig. 1). We currently support GIS4WRF for Windows (7, 8, 10), macOS (Sierra, High Sierra), and Ubuntu (17.x, 18.x). 
+
+*Did you know? We provide pre-built WPS and WRF binaries for Windows. After [installing](#installation-overview) GIS4WRF go ahead and explore all its features from the included [documentation](#documentation-overview).*
 
 <p align="center"><img src="https://github.com/GIS4WRF/gis4wrf-docs/blob/dmey/gis4wrf-0.9.0/images/gis4wrf-demo.gif"></p>
-
- Please refer to the table below for a overview of currently-supported OS platforms.
-
-| OS Name   | OS Version                            | Downloadable WPS & WRF Pre-built Binaries? |
-|-----------|---------------------------------------|--------------------------------------------|
-| Windows   | 7, 8, 10                              | YES                                        |
-| macOS     | 10.12 (Sierra), 10.13 (High Sierra)   | NO                                         |
-| Ubuntu    | 17.x, 18.x                            | NO                                         |
+<p align="center">Fig 1. Configure, run and visualize a WRF simulation in GIS4WRF</p>
 
 *Tip: if you would like us to support other Linux distributions, fix a bug, or simply add a new feature, do let us know by [opening an issue](issues).*
 
 ## Table of Contents
 - [GIS4WRF](#gis4wrf)
     - [Table of Contents](#table-of-contents)
-    - [Installation](#installation)
-    - [Documentation](#documentation)
+    - [Installation Overview](#installation-overview)
+    - [Documentation Overview](#documentation-overview)
     - [How to reference GIS4WRF](#how-to-reference-gis4wrf)
     - [Contributing](#contributing)
     - [Versioning](#versioning)
     - [Copyright and Licence](#copyright-and-licence)
 
-## Installation
-If you are already familiar with QGIS and have the latest version of QGIS 3 on your system, you can find GIS4WRF ready to be downloaded and installed from the `Plugins` > `Manage and Install Plugins...` menu. If you are not familiar with QGIS or are encountering issues with the installation, please refer to the [installation guide](INSTALL.md).
+## Installation Overview
+If you are already familiar with QGIS and have already installed the latest version of **QGIS 3** on your system, you can find GIS4WRF ready to be downloaded and installed from the `Plugins` > `Manage and Install Plugins...` menu (Fig 2). If you are not familiar with QGIS, or are encountering issues with the installation, please refer to the [installation guide](INSTALL.md).
 
 <p align="center"><img src="https://github.com/GIS4WRF/gis4wrf-docs/blob/dmey/gis4wrf-0.9.0/images/gis4wrf-installation.gif"></p>
+<p align="center">Fig 2. GIS4WRF — Installation</p>
 
-
-## Documentation
-Documentation on how to use GIS4WRF can be found directly in GIS4WRF under the `Home` tab. At each release of GIS4WRF, we bundle the most up-to-date documentation found in the [GIS4WRF documentation repository](https://github.com/GIS4WRF/gis4wrf-docs). If you find a mistake in the documentation, would like to contribute or simply browse the documentation outside of QGIS, please refer to the [GIS4WRF documentation repository](https://github.com/GIS4WRF/gis4wrf-docs).
+After installation, you can configure GIS4WRF directly in QGIS from the `Settings` > `Options...` > `GIS4WRF` menu (Fig. 3). To learn more about features and how to use GIS4WRF please refer to the GIS4WRF [documentation](#documentation-overview). 
 
 <p align="center"><img src="https://github.com/GIS4WRF/gis4wrf-docs/blob/dmey/gis4wrf-0.9.0/images/gis4wrf-configuration.gif"></p>
+<p align="center">Fig 3. GIS4WRF — Configuration</p>
+
+## Documentation Overview
+Documentation on how to use GIS4WRF can be found directly in GIS4WRF under the `Home` tab. At each release of GIS4WRF, we bundle the most up-to-date documentation found in the [GIS4WRF documentation repository](https://github.com/GIS4WRF/gis4wrf-docs). If you find a mistake in the documentation, would like to contribute or you would like to simply browse the documentation outside of QGIS, please refer to the [GIS4WRF documentation repository](https://github.com/GIS4WRF/gis4wrf-docs).
+
 
 ## How to reference GIS4WRF
 We ask to please acknowledge our work by citing and referencing both, the GIS4WRF paper and the GIS4WRF software in the following way:
