@@ -110,15 +110,12 @@ met_datasets = {
     "ds083.0" : "NCEP FNL Operational Model Global Tropospheric Analyses, April 1997 through June 2007",
     "ds083.2" : "NCEP FNL Operational Model Global Tropospheric Analyses, continuing from July 1999",
     "ds083.3" : "NCEP GDAS/FNL 0.25 Degree Global Tropospheric Analyses and Forecast Grids",
-    "ds084.1" : "NCEP GFS 0.25 Degree Global Forecast Grids Historical Archive",
-    "ds090.0" : "CEP/NCAR Global Reanalysis Products, 1948-continuing"
-
+    "ds084.1" : "NCEP GFS 0.25 Degree Global Forecast Grids Historical Archive"
 }
 
 met_datasets_vtables = {
     "ds083.0" : "Vtable.GFS",
     "ds083.2" : "Vtable.GFS",
     "ds083.3" : "Vtable.GFS",
-    "ds084.1" : "Vtable.GFS",
-    "ds090.0" : "Vtable.NNRP"
+    "ds084.1" : "Vtable.GFS"
 }
