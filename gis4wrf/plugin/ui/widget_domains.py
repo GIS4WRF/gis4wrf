@@ -14,6 +14,8 @@ from qgis.core import QgsCoordinateReferenceSystem, QgsProject, QgsRectangle
 from qgis.gui import QgisInterface
 
 from gis4wrf.core import LonLat, Coordinate2D, CRS, Project
+from gis4wrf.core.writers.namelist import write_namelist
+from gis4wrf.core.transforms.project_to_wps_namelist import convert_project_to_wps_namelist
 from gis4wrf.plugin.geo import update_domain_outline_layers, update_domain_grid_layers, get_qgis_crs, rect_to_bbox
 from gis4wrf.plugin.ui.helpers import (
     MyLineEdit, add_grid_lineedit, update_input_validation_style, create_lineedit,
@@ -276,11 +278,12 @@ class DomainWidget(QWidget):
     def on_export_geogrid_namelist_button_clicked(self):
         if not self.update_project():
             raise ValueError('Input invalid, check fields')
-        folder = QFileDialog.getExistingDirectory(caption='Select namelist.wps output folder')
-        if not folder:
+        file_path, _ = QFileDialog.getSaveFileName(caption='Save wps namelist as', \
+                                                   directory='namelist.wps')
+        if not file_path:
             return
-        self.project.export_namelists(folder)
-
+        wps_namelist = convert_project_to_wps_namelist(self.project)
+        write_namelist(wps_namelist, file_path)
 
     @pyqtSlot()
     def on_set_projection_button_clicked(self):
