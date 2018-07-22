@@ -1,7 +1,7 @@
 # GIS4WRF (https://doi.org/10.5281/zenodo.1288569)
 # Copyright (c) 2018 D. Meyer and M. Riechert. Licensed under MIT.
 
-from typing import Optional
+from typing import Optional, List
 import os
 import platform
 
@@ -130,6 +130,19 @@ class Options(object):
         if not self.wps_dir:
             return None
         return os.path.join(self.wps_dir, 'ungrib.exe')
+
+    @property
+    def ungrib_vtable_dir(self) -> Optional[str]:
+        if not self.wps_dir:
+            return None
+        return os.path.join(self.wps_dir, 'ungrib', 'Variable_Tables')
+
+    @property
+    def ungrib_vtable_filenames(self) -> Optional[List[str]]:
+        if not self.wps_dir:
+            return None
+        vtable_dir = self.ungrib_vtable_dir
+        return sorted(filename for filename in os.listdir(vtable_dir) if filename.startswith('Vtable.'))
 
     @property
     def metgrid_exe(self) -> Optional[str]:

@@ -143,9 +143,8 @@ def add_grid_lineedit(grid: QGridLayout, row: int, label_name: str, validator: O
     """Helper to return a 'validator-ready' grid layout
     composed of a name label, line edit and optional unit.
     """
-    grid.addWidget(QLabel(label_name + ':'), row, 0)
     lineedit = create_lineedit(validator, required)
-    grid.addWidget(lineedit, row, 1)
+    add_grid_labeled_widget(grid, row, label_name, lineedit)
     if unit:
         grid.addWidget(QLabel(unit), row, 2)
     return lineedit
@@ -154,10 +153,13 @@ def add_grid_combobox(grid: QGridLayout, row: int, label_name: str) -> QComboBox
     """Helper to return a 'validator-ready' grid layout
     composed of a name label, line edit and optional unit.
     """
-    grid.addWidget(QLabel(label_name + ':'), row, 0)
     combo = QComboBox()
-    grid.addWidget(combo, row, 1)
+    add_grid_labeled_widget(grid, row, label_name, combo)
     return combo
+
+def add_grid_labeled_widget(grid: QGridLayout, row: int, label_name: str, widget: QWidget) -> None:
+    grid.addWidget(QLabel(label_name + ':'), row, 0)
+    grid.addWidget(widget, row, 1)
 
 def create_two_radio_group_box(radio1_name: str, radio2_name: str,
                                gbox_name: str) -> QGroupBox:

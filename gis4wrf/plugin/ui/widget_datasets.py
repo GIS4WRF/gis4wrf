@@ -24,6 +24,7 @@ from gis4wrf.core import (
 from gis4wrf.plugin.options import get_options
 from gis4wrf.plugin.geo import load_wps_binary_layer
 from gis4wrf.plugin.ui.helpers import add_grid_lineedit, add_grid_combobox, clear_layout, create_lineedit, StringValidator
+from gis4wrf.plugin.ui.dialog_custom_met_dataset import CustomMetDatasetDialog
 from gis4wrf.plugin.constants import PLUGIN_NAME
 from gis4wrf.plugin.broadcast import Broadcast
 
@@ -453,6 +454,10 @@ class DatasetsWidget(QWidget):
         selection_button.clicked.connect(self.on_met_data_selection_button_clicked)
         vbox_datasets_spec.addWidget(selection_button)
 
+        custom_button = QPushButton('Use Custom Dataset')
+        custom_button.clicked.connect(self.on_met_data_custom_button_clicked)
+        vbox_datasets_spec.addWidget(custom_button)
+
         hbox_current_config = QHBoxLayout()
         vbox_datasets_spec.addLayout(hbox_current_config)
         hbox_current_config.addWidget(QLabel('Current Configuration: '))
@@ -468,7 +473,12 @@ class DatasetsWidget(QWidget):
             config = None
         else:
             time_range = [d.strftime('%Y-%m-%d %H:%M') for d in spec['time_range']]
-            config = '{} / {}\n{} -\n{}'.format(spec['dataset'], spec['product'], *time_range)
+            dataset = spec['dataset']
+            product = spec['product']
+            if dataset:
+                config = '{} / {}\n{} -\n{}'.format(spec['dataset'], spec['product'], *time_range)
+            else:
+                config = 'Custom dataset / {} GRIB files\n{} -\n{}'.format(len(spec['paths']), *time_range)
 
         lbl = self.met_data_current_config_label
         if not config:
@@ -519,6 +529,28 @@ class DatasetsWidget(QWidget):
             'product': os.path.basename(product_folder),
             'time_range': meta_all.time_range,
             'interval_seconds': meta_all.interval_seconds
+        }
+        self.set_met_data_current_config_label()
+
+    def on_met_data_custom_button_clicked(self) -> None:
+        try:
+            spec = self.project.met_dataset_spec
+            if spec['dataset']:
+                spec = None # not a custom dataset
+        except KeyError:
+            # met data not configured yet
+            spec = None
+
+        dialog = CustomMetDatasetDialog(self.options.ungrib_vtable_filenames, spec)
+        if not dialog.exec_():
+            return
+
+        self.project.met_dataset_spec = {
+            'paths': dialog.paths,
+            'base_folder': dialog.base_folder,
+            'vtable': dialog.vtable,
+            'time_range': [dialog.start_date, dialog.end_date],
+            'interval_seconds': dialog.interval_seconds
         }
         self.set_met_data_current_config_label()
 
