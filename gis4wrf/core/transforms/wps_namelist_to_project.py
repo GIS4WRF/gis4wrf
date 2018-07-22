@@ -8,27 +8,29 @@ from gis4wrf.core.project import Project
 @export
 def convert_wps_nml_to_project(nml: dict, existing_project: Project) -> Project:
     data = existing_project.data.copy()
-    data['domains'] = convert_nml_to_gis4wrf_domains(nml)
+    data['domains'] = convert_nml_to_project_domains(nml)
     project = Project(data, existing_project.path)
     return project
 
-def convert_nml_to_gis4wrf_domains(nml: dict) -> List[dict]:
+def convert_nml_to_project_domains(nml: dict) -> List[dict]:
+    max_dom = nml['share']['max_dom'] # type: int
+
+    nml = nml['geogrid']
+    map_proj = nml['map_proj'] # type: str
     parent_id = nml['parent_id'] # type: List[int]
     parent_grid_ratio = nml['parent_grid_ratio'] # type: List[int]
     i_parent_start = nml['i_parent_start'] # type: List[int]
     j_parent_start = nml['j_parent_start'] # type: List[int]
     e_we = nml['e_we'] # type: List[int]
     e_sn = nml['e_sn'] # type: List[int]
-    map_proj = nml['map_proj'] # type: str
     dx = [nml['dx']] # type: List[float]
     dy = [nml['dy']] # type: List[float]
     ref_lon = [nml['ref_lon']] # type: List[float]
     ref_lat = [nml['ref_lat']] # type: List[float]
-    max_dom = nml['max_dom'] # type: int
 
     # Check that there are no domains with 2 nests on the same level
     if parent_id != [1] + list(range(1, max_dom)):
-        raise RuntimeError(f'We only support 1 nested domain per parent domain.')
+        raise RuntimeError('We only support 1 nested domain per parent domain.')
 
     # Check if projection is currently supported
     SUPPORTED_PROJ = ['lat-lon']

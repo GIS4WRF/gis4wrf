@@ -22,6 +22,7 @@ from gis4wrf.plugin.ui.helpers import (
     MyLineEdit, add_grid_lineedit, update_input_validation_style, create_lineedit,
     create_two_radio_group_box, WhiteScroll, RATIO_VALIDATOR, DIM_VALIDATOR
 )
+from gis4wrf.plugin.broadcast import Broadcast
 
 MAX_PARENTS = 22
 DECIMALS = 50
@@ -44,7 +45,7 @@ class DomainWidget(QWidget):
         # Import/Export
         ## Import from 'namelist.wps'
         import_from_namelist_button = QPushButton("Import from namelist")
-        import_from_namelist_button.setObjectName('import_from_namelist')
+        import_from_namelist_button.setObjectName('import_from_namelist_button')
 
         ## Export to namelist
         export_geogrid_namelist_button = QPushButton("Export to namelist")
@@ -276,13 +277,13 @@ class DomainWidget(QWidget):
         self.draw_bbox_and_grids(zoom_out=True)
 
     @pyqtSlot()
-    def on_import_from_namelist_button_clicked(self):
+    def on_import_from_namelist_button_clicked(self) -> None:
         file_path, _ = QFileDialog.getOpenFileName(caption='Open wps namelist')
         if not file_path:
             return
-        nml = read_namelist(file_path)
+        nml = read_namelist(file_path, schema_name='wps')
         project = convert_wps_nml_to_project(nml, self.project)
-        # TODO load new project
+        Broadcast.open_project_from_object.emit(project)
 
     @pyqtSlot()
     def on_export_geogrid_namelist_button_clicked(self):
