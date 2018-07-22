@@ -6,18 +6,17 @@ import os
 
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import ( 
-    QHBoxLayout, QVBoxLayout, QLabel, QLineEdit, QToolButton, QFileDialog, QAction, QGroupBox,
+    QHBoxLayout, QVBoxLayout, QLabel, QLineEdit, QGroupBox,
     QCheckBox, QPushButton, QMessageBox
 )
 
-from qgis.core import QgsApplication
 from qgis.gui import QgsOptionsWidgetFactory, QgsOptionsPageWidget
 
 from gis4wrf.core import get_wps_dist_url, get_wrf_dist_url, download_and_extract_dist, WRF_WPS_DIST_VERSION
 from gis4wrf.core.util import export
 from gis4wrf.plugin.options import get_options
 from gis4wrf.plugin.constants import PLUGIN_NAME, GIS4WRF_LOGO_PATH
-from gis4wrf.plugin.ui.helpers import FormattedLabel, WaitDialog, reraise, wrap_error
+from gis4wrf.plugin.ui.helpers import FormattedLabel, WaitDialog, create_file_input, reraise, wrap_error
 from gis4wrf.plugin.ui.thread import TaskThread
 
 @export
@@ -41,8 +40,9 @@ class ConfigOptionsPage(QgsOptionsPageWidget):
         self.vbox = QVBoxLayout()
         self.setLayout(self.vbox)
 
-        self.working_dir, layout = self.create_folder_input(
-            'Working directory', self.options.working_dir)
+        self.working_dir, layout = create_file_input(
+            is_folder=True, input_label='Working directory',
+            value=self.options.working_dir, start_folder=self.options.working_dir)
         self.vbox.addLayout(layout)
 
         self.mpi_enabled, self.wps_dir, self.wrf_dir, gbox = self.create_distribution_box()
@@ -87,10 +87,12 @@ class ConfigOptionsPage(QgsOptionsPageWidget):
         hbox.addWidget(mpi_enabled)
         vbox.addLayout(hbox)
 
-        wps_dir, hbox = self.create_folder_input('WPS directory', self.options.wps_dir)
+        wps_dir, hbox = create_file_input(input_label='WPS directory',
+            is_folder=True, start_folder=self.options.distributions_dir, value=self.options.wps_dir)
         vbox.addLayout(hbox)
 
-        wrf_dir, hbox = self.create_folder_input('WRF directory', self.options.wrf_dir)
+        wrf_dir, hbox = create_file_input(input_label='WRF directory',
+            is_folder=True, start_folder=self.options.distributions_dir, value=self.options.wrf_dir)
         vbox.addLayout(hbox)
 
         hbox = QHBoxLayout()
@@ -104,29 +106,6 @@ class ConfigOptionsPage(QgsOptionsPageWidget):
         vbox.addLayout(hbox)
 
         return mpi_enabled, wps_dir, wrf_dir, gbox
-
-    def create_folder_input(self, label: str, value: str) -> Tuple[QLineEdit, QHBoxLayout]:
-        hbox = QHBoxLayout()
-
-        field = QLineEdit(value)
-
-        button = QToolButton()
-        action = QAction(QgsApplication.getThemeIcon('/mActionFileOpen.svg'), 'Choose Folder')
-        button.setDefaultAction(action)
-
-        def on_button_triggered():
-            folder = QFileDialog.getExistingDirectory(caption='Select ' + label, directory=self.options.distributions_dir)
-            if not folder:
-                return
-            field.setText(folder)
-
-        button.triggered.connect(on_button_triggered)
-
-        hbox.addWidget(QLabel(label))
-        hbox.addWidget(field)
-        hbox.addWidget(button)
-
-        return field, hbox
 
     def create_rda_auth_input(self) -> Tuple[QLineEdit, QLineEdit, QGroupBox]:
         username = QLineEdit(self.options.rda_username)

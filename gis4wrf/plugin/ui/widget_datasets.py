@@ -3,6 +3,7 @@
 
 from operator import xor
 import os
+from pathlib import Path
 import re
 
 from PyQt5.QtCore import Qt, pyqtSignal
@@ -541,14 +542,19 @@ class DatasetsWidget(QWidget):
             # met data not configured yet
             spec = None
 
-        dialog = CustomMetDatasetDialog(self.options.ungrib_vtable_filenames, spec)
+        dialog = CustomMetDatasetDialog(self.options.ungrib_vtable_dir, spec)
         if not dialog.exec_():
             return
+
+        vtable_path = dialog.vtable_path
+        # only store absolute path if not a standard WPS vtable
+        if Path(vtable_path).parent == Path(self.options.ungrib_vtable_dir):
+            vtable_path = Path(vtable_path).name
 
         self.project.met_dataset_spec = {
             'paths': dialog.paths,
             'base_folder': dialog.base_folder,
-            'vtable': dialog.vtable,
+            'vtable': vtable_path,
             'time_range': [dialog.start_date, dialog.end_date],
             'interval_seconds': dialog.interval_seconds
         }

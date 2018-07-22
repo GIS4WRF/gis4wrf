@@ -1,7 +1,7 @@
 # GIS4WRF (https://doi.org/10.5281/zenodo.1288569)
 # Copyright (c) 2018 D. Meyer and M. Riechert. Licensed under MIT.
 
-from typing import Union, Optional, List, Callable
+from typing import Union, Optional, Tuple, List, Callable
 import os
 import signal
 import sys
@@ -18,7 +18,7 @@ from PyQt5.Qt import QWebPage
 from PyQt5.QtWidgets import (
     QWidget, QLabel, QLayout, QHBoxLayout, QVBoxLayout, QGridLayout, QComboBox, QMessageBox,
     QScrollArea, QLineEdit, QPushButton, QGroupBox, QRadioButton, QFileDialog, QTreeWidget, QTreeWidgetItem,
-    QSizePolicy, QDialog, QProgressBar
+    QSizePolicy, QDialog, QProgressBar, QToolButton, QAction
 )
 
 # TODO: QWebView is deprecated. We should use QWebEngineView instead.
@@ -27,7 +27,7 @@ from PyQt5.QtWebKitWidgets import QWebView
 # from PyQt5.QtWebEngineWidgets import QWebEngineView
 
 from qgis.gui import QgisInterface
-from qgis.core import QgsMapLayer
+from qgis.core import QgsApplication, QgsMapLayer
 
 # NOTE: Do not import anything from gis4wrf.core or other gis4wrf.plugin module depending on core here.
 #       The helpers module is used in the bootstrapping UI.
@@ -157,9 +157,45 @@ def add_grid_combobox(grid: QGridLayout, row: int, label_name: str) -> QComboBox
     add_grid_labeled_widget(grid, row, label_name, combo)
     return combo
 
-def add_grid_labeled_widget(grid: QGridLayout, row: int, label_name: str, widget: QWidget) -> None:
+def add_grid_labeled_widget(grid: QGridLayout, row: int, label_name: str, widget: Union[QWidget,QLayout]) -> None:
     grid.addWidget(QLabel(label_name + ':'), row, 0)
-    grid.addWidget(widget, row, 1)
+    if isinstance(widget, QWidget):
+        grid.addWidget(widget, row, 1)
+    else:
+        grid.addLayout(widget, row, 1)
+
+def create_file_input(start_folder: str, dialog_caption: Optional[str]=None, input_label: Optional[str]=None, is_folder=False, value: Optional[str]=None) -> Tuple[QLineEdit, QHBoxLayout]:
+    hbox = QHBoxLayout()
+
+    if value is None:
+        value = ''
+    field = QLineEdit(value)
+
+    button = QToolButton()
+    tooltip_suffix = 'Folder' if is_folder else 'File'
+    action = QAction(QgsApplication.getThemeIcon('/mActionFileOpen.svg'), 'Choose ' + tooltip_suffix)
+    button.setDefaultAction(action)
+
+    if dialog_caption is None and input_label:
+        dialog_caption = 'Select ' + input_label
+
+    def on_button_triggered():
+        if is_folder:
+            path = QFileDialog.getExistingDirectory(caption=dialog_caption, directory=start_folder)
+        else:
+            path, _ = QFileDialog.getOpenFileName(caption=dialog_caption, directory=start_folder)
+        if not path:
+            return
+        field.setText(path)
+
+    button.triggered.connect(on_button_triggered)
+
+    if input_label:
+        hbox.addWidget(QLabel(input_label))
+    hbox.addWidget(field)
+    hbox.addWidget(button)
+
+    return field, hbox
 
 def create_two_radio_group_box(radio1_name: str, radio2_name: str,
                                gbox_name: str) -> QGroupBox:

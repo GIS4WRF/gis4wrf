@@ -17,11 +17,11 @@ from PyQt5.QtWidgets import (
     QAbstractItemView, QDateTimeEdit, QLabel
 )
 
-from gis4wrf.plugin.ui.helpers import add_grid_lineedit, add_grid_combobox, add_grid_labeled_widget
+from gis4wrf.plugin.ui.helpers import add_grid_lineedit, add_grid_combobox, add_grid_labeled_widget, create_file_input
 
 
 class CustomMetDatasetDialog(QDialog):
-    def __init__(self, vtable_filenames: List[str], spec: Optional[dict]=None) -> None:
+    def __init__(self, vtable_dir: str, spec: Optional[dict]=None) -> None:
         super().__init__()
 
         self.paths = set() # type: Set[Path]
@@ -69,10 +69,10 @@ class CustomMetDatasetDialog(QDialog):
         interval_validator.setBottom(1)
         self.interval_input = add_grid_lineedit(grid, 2, 'Interval in seconds', interval_validator, required=True)   
 
-        # vtable dropdown
-        self.vtable_selector = add_grid_combobox(grid, 3, 'VTable')
-        for filename in vtable_filenames:
-            self.vtable_selector.addItem(filename)
+        # vtable file input
+        self.vtable_input, vtable_hbox = create_file_input(dialog_caption='Select VTable file',
+            is_folder=False, start_folder=vtable_dir)
+        add_grid_labeled_widget(grid, 3, 'VTable', vtable_hbox)
 
         btn_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         btn_box.accepted.connect(self.on_ok_clicked)
@@ -92,7 +92,7 @@ class CustomMetDatasetDialog(QDialog):
 
             self.interval_input.set_value(spec['interval_seconds'])
 
-            self.vtable_selector.setCurrentText(spec['vtable'])
+            self.vtable_input.setText(spec['vtable'])
 
     @property
     def start_date(self) -> datetime:
@@ -107,8 +107,8 @@ class CustomMetDatasetDialog(QDialog):
         return self.interval_input.value()
 
     @property
-    def vtable(self) -> str:
-        return self.vtable_selector.currentText()
+    def vtable_path(self) -> str:
+        return self.vtable_input.text()
 
     def on_ok_clicked(self) -> None:
         def error(msg: str) -> None:
@@ -124,6 +124,12 @@ class CustomMetDatasetDialog(QDialog):
             return
         if self.start_date > self.end_date:
             error('Start date cannot be after the end date.')
+            return
+        if not self.vtable_path:
+            error('No VTable file selected.')
+            return
+        if not os.path.exists(self.vtable_path):
+            error('VTable file does not exist.')
             return
         self.accept()
 
