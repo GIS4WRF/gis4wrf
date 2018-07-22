@@ -24,6 +24,7 @@ class CustomMetDatasetDialog(QDialog):
     def __init__(self, vtable_dir: str, spec: Optional[dict]=None) -> None:
         super().__init__()
 
+        self.vtable_dir = vtable_dir
         self.paths = set() # type: Set[Path]
 
         geom = QGuiApplication.primaryScreen().geometry()
@@ -128,7 +129,7 @@ class CustomMetDatasetDialog(QDialog):
         if not self.vtable_path:
             error('No VTable file selected.')
             return
-        if not os.path.exists(self.vtable_path):
+        if not os.path.exists(os.path.join(self.vtable_dir, self.vtable_path)):
             error('VTable file does not exist.')
             return
         self.accept()
