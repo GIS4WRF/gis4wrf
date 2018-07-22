@@ -138,13 +138,6 @@ class Options(object):
         return os.path.join(self.wps_dir, 'ungrib', 'Variable_Tables')
 
     @property
-    def ungrib_vtable_filenames(self) -> Optional[List[str]]:
-        if not self.wps_dir:
-            return None
-        vtable_dir = self.ungrib_vtable_dir
-        return sorted(filename for filename in os.listdir(vtable_dir) if filename.startswith('Vtable.'))
-
-    @property
     def metgrid_exe(self) -> Optional[str]:
         if not self.wps_dir:
             return None
