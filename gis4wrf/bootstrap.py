@@ -38,7 +38,7 @@ DEPS = [
 
     #Dependency('xarray', install='0.10.0', min=None),
     Dependency('f90nml', install='1.0.2', min=None),
-    Dependency('pyyaml', install='3.12', min=None),
+    Dependency('pyyaml', install='3.13', min=None),
     # >= 1.3.0 is built against too recent numpy version
     Dependency('netCDF4', install='1.2.9', min=None),
 
