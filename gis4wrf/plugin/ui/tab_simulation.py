@@ -54,6 +54,7 @@ class SimulationTab(QTabWidget):
 
         self.currentChanged.connect(self.on_tab_changed)
         Broadcast.options_updated.connect(self.update_project)
+        Broadcast.open_project_from_object.connect(self.open_project_from_object)
 
     def open_data_tab(self):
         self.setCurrentIndex(2)
@@ -99,6 +100,15 @@ class SimulationTab(QTabWidget):
         self.project.save()
         self.set_project_in_tabs()
         self.enable_project_dependent_tabs()
+
+    def open_project_from_object(self, project: Project) -> None:
+        self.project = project
+        self.set_project_in_tabs()
+        if project.path:
+            self.enable_project_dependent_tabs()
+            self.project.save()
+        else:
+            self.disable_project_dependent_tabs()
 
     def on_open_project(self, path: str) -> None:
         self.project = Project.load(path)
