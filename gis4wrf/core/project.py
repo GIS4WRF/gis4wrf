@@ -140,32 +140,45 @@ class Project(object):
     @property
     def met_dataset_spec(self) -> dict:
         spec = self.data['met_dataset_spec']
-        paths = [os.path.join(self.met_data_path, rel_path) for rel_path in spec['rel_paths']]
+        base_folder = spec.get('base_folder', self.met_data_path)
+        paths = [os.path.join(base_folder, rel_path) for rel_path in spec['rel_paths']]
         if not os.path.exists(paths[0]):
             # This would happen if a dataset was manually deleted from disk
             # or the project was copied to another machine which doesn't have
             # the dataset yet.
             # TODO use as trigger to offer download of missing data
             paths = None
-        return {
+        vtable = spec.get('vtable')
+        if not vtable:
+            vtable = met_datasets_vtables[spec['dataset']]
+        result = {
             'dataset': spec['dataset'],
             'product': spec['product'],
             'time_range': [datetime.strptime(d, '%Y-%m-%d %H:%M') for d in spec['time_range']],
             'interval_seconds': spec['interval_seconds'],
-            'paths': paths
+            'paths': paths,
+            'vtable': vtable
         }
+        if base_folder != self.met_data_path:
+            result['base_folder'] = base_folder
+        return result
 
     @met_dataset_spec.setter
     def met_dataset_spec(self, spec: dict) -> None:
-        rel_paths = [os.path.relpath(path, self.met_data_path) for path in spec['paths']]
+        base_folder = spec.get('base_folder', self.met_data_path)
+        rel_paths = [os.path.relpath(path, base_folder) for path in spec['paths']]
         time_range = [d.strftime('%Y-%m-%d %H:%M') for d in spec['time_range']]
-        self.data['met_dataset_spec'] = {
-            'dataset': spec['dataset'],
-            'product': spec['product'],
+        data_spec = self.data['met_dataset_spec'] = {
+            'dataset': spec.get('dataset'),
+            'product': spec.get('product'),
             'time_range': time_range,
             'interval_seconds': spec['interval_seconds'],
             'rel_paths': rel_paths
         }
+        if base_folder != self.met_data_path:
+            data_spec['base_folder'] = base_folder
+        if 'vtable' in spec:
+            data_spec['vtable'] = spec['vtable']
         self.save()
 
     def set_domains(self, map_proj: str,
@@ -364,7 +377,7 @@ class Project(object):
             # met data not configured yet
             pass
         else:
-            vtable_filename = met_datasets_vtables[self.met_dataset_spec['dataset']]
+            vtable_filename = self.met_dataset_spec['vtable']
             shutil.copy(os.path.join(wps_folder, 'ungrib', 'Variable_Tables', vtable_filename),
                         os.path.join(self.run_wps_folder, 'Vtable'))
             

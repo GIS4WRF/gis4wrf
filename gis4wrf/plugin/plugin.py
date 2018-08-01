@@ -76,8 +76,7 @@ class QGISPlugin():
         add_default_basemap()
 
     def show_about(self) -> None:
-        self.dlg = AboutDialog()
-        self.dlg.show()
+        AboutDialog().exec_()
 
     def add_wrf_layer(self) -> None:
         path, _ = QFileDialog.getOpenFileName(caption='Open WRF NetCDF File')
