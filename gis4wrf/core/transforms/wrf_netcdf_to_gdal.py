@@ -172,11 +172,14 @@ def convert_wrf_nc_var_to_gdal_dataset(
         var = ds.variables[var_name]
         dims = var.dimensions
         shape = var.shape
+
     assert len(dims) == len(shape)
     if len(dims) == 4:
         # TODO remove once performance issues with VRT are resolved
         #      (see below)
         fmt = GDALFormat.GTIFF
+
+    ds.close()
 
     use_vrt = fmt.is_vrt
     ext = fmt.value
@@ -316,7 +319,9 @@ def get_supported_wrf_nc_variables(path: str) -> Dict[str,WRFNetCDFVariable]:
         is_wps = 'bottom_top' not in ds.dimensions
         if not is_wps:
             variables.update(DIAG_VARS)
-    
+
+    ds.close()
+
     return variables
 
 @export
@@ -325,6 +330,7 @@ def get_wrf_nc_extra_dims(path: str) -> Dict[str,WRFNetCDFExtraDim]:
     dims = ds.dimensions
     attrs = ds.__dict__
     extra_dims = {} # type: Dict[str,WRFNetCDFExtraDim]
+    ds.close()
 
     def add_dim(name: str, label: str, step_fn: Optional[Callable[[int],Any]]=None):
         if name not in dims:

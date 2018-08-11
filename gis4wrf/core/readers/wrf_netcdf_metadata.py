@@ -22,4 +22,5 @@ def get_wrf_nc_time_steps(path: str) -> List[str]:
         time = ''.join([c.decode() for c in val])
         time = time.replace('_', ' ')
         steps.append(time)
+    ds.close()
     return steps
