@@ -12,6 +12,7 @@ from datetime import datetime
 import string
 import itertools
 
+from gis4wrf.core.logging import logger
 from gis4wrf.core.util import export, gdal, get_temp_vsi_path, link_or_copy, ogr, read_vsi_string
 from gis4wrf.core.constants import PROJECT_JSON_VERSION
 from gis4wrf.core.crs import CRS, LonLat, BoundingBox2D, Coordinate2D
@@ -346,6 +347,8 @@ class Project(object):
         self.fill_domains()
         nml_patch = convert_project_to_wrf_namelist(self)
 
+        nml_path = self.wrf_namelist_path
+
         # Allow the user to change the following max_dom sized variables, but patch if the size is wrong.
         # The size is typically wrong when the template namelist from the WRF distribution is initially
         # copied and the user has nested domains, since the template assumes no nesting.
@@ -355,7 +358,7 @@ class Project(object):
             'time_control': ['history_interval', 'frames_per_outfile', 'input_from_file'],
             'domains': ['e_vert']
         }
-        nml_old = read_namelist(self.wrf_namelist_path, 'wrf')
+        nml_old = read_namelist(nml_path, 'wrf')
         for group_name, var_names in skip_patch_if_size_matches.items():
             if group_name not in nml_old:
                 continue
@@ -365,19 +368,24 @@ class Project(object):
                 old_size = len(nml_old[group_name][var_name])
                 patch_size = len(nml_patch[group_name][var_name])
                 if old_size == patch_size:
+                    logger.debug(f'{nml_path}: size of {group_name}/{var_name} as expected, skipping patch')
                     del nml_patch[group_name][var_name]
                     continue
                 var_old = nml_old[group_name][var_name]
                 if old_size < patch_size:
+                    logger.debug(f'{nml_path}: size of {group_name}/{var_name} smaller than expected,' +
+                        f' extending to correct size by repeating last array value {var_old[-1]}')
                     var_patch = var_old + [var_old[-1]] * (patch_size - old_size)
                 else:
+                    logger.debug(f'{nml_path}: size of {group_name}/{var_name} bigger than expected,' +
+                        ' truncating to correct size')
                     var_patch = var_old[:patch_size]
                 nml_patch[group_name][var_name] = var_patch
 
         # We use the end_* variables instead.
         delete_from_wrf_namelist = ['run_days', 'run_hours', 'run_minutes', 'run_seconds']
 
-        patch_namelist(self.wrf_namelist_path, nml_patch, delete_from_wrf_namelist)
+        patch_namelist(nml_path, nml_patch, delete_from_wrf_namelist)
 
     # TODO move prepare functions into separate module together with functions for running
     def prepare_wps_run(self, wps_folder: str) -> None:
