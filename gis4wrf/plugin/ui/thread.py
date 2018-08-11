@@ -64,11 +64,14 @@ class TaskThread(QThread):
 class ProgramThread(QThread):
     output = pyqtSignal(str)
 
-    def __init__(self, path: str, cwd: str, error_pattern: Optional[str]=None) -> None:
+    def __init__(self, path: str, cwd: str, error_pattern: Optional[str]=None,
+                 use_mpi: bool=False, mpi_processes: Optional[int]=None) -> None:
         super().__init__()
         self.path = path
         self.cwd = cwd
         self.error_pattern = error_pattern
+        self.use_mpi = use_mpi
+        self.mpi_processes = mpi_processes
         self.pid = -1
         self.error = None
         self.exc_info = None
@@ -78,7 +81,8 @@ class ProgramThread(QThread):
 
     def run(self):
         try:
-            for msg_type, msg_val in run_program(self.path, self.cwd, self.error_pattern):
+            for msg_type, msg_val in run_program(self.path, self.cwd, self.error_pattern,
+                                                 self.use_mpi, self.mpi_processes):
                 if msg_type == 'pid':
                     self.pid = msg_val
                 elif msg_type == 'log':

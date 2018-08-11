@@ -10,3 +10,5 @@ GIS4WRF_LOGO_PATH = ':/plugins/gis4wrf/gis4wrf_logo.svg'
 BUG_ICON_PATH = ':/plugins/gis4wrf/bug_icon.svg'
 ADD_WRF_NETCDF_LAYER_ICON_PATH = ':/plugins/gis4wrf/AddWRFNetCDFLayer.svg'
 ADD_BINARY_LAYER_ICON_PATH = ':/plugins/gis4wrf/AddBinaryLayer.svg'
+
+MSMPI_DOWNLOAD_PAGE = 'https://www.microsoft.com/en-us/download/details.aspx?id=56727'

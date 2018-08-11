@@ -131,23 +131,28 @@ class RunWidget(QWidget):
         self.prepare_wps_run()
 
         # TODO move this into core
-        self.run_program(self.options.geogrid_exe, self.project.run_wps_folder)
+        self.run_program(self.options.geogrid_exe, self.project.run_wps_folder,
+                         supports_mpi=True)
 
     def on_run_ungrib_clicked(self) -> None:
         self.prepare_wps_run()
-        self.run_program(self.options.ungrib_exe, self.project.run_wps_folder)
+        self.run_program(self.options.ungrib_exe, self.project.run_wps_folder,
+                         supports_mpi=False)
 
     def on_run_metgrid_clicked(self) -> None:
         self.prepare_wps_run()
-        self.run_program(self.options.metgrid_exe, self.project.run_wps_folder)
+        self.run_program(self.options.metgrid_exe, self.project.run_wps_folder,
+                         supports_mpi=True)
 
     def on_run_real_clicked(self) -> None:
         self.prepare_wrf_run()
-        self.run_program(self.options.real_exe, self.project.run_wrf_folder)
+        self.run_program(self.options.real_exe, self.project.run_wrf_folder,
+                         supports_mpi=True)
 
     def on_run_wrf_clicked(self) -> None:
         self.prepare_wrf_run()
-        self.run_program(self.options.wrf_exe, self.project.run_wrf_folder)
+        self.run_program(self.options.wrf_exe, self.project.run_wrf_folder,
+                         supports_mpi=True)
 
     def on_open_output_wps_clicked(self) -> None:
         path, _ = QFileDialog.getOpenFileName(
@@ -171,12 +176,12 @@ class RunWidget(QWidget):
         self.dont_report_program_status = True
         self.thread.kill_program()
 
-    def run_program(self, path: str, cwd: str) -> None:
+    def run_program(self, path: str, cwd: str, supports_mpi: bool) -> None:
         self.dont_report_program_status = False
         self.wps_box.setVisible(False)
         self.wrf_box.setVisible(False)
         self.control_box.setVisible(True)
-        self.run_program_in_background(path, cwd, self.on_program_execution_done)
+        self.run_program_in_background(path, cwd, self.on_program_execution_done, supports_mpi)
 
     def on_program_execution_done(self, path: str, error: Union[bool, str, None]) -> None:
         self.wps_box.setVisible(True)
@@ -257,7 +262,8 @@ class RunWidget(QWidget):
         
         return gbox, text_area, highlighter
 
-    def run_program_in_background(self, path: str, cwd: str, on_done: Callable[[str,Union[bool,str,None]],None]) -> None:
+    def run_program_in_background(self, path: str, cwd: str, on_done: Callable[[str,Union[bool,str,None]],None],
+                                  supports_mpi: bool) -> None:
         self.stdout_textarea.clear()
 
         # WRF/WPS does not use exit codes to indicate success/failure,
@@ -266,8 +272,9 @@ class RunWidget(QWidget):
 
         # Using QThread and signals (instead of a plain Python thread) is necessary
         # so that the on_done callback is run on the UI thread, instead of the worker thread.
-        thread = ProgramThread(path, cwd, wrf_error_pattern)
-        # TODO add support for MPI
+        thread = ProgramThread(path, cwd, wrf_error_pattern,
+                               use_mpi=supports_mpi and self.options.mpi_enabled,
+                               mpi_processes=self.options.mpi_processes)
 
         def on_output(out: str) -> None:
             self.stdout_textarea.appendPlainText(out)

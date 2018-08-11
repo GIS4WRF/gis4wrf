@@ -3,11 +3,14 @@
 
 from typing import Tuple, Callable
 import os
+import platform
+import multiprocessing
+import webbrowser
 
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import ( 
     QHBoxLayout, QVBoxLayout, QLabel, QLineEdit, QGroupBox,
-    QCheckBox, QPushButton, QMessageBox
+    QCheckBox, QPushButton, QSpinBox, QMessageBox
 )
 
 from qgis.gui import QgsOptionsWidgetFactory, QgsOptionsPageWidget
@@ -15,7 +18,7 @@ from qgis.gui import QgsOptionsWidgetFactory, QgsOptionsPageWidget
 from gis4wrf.core import get_wps_dist_url, get_wrf_dist_url, download_and_extract_dist, WRF_WPS_DIST_VERSION
 from gis4wrf.core.util import export
 from gis4wrf.plugin.options import get_options
-from gis4wrf.plugin.constants import PLUGIN_NAME, GIS4WRF_LOGO_PATH
+from gis4wrf.plugin.constants import PLUGIN_NAME, GIS4WRF_LOGO_PATH, MSMPI_DOWNLOAD_PAGE
 from gis4wrf.plugin.ui.helpers import FormattedLabel, WaitDialog, create_file_input, reraise, wrap_error
 from gis4wrf.plugin.ui.thread import TaskThread
 
@@ -45,7 +48,8 @@ class ConfigOptionsPage(QgsOptionsPageWidget):
             value=self.options.working_dir, start_folder=self.options.working_dir)
         self.vbox.addLayout(layout)
 
-        self.mpi_enabled, self.wps_dir, self.wrf_dir, gbox = self.create_distribution_box()
+        self.mpi_enabled, self.mpi_processes, self.wps_dir, self.wrf_dir, gbox = \
+            self.create_distribution_box()
         self.vbox.addWidget(gbox)
 
         self.rda_username, self.rda_password, gbox = self.create_rda_auth_input()
@@ -57,12 +61,13 @@ class ConfigOptionsPage(QgsOptionsPageWidget):
         ''' Called when the options dialog is accepted. '''
         self.options.working_dir = self.working_dir.text()
         self.options.mpi_enabled = self.mpi_enabled.isChecked()
+        self.options.mpi_processes = self.mpi_processes.value()
         self.options.wrf_dir = self.wrf_dir.text()
         self.options.wps_dir = self.wps_dir.text()
         self.options.rda_username = self.rda_username.text()
         self.options.rda_password = self.rda_password.text()
 
-    def create_distribution_box(self) -> Tuple[QLineEdit, QLineEdit, QGroupBox]:
+    def create_distribution_box(self) -> Tuple[QCheckBox, QSpinBox, QLineEdit, QLineEdit, QGroupBox]:
         gbox = QGroupBox('WPS/WRF Distribution')
         vbox = QVBoxLayout()
         gbox.setLayout(vbox)
@@ -84,7 +89,15 @@ class ConfigOptionsPage(QgsOptionsPageWidget):
         hbox = QHBoxLayout()
         mpi_enabled = QCheckBox('MPI')
         mpi_enabled.setChecked(self.options.mpi_enabled)
+        mpi_enabled.clicked.connect(self.on_mpi_enabled_clicked)
         hbox.addWidget(mpi_enabled)
+        # TODO decrease size
+        mpi_processes = QSpinBox()
+        mpi_processes.setRange(1, multiprocessing.cpu_count())
+        mpi_processes.setValue(self.options.mpi_processes)
+        hbox.addWidget(mpi_processes)
+        mpi_processes_lbl = QLabel('MPI Processes')
+        hbox.addWidget(mpi_processes_lbl)
         vbox.addLayout(hbox)
 
         wps_dir, hbox = create_file_input(input_label='WPS directory',
@@ -105,7 +118,7 @@ class ConfigOptionsPage(QgsOptionsPageWidget):
         hbox.addStretch()
         vbox.addLayout(hbox)
 
-        return mpi_enabled, wps_dir, wrf_dir, gbox
+        return mpi_enabled, mpi_processes, wps_dir, wrf_dir, gbox
 
     def create_rda_auth_input(self) -> Tuple[QLineEdit, QLineEdit, QGroupBox]:
         username = QLineEdit(self.options.rda_username)
@@ -135,6 +148,32 @@ class ConfigOptionsPage(QgsOptionsPageWidget):
         gbox.setLayout(vbox)
 
         return username, password, gbox
+
+    def on_mpi_enabled_clicked(self) -> None:
+        if not self.mpi_enabled.isChecked():
+            return
+        
+        plat = platform.system()
+
+        if plat == 'Windows':
+            has_msmpi = os.environ.get('MSMPI_BIN')
+            if not has_msmpi:
+                self.mpi_enabled.setChecked(False)
+                reply = QMessageBox.question(
+                    self, 'Microsoft MPI not found',
+                    'Microsoft MPI is not installed on your system. ' +
+                    'Do you want to be redirected to the download page? ' +
+                    'Note that QGIS must be restarted after the installation.',
+                    QMessageBox.Yes, QMessageBox.No)
+                if reply == QMessageBox.Yes:
+                    webbrowser.open(MSMPI_DOWNLOAD_PAGE)
+        elif plat in ['Darwin', 'Linux']:
+            # TODO check if mpirun/mpich is available
+            pass
+        else:
+            self.mpi_enabled.setChecked(False)
+            QMessageBox.critical(self, 'Unsupported platform',
+                PLUGIN_NAME + ' does not support MPI on ' + plat)
 
     def download_wps(self) -> None:
         mpi = self.mpi_enabled.isChecked()
