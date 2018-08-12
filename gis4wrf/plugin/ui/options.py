@@ -5,6 +5,7 @@ from typing import Tuple, Callable
 import os
 import platform
 import multiprocessing
+import subprocess
 import webbrowser
 
 from PyQt5.QtGui import QIcon
@@ -168,8 +169,17 @@ class ConfigOptionsPage(QgsOptionsPageWidget):
                 if reply == QMessageBox.Yes:
                     webbrowser.open(MSMPI_DOWNLOAD_PAGE)
         elif plat in ['Darwin', 'Linux']:
-            # TODO check if mpirun/mpich is available
-            pass
+            try:
+                subprocess.check_output(['mpiexec', '-h'])
+            except subprocess.CalledProcessError:
+                self.mpi_enabled.setChecked(False)
+                if plat == 'Linux':
+                    extra = 'For Debian/Ubuntu, run "sudo apt install mpich".'
+                else: # Darwin
+                    extra = 'If you use Homebrew, run "brew install mpich".'
+                QMessageBox.critical(self, 'MPICH not found',
+                    'MPICH does not seem to be installed on your system. ' +
+                    + extra)
         else:
             self.mpi_enabled.setChecked(False)
             QMessageBox.critical(self, 'Unsupported platform',

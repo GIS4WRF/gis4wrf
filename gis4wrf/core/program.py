@@ -18,13 +18,12 @@ def run_program(path: str, cwd: str, error_pattern: Optional[str]=None,
         if plat == 'Windows':
             # Microsoft MPI
             mpi_path = os.path.join(os.environ['MSMPI_BIN'], 'mpiexec.exe')
-            args = [mpi_path, '-n', str(mpi_processes), path]
-
         elif plat in ['Darwin', 'Linux']:
-            # MPICH
-            args = ['mpirun', '-np', str(mpi_processes), path]
+            # MPICH (most likely)
+            mpi_path = 'mpiexec'
         else:
             raise NotImplementedError('MPI not supported on ' + plat)
+        args = [mpi_path, '-n', str(mpi_processes), path]
     else:
         args = [path]
 
