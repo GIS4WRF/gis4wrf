@@ -171,7 +171,7 @@ class ConfigOptionsPage(QgsOptionsPageWidget):
         elif plat in ['Darwin', 'Linux']:
             try:
                 subprocess.check_output(['mpiexec', '-h'])
-            except subprocess.CalledProcessError:
+            except FileNotFoundError:
                 self.mpi_enabled.setChecked(False)
                 if plat == 'Linux':
                     extra = 'For Debian/Ubuntu, run "sudo apt install mpich".'
