@@ -11,7 +11,7 @@ import webbrowser
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import ( 
     QHBoxLayout, QVBoxLayout, QLabel, QLineEdit, QGroupBox,
-    QCheckBox, QPushButton, QSpinBox, QMessageBox
+    QCheckBox, QPushButton, QSpinBox, QMessageBox, QSizePolicy
 )
 
 from qgis.gui import QgsOptionsWidgetFactory, QgsOptionsPageWidget
@@ -92,10 +92,10 @@ class ConfigOptionsPage(QgsOptionsPageWidget):
         mpi_enabled.setChecked(self.options.mpi_enabled)
         mpi_enabled.clicked.connect(self.on_mpi_enabled_clicked)
         hbox.addWidget(mpi_enabled)
-        # TODO decrease size
         mpi_processes = QSpinBox()
         mpi_processes.setRange(1, multiprocessing.cpu_count())
         mpi_processes.setValue(self.options.mpi_processes)
+        mpi_processes.setFixedWidth(70)
         hbox.addWidget(mpi_processes)
         mpi_processes_lbl = QLabel('MPI Processes')
         hbox.addWidget(mpi_processes_lbl)
