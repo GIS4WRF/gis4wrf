@@ -347,8 +347,6 @@ class Project(object):
         self.fill_domains()
         nml_patch = convert_project_to_wrf_namelist(self)
 
-        nml_path = self.wrf_namelist_path
-
         # Allow the user to change the following max_dom sized variables, but patch if the size is wrong.
         # The size is typically wrong when the template namelist from the WRF distribution is initially
         # copied and the user has nested domains, since the template assumes no nesting.
@@ -358,7 +356,7 @@ class Project(object):
             'time_control': ['history_interval', 'frames_per_outfile', 'input_from_file'],
             'domains': ['e_vert']
         }
-        nml_old = read_namelist(nml_path, 'wrf')
+        nml_old = read_namelist(self.wrf_namelist_path, 'wrf')
         for group_name, var_names in skip_patch_if_size_matches.items():
             if group_name not in nml_old:
                 continue
@@ -385,7 +383,7 @@ class Project(object):
         # We use the end_* variables instead.
         delete_from_wrf_namelist = ['run_days', 'run_hours', 'run_minutes', 'run_seconds']
 
-        patch_namelist(nml_path, nml_patch, delete_from_wrf_namelist)
+        patch_namelist(self.wrf_namelist_path, nml_patch, delete_from_wrf_namelist)
 
     # TODO move prepare functions into separate module together with functions for running
     def prepare_wps_run(self, wps_folder: str) -> None:

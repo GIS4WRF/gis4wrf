@@ -262,6 +262,7 @@ class RunWidget(QWidget):
 
         # WRF/WPS does not use exit codes to indicate success/failure,
         # therefore in addition we look for a pattern in the program output.
+        # TODO add 'FATAL' as patterm
         wrf_error_pattern = 'ERROR'
 
         # Using QThread and signals (instead of a plain Python thread) is necessary
