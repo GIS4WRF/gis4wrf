@@ -1,0 +1,24 @@
+{
+    "description": "<p>GIS4WRF is a free and open source&nbsp;<a href='https://qgis.org/'>QGIS</a>&nbsp;plug-in to help researchers and practitioners with their&nbsp;<a href='https://www.mmm.ucar.edu/weather-research-and-forecasting-model'>Advanced Research Weather Research and Forecasting</a>&nbsp;modelling workflows. GIS4WRF can be used to pre-process input data, run simulations, and visualize or post-process results</p>",
+    "license": "MIT",
+    "title": "GIS4WRF",
+    "upload_type": "software",
+    "keywords": [
+        "GIS",
+        "WRF",
+        "WPS",
+        "NWP",
+        "NetCDF"
+    ],
+    "creators": [
+        {
+            "orcid": "0000-0002-7071-7547",
+            "name": "D. Meyer"
+        },
+        {
+            "orcid": "0000-0003-3299-1382",
+            "name": "M. Riechert"
+        }
+    ],
+    "access_right": "open"
+}
