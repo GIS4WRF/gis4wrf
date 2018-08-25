@@ -179,8 +179,6 @@ def convert_wrf_nc_var_to_gdal_dataset(
         #      (see below)
         fmt = GDALFormat.GTIFF
 
-    ds.close()
-
     use_vrt = fmt.is_vrt
     ext = fmt.value
 
@@ -252,6 +250,8 @@ def convert_wrf_nc_var_to_gdal_dataset(
             band.WriteArray(data)
 
     gdal_ds.FlushCache()
+
+    ds.close()
 
     if use_vsi:
         dispose = partial(remove_vsis, [out_path])
@@ -330,8 +330,7 @@ def get_wrf_nc_extra_dims(path: str) -> Dict[str,WRFNetCDFExtraDim]:
     dims = ds.dimensions
     attrs = ds.__dict__
     extra_dims = {} # type: Dict[str,WRFNetCDFExtraDim]
-    ds.close()
-
+    
     def add_dim(name: str, label: str, step_fn: Optional[Callable[[int],Any]]=None):
         if name not in dims:
             return
@@ -353,6 +352,8 @@ def get_wrf_nc_extra_dims(path: str) -> Dict[str,WRFNetCDFExtraDim]:
     # the following exist in metgrid output only
     add_dim('num_metgrid_levels', 'Vertical Level')
     # TODO add num_st_layers, num_sm_layers, z-dimension00**
+
+    ds.close()
 
     return extra_dims
 
