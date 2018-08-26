@@ -144,16 +144,26 @@ class Options(object):
         return os.path.join(self.wps_dir, 'metgrid.exe')
 
     @property
+    def wrf_bin_dir(self) -> Optional[str]:
+        if not self.wrf_dir:
+            return None
+        bin_dir = os.path.join(self.wrf_dir, 'main')
+        if not os.path.exists(bin_dir):
+            # fall-back for older gis4wrf WRF Windows distributions
+            bin_dir = os.path.join(self.wrf_dir, 'run')
+        return bin_dir
+
+    @property
     def real_exe(self) -> Optional[str]:
         if not self.wrf_dir:
             return None
-        return os.path.join(self.wrf_dir, 'run', 'real.exe')
+        return os.path.join(self.wrf_bin_dir, 'real.exe')
 
     @property
     def wrf_exe(self) -> Optional[str]:
         if not self.wrf_dir:
             return None
-        return os.path.join(self.wrf_dir, 'run', 'wrf.exe')
+        return os.path.join(self.wrf_bin_dir, 'wrf.exe')
 
     @property
     def wrf_namelist_path(self) -> Optional[str]:
