@@ -77,9 +77,8 @@ class ConfigOptionsPage(QgsOptionsPageWidget):
                   If you have an existing compilation of WPS and/or WRF then simply choose
                   the corresponding folders below. If you compiled with <code>dmpar</code> make sure
                   to tick the "MPI" checkbox. Alternatively, you can download pre-compiled
-                  distributions by clicking on the buttons below. Note that currently pre-compiled
-                  distributions are not available for all platforms and are compiled using basic
-                  nesting support.
+                  distributions by clicking on the buttons below. Note that pre-compiled
+                  distributions are only available with basic nesting support.
                   </html>"""
         label = FormattedLabel(text, align=True)
         label = QLabel(text)
