@@ -3571,6 +3571,13 @@ dynamics:
     minlen: max_dom
     itemtype: real
     example: 0.0
+  hybrid_opt:
+    description: Hybrid Vertical Coordinate
+    type: int
+    default: 0
+    options:
+      0: (default) disabled
+      2: enabled
   w_damping:
     description: vertical velocity damping flag (for operational use)
     type: int
