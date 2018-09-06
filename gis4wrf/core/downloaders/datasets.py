@@ -63,47 +63,57 @@ geo_datasets = {
     "varsso_10m": ("Variance of subgrid-scale orography", 0.16666667),
     "varsso_5m": ("Variance of subgrid-scale orography", 0.08333333),
     "varsso_2m": ("Variance of subgrid-scale orography", 0.03333333),
-    "varsso": ("Variance of subgrid-scale orography", 0.00833333),    
+    "varsso": ("Variance of subgrid-scale orography", 0.00833333),
+
+    "albedo_modis": ("Monthly MODIS surface albedo", 0.05),
+    "greenfrac_fpar_modis_5m": ("MODIS FPAR, subsampled by NCAR/MMM 2018-05-23 from 30-arc-second", 0.00833333),
+    "maxsnowalb_modis": ("MODIS maximum snow albedo", 0.05),
+    "modis_landuse_20class_5m_with_lakes": ("Noah-modified 21-category IGBP-MODIS landuse, subsampled by NCAR/MMM 2018-05-23 from 30-arc-second", 0.00833333),
+    "topo_gmted2010_5m": ("GMTED2010 5-arc-minute topography height, subsampled by NCAR/MMM 2018-05-23 from 30-arc-second", 0.0833333),
+    "erod": ("EROD", 0.25),
+    "soilgrids": ("soilgrids", 0.00833333),
+    "urbfrac_nlcd2011": ("Urban fraction derived from 30 m NLCD 2011 (22 = 50%, 23 = 90%, 24 = 95%)", 30.0), # FIXME: this is in Albers proj with unit metres
+    # TODO: add `updated_Iceland_LU.tar.gz``
 }
 
-# Lowest resolution of each mandatory field (WRF 3.9).
-# See http://www2.mmm.ucar.edu/wrf/users/download/get_sources_wps_geog_V3.html.
+# Lowest resolution of each mandatory field (WRF 4.0).
+# See http://www2.mmm.ucar.edu/wrf/users/download/get_sources_wps_geog.html.
 geo_datasets_mandatory_lores = [
-    "albedo_ncep",
-    "clayfrac_5m",
-    "greenfrac",
-    "islope",
+    "albedo_modis",
+    "greenfrac_fpar_modis",
+    "greenfrac_fpar_modis_5m",
     "lai_modis_10m",
-    "lake_depth",
-    "landuse_10m",
-    "maxsnowalb",
-    "orogwd_2deg",
-    "sandfrac_5m",
+    "maxsnowalb_modis",
+    "modis_landuse_20class_5m_with_lakes",
+    "orogwd_1deg",
     "soiltemp_1deg",
-    "soiltype_bot_10m",
-    "soiltype_top_10m",
-    "topo_10m",
-    "varsso_10m"
+    "soiltype_bot_5m",
+    "soiltype_top_5m",
+    "topo_gmted2010_5m"
 ]
 
-# Highest resolution of each mandatory field (WRF 3.9).
-# See http://www2.mmm.ucar.edu/wrf/users/download/get_sources_wps_geog_V3.html.
+# Highest resolution of each mandatory field (WRF 4.0).
+# See http://www2.mmm.ucar.edu/wrf/users/download/get_sources_wps_geog.html.
 geo_datasets_mandatory_hires = [
-    "albedo_ncep",
-    "clayfrac_5m",
+    "albedo_modis",
     "greenfrac_fpar_modis",
-    "islope",
+    "lai_modis_10m",
     "lai_modis_30s",
-    "lake_depth",
+    "maxsnowalb_modis",
     "modis_landuse_20class_30s_with_lakes",
-    "maxsnowalb",
+    "orogwd_2deg",
+    "orogwd_1deg",
+    "orogwd_30m",
+    "orogwd_20m",
     "orogwd_10m",
-    "sandfrac_5m",
     "soiltemp_1deg",
     "soiltype_bot_30s",
     "soiltype_top_30s",
     "topo_gmted2010_30s",
-    "varsso"
+    "varsso",
+    "varsso_10m",
+    "varsso_5m",
+    "varsso_2m"
 ]
 
 met_datasets = { 
