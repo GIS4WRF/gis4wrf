@@ -168,8 +168,11 @@ class ConfigOptionsPage(QgsOptionsPageWidget):
                 if reply == QMessageBox.Yes:
                     webbrowser.open(MSMPI_DOWNLOAD_PAGE)
         elif plat in ['Darwin', 'Linux']:
-            try:
-                subprocess.check_output(['mpiexec', '-h'])
+            try: 
+                if plat == 'Linux':
+                    subprocess.check_output(['mpiexec', '-h'])
+                else: # Darwin # FIXME: momentarily hardcode path
+                    subprocess.check_output(['/usr/local/bin/mpiexec', '-h'])
             except FileNotFoundError:
                 self.mpi_enabled.setChecked(False)
                 if plat == 'Linux':
@@ -177,8 +180,7 @@ class ConfigOptionsPage(QgsOptionsPageWidget):
                 else: # Darwin
                     extra = 'If you use Homebrew, run "brew install mpich".'
                 QMessageBox.critical(self, 'MPICH not found',
-                    'MPICH does not seem to be installed on your system. ' +
-                    + extra)
+                    'MPICH does not seem to be installed on your system. ' + extra)
         else:
             self.mpi_enabled.setChecked(False)
             QMessageBox.critical(self, 'Unsupported platform',
