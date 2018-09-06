@@ -76,44 +76,44 @@ geo_datasets = {
     # TODO: add `updated_Iceland_LU.tar.gz``
 }
 
-# Lowest resolution of each mandatory field (WRF 3.9).
-# See http://www2.mmm.ucar.edu/wrf/users/download/get_sources_wps_geog_V3.html.
+# Lowest resolution of each mandatory field (WRF 4.0).
+# See http://www2.mmm.ucar.edu/wrf/users/download/get_sources_wps_geog.html.
 geo_datasets_mandatory_lores = [
-    "albedo_ncep",
-    "clayfrac_5m",
-    "greenfrac",
-    "islope",
+    "albedo_modis",
+    "greenfrac_fpar_modis",
+    "greenfrac_fpar_modis_5m",
     "lai_modis_10m",
-    "lake_depth",
-    "landuse_10m",
-    "maxsnowalb",
-    "orogwd_2deg",
-    "sandfrac_5m",
+    "maxsnowalb_modis",
+    "modis_landuse_20class_5m_with_lakes",
+    "orogwd_1deg",
     "soiltemp_1deg",
-    "soiltype_bot_10m",
-    "soiltype_top_10m",
-    "topo_10m",
-    "varsso_10m"
+    "soiltype_bot_5m",
+    "soiltype_top_5m",
+    "topo_gmted2010_5m"
 ]
 
-# Highest resolution of each mandatory field (WRF 3.9).
-# See http://www2.mmm.ucar.edu/wrf/users/download/get_sources_wps_geog_V3.html.
+# Highest resolution of each mandatory field (WRF 4.0).
+# See http://www2.mmm.ucar.edu/wrf/users/download/get_sources_wps_geog.html.
 geo_datasets_mandatory_hires = [
-    "albedo_ncep",
-    "clayfrac_5m",
+    "albedo_modis",
     "greenfrac_fpar_modis",
-    "islope",
+    "lai_modis_10m",
     "lai_modis_30s",
-    "lake_depth",
+    "maxsnowalb_modis",
     "modis_landuse_20class_30s_with_lakes",
-    "maxsnowalb",
+    "orogwd_2deg",
+    "orogwd_1deg",
+    "orogwd_30m",
+    "orogwd_20m",
     "orogwd_10m",
-    "sandfrac_5m",
     "soiltemp_1deg",
     "soiltype_bot_30s",
     "soiltype_top_30s",
     "topo_gmted2010_30s",
-    "varsso"
+    "varsso",
+    "varsso_10m",
+    "varsso_5m",
+    "varsso_2m"
 ]
 
 met_datasets = { 
