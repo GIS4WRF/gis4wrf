@@ -69,16 +69,18 @@ class ConfigOptionsPage(QgsOptionsPageWidget):
         self.options.rda_password = self.rda_password.text()
 
     def create_distribution_box(self) -> Tuple[QCheckBox, QSpinBox, QLineEdit, QLineEdit, QGroupBox]:
-        gbox = QGroupBox('WPS/WRF Distribution')
+        gbox = QGroupBox('WPS/WRF Integration')
         vbox = QVBoxLayout()
         gbox.setLayout(vbox)
 
         text = """<html>GIS4WRF allows you to run WPS and WRF on your local system.
-                  If you have an existing compilation of WPS and/or WRF then simply choose
-                  the corresponding folders below. If you compiled with <code>dmpar</code> make sure
-                  to tick the "MPI" checkbox. Alternatively, you can download pre-compiled
-                  distributions by clicking on the buttons below. Note that pre-compiled
-                  distributions are only available with basic nesting support.
+                  We offer pre-compiled WPS/WRF binary-distributions for Windows, macOS and Linux 
+                  using <a href="https://github.com/WRF-CMake/WRF#readme">WPS-CMake and WRF-CMake</a> (experimental). 
+                  You can download the pre-compiled WPS/WRF binaries by clicking on the buttons below. 
+                  Note that pre-compiled distributions are only available with basic nesting support.
+                  Alternatively, If you have an existing compilation of WPS and/or WRF, simply point to their respective
+                  folders below. If you compiled with <code>dmpar</code> make sure
+                  to tick the "MPI" checkbox. 
                   </html>"""
         label = FormattedLabel(text, align=True)
         label = QLabel(text)
