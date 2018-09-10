@@ -171,11 +171,16 @@ class ViewWidget(QWidget):
         if dataset_init:
             self.interp_vert_selector.clear()
             has_vert = False
-            for variable in sorted(self.dataset.variables.values(), key=lambda v: v.label):
+            sorted_variables = sorted(self.dataset.variables.values(), key=lambda v: v.label)
+            for variable in sorted_variables:
                 if variable.extra_dim_name != 'bottom_top':
                     continue
                 has_vert = True
-                self.interp_vert_selector.addItem(variable.label, variable.name)
+                if len(variable.label) > 30:
+                    interp_vert_selector_label = variable.label[:27] + '...'
+                else:
+                    interp_vert_selector_label = variable.label
+                self.interp_vert_selector.addItem(interp_vert_selector_label, variable.name)
             if not has_vert:
                 self.extra_dim_container.setEnabled(True)
                 self.interp_container.hide()
