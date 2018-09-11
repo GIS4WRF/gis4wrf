@@ -231,18 +231,31 @@ def convert_wrf_nc_var_to_gdal_dataset(
             # supported as GeoTIFF and not VRT.
             assert not is_4d
 
-            if fmt == GDALFormat.HDF5_VRT:
-                subdataset_name = 'HDF5:"{path}"://{var_name}'.format(path=path, var_name=var_name)
-            elif fmt == GDALFormat.NETCDF_VRT:
-                subdataset_name = 'NETCDF:"{path}":{var_name}'.format(path=path, var_name=var_name)
-
-            band.SetMetadata({'source_0': ('''
-                <SimpleSource>
-                    <SourceFilename relativeToVRT="0">{name}</SourceFilename>
-                    <SourceBand>{band}</SourceBand>
-                    <SrcRect xOff="0" yOff="0" xSize="{cols}" ySize="{rows}" />
-                    <DstRect xOff="0" yOff="0" xSize="{cols}" ySize="{rows}" />
-                </SimpleSource>''').format(name=subdataset_name, band=band_idx, rows=rows, cols=cols)}, 'vrt_sources')
+            def set_band_metadata(fmt: GDALFormat) -> None:
+                if fmt == GDALFormat.HDF5_VRT:
+                    subdataset_name = 'HDF5:"{path}"://{var_name}'.format(path=path, var_name=var_name)
+                elif fmt == GDALFormat.NETCDF_VRT:
+                    subdataset_name = 'NETCDF:"{path}":{var_name}'.format(path=path, var_name=var_name)
+                band.SetMetadata({'source_0': ('''
+                    <SimpleSource>
+                        <SourceFilename relativeToVRT="0">{name}</SourceFilename>
+                        <SourceBand>{band}</SourceBand>
+                        <SrcRect xOff="0" yOff="0" xSize="{cols}" ySize="{rows}" />
+                        <DstRect xOff="0" yOff="0" xSize="{cols}" ySize="{rows}" />
+                    </SimpleSource>''').format(name=subdataset_name, band=band_idx, rows=rows, cols=cols)}, 'vrt_sources')
+            
+            try:
+                set_band_metadata(fmt)
+            except RuntimeError:
+                # Work-around gdal bug where sometimes files cannot be opened with a specific driver.
+                # E.g. "RuntimeError: `HDF5:"C:/.../geo_em.d02.nc"://LU_INDEX' does not exist in the file system,
+                #       and is not recognized as a supported dataset name."
+                if fmt == GDALFormat.HDF5_VRT:
+                    fmt = GDALFormat.NETCDF_VRT
+                else:
+                    fmt = GDALFormat.HDF5_VRT
+                set_band_metadata(fmt)
+            
         elif fmt == GDALFormat.GTIFF:
             data = var[band_idx - 1]
             if is_4d:
