@@ -254,10 +254,6 @@ def convert_wrf_nc_var_to_gdal_dataset(
                     fmt = GDALFormat.NETCDF_VRT
                 else:
                     fmt = GDALFormat.HDF5_VRT
-                # The NetCDF VRT datasets returned by this function require the
-                # GDAL config option GDAL_NETCDF_BOTTOMUP to be set to 'NO'. 
-                # See `convert_wrf_nc_var_to_gdal_dataset` for more info.
-                gdal.SetConfigOption('GDAL_NETCDF_BOTTOMUP', 'NO')
                 set_band_metadata(fmt)
             
         elif fmt == GDALFormat.GTIFF:

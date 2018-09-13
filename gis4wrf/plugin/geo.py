@@ -102,11 +102,13 @@ def zoom_out_to_layer(canvas: QgsMapCanvas, layer: QgsVectorLayer) -> None:
     canvas.refresh()
 
 def load_layers(uris_and_names: List[Tuple[str,str,Optional[str]]], group_name=None,
-                visible: Union[bool,int]=0, expanded: bool=True,
-                netcdf_bottomup=None) -> List[QgsRasterLayer]:
-    if netcdf_bottomup is False:
-        config_bak = gdal.GetConfigOption('GDAL_NETCDF_BOTTOMUP')
-        gdal.SetConfigOption('GDAL_NETCDF_BOTTOMUP', 'NO')
+                visible: Union[bool,int]=0, expanded: bool=True) -> List[QgsRasterLayer]:
+    # The NetCDF VRT datasets returned by `convert_wrf_nc_var_to_gdal_dataset` require the
+    # GDAL config option GDAL_NETCDF_BOTTOMUP to be set to 'NO'.
+    # Note that NetCDF VRTs are currently only used as a fall-back if TIFF or HDF5 VRTs
+    # cannot be used.
+    config_bak = gdal.GetConfigOption('GDAL_NETCDF_BOTTOMUP')
+    gdal.SetConfigOption('GDAL_NETCDF_BOTTOMUP', 'NO')
 
     registry = QgsProject.instance() # type: QgsProject
     root = registry.layerTreeRoot() # type: QgsLayerTree
@@ -136,8 +138,7 @@ def load_layers(uris_and_names: List[Tuple[str,str,Optional[str]]], group_name=N
         layer_node.setItemVisibilityChecked(visibility)
         layers.append(layer)
 
-    if netcdf_bottomup is False:
-        gdal.SetConfigOption('GDAL_NETCDF_BOTTOMUP', config_bak)
+    gdal.SetConfigOption('GDAL_NETCDF_BOTTOMUP', config_bak)
 
     return layers
 
