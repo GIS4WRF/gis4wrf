@@ -103,13 +103,6 @@ def zoom_out_to_layer(canvas: QgsMapCanvas, layer: QgsVectorLayer) -> None:
 
 def load_layers(uris_and_names: List[Tuple[str,str,Optional[str]]], group_name=None,
                 visible: Union[bool,int]=0, expanded: bool=True) -> List[QgsRasterLayer]:
-    # The NetCDF VRT datasets returned by `convert_wrf_nc_var_to_gdal_dataset` require the
-    # GDAL config option GDAL_NETCDF_BOTTOMUP to be set to 'NO'.
-    # Note that NetCDF VRTs are currently only used as a fall-back if TIFF or HDF5 VRTs
-    # cannot be used.
-    config_bak = gdal.GetConfigOption('GDAL_NETCDF_BOTTOMUP')
-    gdal.SetConfigOption('GDAL_NETCDF_BOTTOMUP', 'NO')
-
     registry = QgsProject.instance() # type: QgsProject
     root = registry.layerTreeRoot() # type: QgsLayerTree
     if group_name:
@@ -137,8 +130,6 @@ def load_layers(uris_and_names: List[Tuple[str,str,Optional[str]]], group_name=N
             visibility = (type(visible) == bool and visible) or (type(visible) == int and i == visible)
         layer_node.setItemVisibilityChecked(visibility)
         layers.append(layer)
-
-    gdal.SetConfigOption('GDAL_NETCDF_BOTTOMUP', config_bak)
 
     return layers
 
