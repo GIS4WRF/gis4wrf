@@ -12,7 +12,6 @@ from gis4wrf.plugin.constants import GIS4WRF_LOGO_PATH
 
 class HomeTab(QWidget):
     """Class for creating the Home tab"""
-
     def __init__(self) -> None:
         super().__init__()
         vbox = QVBoxLayout()
@@ -38,15 +37,15 @@ class HomeTab(QWidget):
                """
 
         label_title = FormattedLabel(title, align=True)
-        label = FormattedLabel(text, align=True)
-        label.setWordWrap(True)
-        label.setOpenExternalLinks(True)
-        label2 = QLabel()
+        label_text = FormattedLabel(text, align=True)
+        label_text.setWordWrap(True)
+        label_text.setOpenExternalLinks(True)
+        label_pixmap = QLabel()
         pixmap = QPixmap(GIS4WRF_LOGO_PATH)
-        label2.setPixmap(pixmap)
-        label2.setAlignment(Qt.AlignCenter)
+        label_pixmap.setPixmap(pixmap)
+        label_pixmap.setAlignment(Qt.AlignCenter)
         vbox.addWidget(label_title)
-        vbox.addWidget(label2)
-        vbox.addWidget(label)
+        vbox.addWidget(label_pixmap)
+        vbox.addWidget(label_text)
         vbox.addStretch()
         self.setLayout(vbox)
