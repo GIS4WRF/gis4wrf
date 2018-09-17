@@ -102,12 +102,7 @@ def zoom_out_to_layer(canvas: QgsMapCanvas, layer: QgsVectorLayer) -> None:
     canvas.refresh()
 
 def load_layers(uris_and_names: List[Tuple[str,str,Optional[str]]], group_name=None,
-                visible: Union[bool,int]=0, expanded: bool=True,
-                netcdf_bottomup=None) -> List[QgsRasterLayer]:
-    if netcdf_bottomup is False:
-        config_bak = gdal.GetConfigOption('GDAL_NETCDF_BOTTOMUP')
-        gdal.SetConfigOption('GDAL_NETCDF_BOTTOMUP', 'NO')
-
+                visible: Union[bool,int]=0, expanded: bool=True) -> List[QgsRasterLayer]:
     registry = QgsProject.instance() # type: QgsProject
     root = registry.layerTreeRoot() # type: QgsLayerTree
     if group_name:
@@ -135,9 +130,6 @@ def load_layers(uris_and_names: List[Tuple[str,str,Optional[str]]], group_name=N
             visibility = (type(visible) == bool and visible) or (type(visible) == int and i == visible)
         layer_node.setItemVisibilityChecked(visibility)
         layers.append(layer)
-
-    if netcdf_bottomup is False:
-        gdal.SetConfigOption('GDAL_NETCDF_BOTTOMUP', config_bak)
 
     return layers
 
