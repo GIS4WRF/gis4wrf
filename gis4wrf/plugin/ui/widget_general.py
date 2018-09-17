@@ -44,12 +44,10 @@ class GeneralWidget(QWidget):
                 """
         text = """
                     <html>
-                        <font size="4">
                         <br>
                         <p>The <em>Simulation</em> tab contains tools to help you prepare your simulations.</p>
                         <p>Here, you will find four subtabs: <em>General</em>, <em>Domain</em>, <em>Data</em>, and <em>Run</em>. In the <em>General </em>subtab you can create or open GIS4WRF projects. The <em>Domain</em>, <em>Data </em>and <em>Run </em>subtabs contain tools to help you with the steps to define and run a WRF simulation such as defining datasets to use in your simulation, configure namelists and run WPS and WRF programs.</p>
                         <p>More details on how to use these tools and examples can be found online at <a title="GIS4WRF Website -- Documentation and Tutorials" href="https://gis4wrf.github.io" target="_blank" rel="noopener">https://gis4wrf.github.io</a>.</p>
-                        </font>
                   </html>
                """
 
