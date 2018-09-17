@@ -113,12 +113,6 @@ resources.py
 # mypy linter cache
 .mypy_cache/
 
-# For Docs and Tutorial
-# Do not track content of `meta` except for the following files
-mkdocs-bootstrap-gis4wrf_theme/
-site/
-gis4wrf-docs-master/
-
 # Files that will be copied into the PKGDIR by the build script
 gis4wrf/ATTRIBUTION.txt
 gis4wrf/CHANGELOG.txt
