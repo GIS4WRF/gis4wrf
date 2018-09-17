@@ -7,7 +7,6 @@ from pathlib import Path
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel
 from PyQt5.QtGui import QPixmap
-from gis4wrf.plugin.ui.helpers import FormattedLabel
 from gis4wrf.plugin.constants import GIS4WRF_LOGO_PATH
 
 class HomeTab(QWidget):
@@ -36,8 +35,8 @@ class HomeTab(QWidget):
                   </html>
                """
 
-        label_title = FormattedLabel(title, align=True)
-        label_text = FormattedLabel(text, align=True)
+        label_title = QLabel(title)
+        label_text = QLabel(text)
         label_text.setWordWrap(True)
         label_text.setOpenExternalLinks(True)
         label_pixmap = QLabel()

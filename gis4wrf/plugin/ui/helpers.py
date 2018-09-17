@@ -73,15 +73,6 @@ class MyLineEdit(QLineEdit):
         state = self.validator().validate(self.text(), 0)[0]
         return state == QValidator.Acceptable
 
-class FormattedLabel(QLabel):
-    def __init__(self, text: QLabel, align: bool=False) -> None:
-        super().__init__()
-        self.setText(text)
-        self.setTextInteractionFlags(Qt.TextSelectableByMouse)
-        if align:
-            self.setWordWrap(True)
-            self.setAlignment(Qt.AlignJustify | Qt.AlignTop)
-
 class WhiteScroll(QScrollArea):
     def __init__(self, widget: QWidget) -> None:
         super().__init__()
