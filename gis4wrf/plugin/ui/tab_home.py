@@ -25,7 +25,7 @@ class HomeTab(QWidget):
                         <br>
                         <p>The GIS4WRF documentation and tutorials have been moved online at: <a href="https://gis4wrf.github.io">https://gis4wrf.github.io</a></p>
                         <br>
-                        <p>We are delighted to announce that we can now provide MPI-enabled WPS-V4 and WRF-V4 pre-built binaries for Windows, macOS and Linux through WRF-CMake. 😊</p>
+                        <p>We are delighted to announce that we can now provide MPI-enabled WPS-V4 and WRF-V4 pre-built binaries for Windows, macOS and Linux through <a href="https://github.com/WRF-CMake/WRF">WRF-CMake</a>. 😊</p>
                         <p>If you have not done so already, make sure to download the latest V4 releases for your system.
                            For more info see: <a href="https://gis4wrf.github.io/configuration">https://gis4wrf.github.io/configuration</a></p>
                         <br>
