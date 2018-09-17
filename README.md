@@ -1,7 +1,9 @@
 <p align="center"><img src="https://github.com/GIS4WRF/gis4wrf-docs/blob/master/images/gis4wrf.png"></p>
 
 # GIS4WRF
-GIS4WRF is a free and open source [QGIS](https://qgis.org/) plug-in to help researchers and practitioners with their [Advanced Research Weather Research and Forecasting](https://www.mmm.ucar.edu/weather-research-and-forecasting-model) modelling workflows. GIS4WRF can be used to pre-process input data, run simulations, and visualize or post-process results. We offer MPI-enabled pre-built binary distributions for Windows, macOS and Linux through [WRF-CMake](https://github.com/WRF-CMake/WRF). For information on how to install GIS4WRF, or check out the main documentation and tutorials, please refer to the GIS4WRF website at https://gis4wrf.github.io.
+GIS4WRF is a free and open source [QGIS](https://qgis.org/) plug-in to help researchers and practitioners with their [Advanced Research Weather Research and Forecasting](https://www.mmm.ucar.edu/weather-research-and-forecasting-model) modelling workflows. GIS4WRF can be used to pre-process input data, run simulations, and visualize or post-process results. We offer MPI-enabled pre-built binary distributions for Windows, macOS and Linux through [WRF-CMake](https://github.com/WRF-CMake/WRF).
+
+**For information on how to install GIS4WRF, or check out the main documentation and tutorials, please refer to the GIS4WRF website at https://gis4wrf.github.io.**
 
 <p align="center"><img src="https://github.com/GIS4WRF/gis4wrf-docs/blob/master/images/gis4wrf-demo.gif"></p>
 <p align="center">Fig 1. Configure, run and visualize a WRF simulation in GIS4WRF</p>
