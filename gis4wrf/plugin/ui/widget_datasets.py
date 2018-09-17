@@ -3,6 +3,7 @@
 
 from operator import xor
 import os
+import platform
 from pathlib import Path
 import re
 
@@ -343,8 +344,18 @@ class DatasetsWidget(QWidget):
         for root, subdirs, _ in os.walk(self.options.geog_dir):
             for subdir in subdirs:
                 path = os.path.join(root, subdir)
-                rel_path = os.path.relpath(path, self.options.geog_dir)
-                self.geog_dataset_form_dataset.addItem(rel_path, path)
+                try:
+                    rel_path = os.path.relpath(path, self.options.geog_dir)
+                except ValueError:
+                    if platform.system() == 'Windows':
+                        # Can happen with folder names that are reserved on Windows, like "con".
+                        # Those are silently ignored.
+                        pass
+                    else:
+                        # Should never happen, but who knows.
+                        raise
+                else:
+                    self.geog_dataset_form_dataset.addItem(rel_path, path)
 
         var_names = sorted(self.geogrid_tbl.variables.keys())
         self.geog_dataset_form_variable.clear()

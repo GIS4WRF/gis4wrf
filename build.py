@@ -8,11 +8,6 @@ import subprocess
 import glob
 from fnmatch import fnmatch
 import zipfile
-import requests
-import zipfile
-import io
-from pathlib import Path
-import subprocess
 import shutil
 
 import PyQt5.pyrcc_main as pyrcc
@@ -66,25 +61,6 @@ if platform.system() == 'Windows' or platform.system() == 'Darwin':
         except subprocess.CalledProcessError as err:
             print('Error creating symlink for plugin:')
             print(err.output, file=sys.stderr)
-
-
-# Download docs and tutorials and create html files
-def download_and_unzip(url, path):
-    response = requests.get(url, stream=True)
-    with zipfile.ZipFile(io.BytesIO(response.content)) as zip_ref:
-        zip_ref.extractall(path)
-
-## We use the modified gis4wrf modified bootstrap theme for MkDocs
-print('Downloading gis4wrf bootstrap theme to: '+ str(THIS_DIR))
-download_and_unzip('https://github.com/GIS4WRF/mkdocs-bootstrap/archive/gis4wrf_theme.zip', THIS_DIR)
-
-PATH_TO_DOCS = os.path.join(THIS_DIR, 'mkdocs')
-print('Downloading docs to: '+ str(PATH_TO_DOCS))
-download_and_unzip('https://github.com/GIS4WRF/gis4wrf-docs/archive/master.zip', PATH_TO_DOCS)
-# TODO: enable this bit for automatically download and generate the documentation of tutorials.
-# download_and_unzip('https://github.com/dmey/gis4wrf-tutorials/archive/master.zip', PATH_TO_DOCS)
-
-subprocess.run(["mkdocs", "build"], cwd=str(THIS_DIR), check=True)
 
 # Copy CHANGELOG.txt, ATTRIBUTION.txt, and LICENSE.txt into gis4wrf plugin directory
 print('Copying CHANGELOG.txt to the package directory: '+ PKG_DIR)
