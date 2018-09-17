@@ -6,7 +6,7 @@ GIS4WRF is a free and open source [QGIS](https://qgis.org/) plug-in to help rese
 **For information on how to install GIS4WRF, or check out the main documentation and tutorials, please refer to the GIS4WRF website at https://gis4wrf.github.io.**
 
 <p align="center"><img src="https://github.com/GIS4WRF/gis4wrf-docs/blob/master/images/gis4wrf-demo.gif"></p>
-<p align="center">Fig 1. Configure, run and visualize a WRF simulation in GIS4WRF</p>
+<p align="center">Configure, run and visualize a WRF simulation in GIS4WRF</p>
 
 ## How to reference GIS4WRF
 We ask to please acknowledge our work by citing and referencing both, the GIS4WRF paper and the GIS4WRF software in the following way:
