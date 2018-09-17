@@ -14,17 +14,12 @@ from PyQt5.QtGui import (
     QGuiApplication, QPalette, QDoubleValidator, QValidator, QIntValidator,
     QDesktopServices
 )
-from PyQt5.Qt import QWebPage
+
 from PyQt5.QtWidgets import (
     QWidget, QLabel, QLayout, QHBoxLayout, QVBoxLayout, QGridLayout, QComboBox, QMessageBox,
     QScrollArea, QLineEdit, QPushButton, QGroupBox, QRadioButton, QFileDialog, QTreeWidget, QTreeWidgetItem,
     QSizePolicy, QDialog, QProgressBar, QToolButton, QAction
 )
-
-# TODO: QWebView is deprecated. We should use QWebEngineView instead.
-#       Currently not possible due to a bug in QGIS (https://issues.qgis.org/issues/18155).
-from PyQt5.QtWebKitWidgets import QWebView
-# from PyQt5.QtWebEngineWidgets import QWebEngineView
 
 from qgis.gui import QgisInterface
 from qgis.core import QgsApplication, QgsMapLayer
@@ -229,38 +224,6 @@ class RadioWithButtonWidget(QGroupBox):
     def radiostate(self,b):
         for radio_button in radio_list:
             print(self.radio_button.text())
-
-
-# TODO: implement use remote url if internet connection is
-# available, else default to the local page
-def create_browser_layout(web_page: str) -> QVBoxLayout:
-    path = THIS_DIR.parents[1] / 'resources' / 'site' / web_page
-    url = QUrl(path.as_uri())
-    vbox = QVBoxLayout()
-    vbox.setContentsMargins(2,2,2,2)
-    
-    browser = QWebView()
-    browser.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding))
-    
-    if platform.system() == 'Windows':
-        # On Windows, QWebView does not adapt according to system scaling settings.
-        # This leads to tiny fonts on high-dpi displays where scaling
-        # is typically 200%. The work-around below sets the right scaling
-        # via the browser's zoom factor.
-        screen = QGuiApplication.primaryScreen()
-        dpi = screen.logicalDotsPerInchX()
-        zoom = dpi / 96
-        browser.setZoomFactor(zoom)
-    
-    # Open external links with the default browser.
-    browser.page().setLinkDelegationPolicy(QWebPage.DelegateExternalLinks)
-    browser.linkClicked.connect(QDesktopServices.openUrl)
-
-    browser.load(url)
-    
-    vbox.addWidget(browser)
-    return vbox
-
 
 def ensure_folder_empty(folder: str, iface: QgisInterface) -> bool:
     existing_files = os.listdir(folder)
