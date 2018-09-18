@@ -3,6 +3,7 @@
 - Add support for pre-built binaries for macOS with WRF-CMake.
 - Add support for pre-built binaries for Linux (all) with WRF-CMake.
 - Add option to run WRF/WPS in MPI mode on Windows, macOS and Linux.
+- Move documentation and tutorials to website at https://gis4wrf.github.io/
 - Bug fixes.
 
 0.10.0
