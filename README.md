@@ -31,8 +31,8 @@ We ask to please acknowledge our work by citing and referencing both, the GIS4WR
     ``` bibtex
     @unpublished{meyer_riechert_2018_article,
         author       = {D. Meyer and M. Riechert},
-    title={GIS4WRF: an integrated open source QGIS toolkit for the Advanced Research WRF Framework},
-    note={Manuscript submitted for publication}
+        title={GIS4WRF: an integrated open source QGIS toolkit for the Advanced Research WRF Framework},
+        note={Manuscript submitted for publication}
     }
 
     @misc{meyer_riechert_2018_software,
