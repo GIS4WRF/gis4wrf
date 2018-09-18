@@ -28,7 +28,7 @@ We ask to please acknowledge our work by citing and referencing both, the GIS4WR
     ```
 - Alternatively, you can add the following to your BibTex file:
 
-    ``` bibtex
+    ```bibtex
     @unpublished{meyer_riechert_2018_article,
         author       = {D. Meyer and M. Riechert},
         title={GIS4WRF: an integrated open source QGIS toolkit for the Advanced Research WRF Framework},
