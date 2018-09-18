@@ -16,7 +16,7 @@ from PyQt5.QtWidgets import (
 
 from qgis.gui import QgsOptionsWidgetFactory, QgsOptionsPageWidget
 
-from gis4wrf.core import get_wps_dist_url, get_wrf_dist_url, download_and_extract_dist, WRF_WPS_DIST_VERSION
+from gis4wrf.core import get_wps_dist_url, get_wrf_dist_url, download_and_extract_dist, WRF_WPS_DIST_VERSION, find_mpiexec
 from gis4wrf.core.util import export
 from gis4wrf.plugin.options import get_options
 from gis4wrf.plugin.constants import PLUGIN_NAME, GIS4WRF_LOGO_PATH, MSMPI_DOWNLOAD_PAGE
@@ -153,11 +153,17 @@ class ConfigOptionsPage(QgsOptionsPageWidget):
         if not self.mpi_enabled.isChecked():
             return
         
+        try:
+            find_mpiexec()
+        except:
+            has_mpi = False
+        else:
+            has_mpi = True
+
         plat = platform.system()
 
         if plat == 'Windows':
-            has_msmpi = os.environ.get('MSMPI_BIN')
-            if not has_msmpi:
+            if not has_mpi:
                 self.mpi_enabled.setChecked(False)
                 reply = QMessageBox.question(
                     self, 'Microsoft MPI not found',
@@ -168,12 +174,7 @@ class ConfigOptionsPage(QgsOptionsPageWidget):
                 if reply == QMessageBox.Yes:
                     webbrowser.open(MSMPI_DOWNLOAD_PAGE)
         elif plat in ['Darwin', 'Linux']:
-            try: 
-                if plat == 'Linux':
-                    subprocess.check_output(['mpiexec', '-h'])
-                else: # Darwin # FIXME: momentarily hardcode path
-                    subprocess.check_output(['/usr/local/bin/mpiexec', '-h'])
-            except FileNotFoundError:
+            if not has_mpi:
                 self.mpi_enabled.setChecked(False)
                 if plat == 'Linux':
                     extra = 'For Debian/Ubuntu, run "sudo apt install mpich".'
