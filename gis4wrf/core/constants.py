@@ -26,12 +26,12 @@ WRF_DIST = {
         'dmpar': 'https://github.com/WRF-CMake/WRF/releases/download/WRF-CMake-4.0/wrf-cmake-4.0-dmpar-basic-release-windows.zip'
     },
     'Darwin': {
-        'serial': 'https://github.com/WRF-CMake/WRF/releases/download/WRF-CMake-4.0/wrf-cmake-4.0-serial-basic-release-macos.zip',
-        'dmpar': 'https://github.com/WRF-CMake/WRF/releases/download/WRF-CMake-4.0/wrf-cmake-4.0-dmpar-basic-release-macos.zip'
+        'serial': 'https://github.com/WRF-CMake/WRF/releases/download/WRF-CMake-4.0/wrf-cmake-4.0-serial-basic-release-macos.tar.xz',
+        'dmpar': 'https://github.com/WRF-CMake/WRF/releases/download/WRF-CMake-4.0/wrf-cmake-4.0-dmpar-basic-release-macos.tar.xz'
     },
     'Linux': {
-        'serial': 'https://github.com/WRF-CMake/WRF/releases/download/WRF-CMake-4.0/wrf-cmake-4.0-serial-basic-release-linux.zip',
-        'dmpar': 'https://github.com/WRF-CMake/WRF/releases/download/WRF-CMake-4.0/wrf-cmake-4.0-dmpar-basic-release-linux.zip'
+        'serial': 'https://github.com/WRF-CMake/WRF/releases/download/WRF-CMake-4.0/wrf-cmake-4.0-serial-basic-release-linux.tar.xz',
+        'dmpar': 'https://github.com/WRF-CMake/WRF/releases/download/WRF-CMake-4.0/wrf-cmake-4.0-dmpar-basic-release-linux.tar.xz'
     }
 }
 
@@ -41,11 +41,11 @@ WPS_DIST = {
         'dmpar': 'https://github.com/WRF-CMake/WPS/releases/download/WPS-CMake-4.0/wps-cmake-4.0-dmpar-basic-release-windows.zip',
     },
     'Darwin': {
-        'serial': 'https://github.com/WRF-CMake/WPS/releases/download/WPS-CMake-4.0/wps-cmake-4.0-serial-basic-release-macos.zip',
-        'dmpar': 'https://github.com/WRF-CMake/WPS/releases/download/WPS-CMake-4.0/wps-cmake-4.0-dmpar-basic-release-macos.zip'
+        'serial': 'https://github.com/WRF-CMake/WPS/releases/download/WPS-CMake-4.0/wps-cmake-4.0-serial-basic-release-macos.tar.xz',
+        'dmpar': 'https://github.com/WRF-CMake/WPS/releases/download/WPS-CMake-4.0/wps-cmake-4.0-dmpar-basic-release-macos.tar.xz'
     },
     'Linux': {
-        'serial': 'https://github.com/WRF-CMake/WPS/releases/download/WPS-CMake-4.0/wps-cmake-4.0-serial-basic-release-linux.zip',
-        'dmpar': 'https://github.com/WRF-CMake/WPS/releases/download/WPS-CMake-4.0/wps-cmake-4.0-dmpar-basic-release-linux.zip'
+        'serial': 'https://github.com/WRF-CMake/WPS/releases/download/WPS-CMake-4.0/wps-cmake-4.0-serial-basic-release-linux.tar.xz',
+        'dmpar': 'https://github.com/WRF-CMake/WPS/releases/download/WPS-CMake-4.0/wps-cmake-4.0-dmpar-basic-release-linux.tar.xz'
     }
 }
