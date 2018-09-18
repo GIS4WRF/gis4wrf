@@ -20,11 +20,30 @@ We ask to please acknowledge our work by citing and referencing both, the GIS4WR
     E.g. — reference list using the American Meteorological Society (AMS) style:
 
     ```
-    Meyer, D., and M. Riechert 2018a. GIS4WRF: an integrated open source QGIS toolkit
+    Meyer, D., and M. Riechert, 2018a: GIS4WRF: an integrated open source QGIS toolkit
         for the Advanced Research WRF Framework. Manuscript submitted for publication.
 
-    Meyer, D., and M. Riechert, 2018b. GIS4WRF.
+    Meyer, D., and M. Riechert, 2018b: The GIS4WRF Plugin.
         doi:10.5281/zenodo.1288569.
+    ```
+- Alternatively, you can add the following to your BibTex file:
+
+    ``` bibtex
+    @unpublished{meyer_riechert_2018_article,
+        author       = {D. Meyer and
+                    M. Riechert},
+    title={GIS4WRF: an integrated open source QGIS toolkit for the Advanced Research WRF Framework},
+    note={Manuscript submitted for publication}
+    }
+
+    @misc{meyer_riechert_2018_software,
+        author       = {D. Meyer and
+                        M. Riechert},
+        title        = {The GIS4WRF Plugin},
+        year         = 2018,
+        doi          = {10.5281/zenodo.1288569},
+        url          = {https://doi.org/10.5281/zenodo.1288569}
+    }
     ```
 
 ## Contributing
