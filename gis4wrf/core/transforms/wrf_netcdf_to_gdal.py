@@ -7,6 +7,7 @@ from enum import Enum
 from functools import partial
 import os
 
+import numpy as np
 import netCDF4 as nc
 
 # Optional import for wrf-python as binary wheels are not yet available for all platforms.
@@ -107,16 +108,6 @@ def convert_wrf_nc_var_to_gdal_dataset(
     path: str, var_name: str, extra_dim_index: Optional[int],
     interp_level: Optional[float], interp_vert_name: Optional[str],
     fmt: GDALFormat=GDALFormat.GTIFF, use_vsi: bool=False) -> Tuple[str,Callable[[],None]]:
-    if fmt == GDALFormat.GTIFF:
-        # LU_INDEX has a color table which is unsupported with TIFF, so we force HDF5_VRT instead.
-        # (GDAL: "SetColorTable() not supported for multi-sample TIFF files.")
-        if var_name == 'LU_INDEX':
-            fmt = GDALFormat.HDF5_VRT
-
-    if fmt == GDALFormat.HDF5_VRT:
-        # TODO remove once gdal bug is fixed: https://github.com/OSGeo/gdal/issues/622 
-        if var_name in ['E', 'F']:
-            fmt = GDALFormat.NETCDF_VRT
 
     if var_name in DIAG_VARS:
         assert wrf is not None
@@ -194,9 +185,19 @@ def convert_wrf_nc_var_to_gdal_dataset(
             assert extra_dim_index is None
 
         print('Adding {}'.format(var_name))
-        type_code = gdal_array.NumericTypeCodeToGDALTypeCode(var.dtype)
-
-        times = shape[0]
+        
+        if fmt == GDALFormat.GTIFF and var_name == 'LU_INDEX' and landuse_cat_names:
+            # All time steps contain the same data, so use only the first here.
+            # This also works around the problem that color tables in GDAL's TIFF driver
+            # can only be used with single band datasets.
+            times = 1
+            # Required for color table support in TIFF.
+            np_dtype = np.uint8
+        else:
+            times = shape[0]
+            np_dtype = var.dtype
+        
+        type_code = gdal_array.NumericTypeCodeToGDALTypeCode(np_dtype)
 
         gdal_ds = driver.Create(out_path, cols, rows, times, type_code) # type: gdal.Dataset
         gdal_ds.SetProjection(crs.wkt)
@@ -250,7 +251,7 @@ def convert_wrf_nc_var_to_gdal_dataset(
                 data = var[band_idx - 1]
                 if is_4d:
                     data = data[extra_dim_index]
-                band.WriteArray(data)
+                band.WriteArray(data.astype(np_dtype, copy=False))
 
         gdal_ds.FlushCache()
     finally:
