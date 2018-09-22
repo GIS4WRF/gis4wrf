@@ -13,10 +13,11 @@ from PyQt5.QtGui import (
 )
 from PyQt5.QtWidgets import (
     QPushButton, QVBoxLayout, QDialog, QGridLayout,
-    QHBoxLayout, QFileDialog, QDialogButtonBox, QMessageBox, QListWidget, QListWidgetItem,
+    QHBoxLayout, QFileDialog, QDialogButtonBox, QListWidget, QListWidgetItem,
     QAbstractItemView, QDateTimeEdit, QLabel
 )
 
+from gis4wrf.core import UserError, UnsupportedError
 from gis4wrf.plugin.ui.helpers import add_grid_lineedit, add_grid_combobox, add_grid_labeled_widget, create_file_input
 
 
@@ -112,26 +113,18 @@ class CustomMetDatasetDialog(QDialog):
         return self.vtable_input.text()
 
     def on_ok_clicked(self) -> None:
-        def error(msg: str) -> None:
-            QMessageBox.critical(self, 'Invalid input', msg)
         if not self.paths:
-            error('No GRIB files were added.')
-            return
+            raise UserError('No GRIB files were added')
         if not self.interval_input.is_valid():
-            error('Interval must be an integer above 0.')
-            return
+            raise UserError('Interval must be an integer above 0')
         if self.start_date == self.end_date:
-            error('Start date cannot be the same as end date.')
-            return
+            raise UserError('Start date cannot be the same as end date')
         if self.start_date > self.end_date:
-            error('Start date cannot be after the end date.')
-            return
+            raise UserError('Start date cannot be after the end date')
         if not self.vtable_path:
-            error('No VTable file selected.')
-            return
+            raise UserError('No VTable file selected')
         if not os.path.exists(os.path.join(self.vtable_dir, self.vtable_path)):
-            error('VTable file does not exist.')
-            return
+            raise UserError('VTable file does not exist')
         self.accept()
 
     def on_add_folder_btn_clicked(self) -> None:
@@ -165,8 +158,7 @@ class CustomMetDatasetDialog(QDialog):
             try:
                 base_folder = os.path.commonpath(paths)
             except ValueError:
-                QMessageBox.critical(self, 'Invalid input', 'All files must be located on the same drive.')
-                return
+                raise UnsupportedError('Only datasets with files located on the same drive are supported')
         else:
             base_folder = None
 

@@ -5,7 +5,7 @@ import signal
 
 from PyQt5.QtCore import QObject, QThread, pyqtSignal
 
-from gis4wrf.core import run_program
+from gis4wrf.core import run_program, UserError
 
 
 _THREADS = [] # type: List[QThread]
@@ -96,5 +96,5 @@ class ProgramThread(QThread):
 
     def kill_program(self):
         if self.pid == -1:
-            raise RuntimeError('Program not started yet')
+            raise UserError('Program not started yet')
         os.kill(self.pid, signal.SIGTERM)

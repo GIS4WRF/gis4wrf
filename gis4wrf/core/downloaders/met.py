@@ -11,6 +11,7 @@ from datetime import datetime
 
 from .util import download_file, requests_retry_session
 from gis4wrf.core.util import export, remove_dir
+from gis4wrf.core.errors import UserError
 
 DATE_FORMAT = '%Y%m%d%H%M'
 ERROR_STATUS = ['No request information found']
@@ -126,7 +127,7 @@ def rda_submit_request(request_data: dict, auth: tuple) -> str:
         response_fmt = [x.split(':') for x in response.text.splitlines()]
         request_id = [x[1].strip() for x in response_fmt if x[0].strip() == 'Index'][0]
     except:
-        raise RuntimeError('RDA error: ' + response.text.strip())
+        raise UserError('RDA error: ' + response.text.strip())
     return request_id
 
 def rda_check_status(request_id: str, auth: tuple) -> str:

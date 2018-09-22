@@ -9,6 +9,7 @@ import yaml
 import f90nml
 
 from gis4wrf.core.util import export
+from gis4wrf.core.errors import UserError
 
 SCHEMA_DIR = os.path.join(os.path.dirname(__file__),  'nml_schemas')
 
@@ -24,7 +25,13 @@ SCHEMA_CACHE = {} # type: Dict[str,Any]
 
 @export
 def read_namelist(path: str, schema_name: Optional[str]=None) -> dict:
-    nml = f90nml.read(path)
+    if not os.path.exists(path):
+        raise UserError(f'Namelist file {path} does not exist')
+    try:
+        nml = f90nml.read(path)
+    except:
+        # f90nml does not raise useful exceptions, so we can't include details here
+        raise UserError(f'Namelist file {path} could not be parsed')
     
     # If a schema is specified, use it to fix single-element lists which are parsed as
     # primitive value since there is nothing to distinguish them from each other in the namelist format.

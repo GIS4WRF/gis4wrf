@@ -15,6 +15,8 @@ import itertools
 from gis4wrf.core.util import export, gdal, get_temp_vsi_path, link_or_copy, ogr, read_vsi_string
 from gis4wrf.core.constants import PROJECT_JSON_VERSION
 from gis4wrf.core.crs import CRS, LonLat, BoundingBox2D, Coordinate2D
+from gis4wrf.core.errors import (
+    UserError, WRFDistributionError, WPSDistributionError)
 from gis4wrf.core.readers.geogrid_tbl import read_geogrid_tbl, GeogridTbl
 from gis4wrf.core.readers.namelist import read_namelist
 from gis4wrf.core.writers.geogrid_tbl import write_geogrid_tbl
@@ -50,13 +52,16 @@ class Project(object):
 
     @staticmethod
     def load(path: str):
-        with open(os.path.join(path, PROJECT_FILENAME)) as fp:
+        project_json_path = os.path.join(path, PROJECT_FILENAME)
+        if not os.path.exists(project_json_path):
+            raise UserError(f'{project_json_path} not found')
+        with open(project_json_path) as fp:
             data = json.load(fp, object_hook=ProjectJSONDecoder)
         if data['version'] < PROJECT_JSON_VERSION:
             # upgrade to new version
             pass
         elif data['version'] > PROJECT_JSON_VERSION:
-            raise ValueError('Plugin too old to read project file of version {}'.format(data['version']))
+            raise UserError('Plugin too old to read project file of version {}'.format(data['version']))
         return Project(data, path)
 
     def save(self) -> None:
@@ -229,7 +234,7 @@ class Project(object):
         elif map_proj == 'lat-lon':
             return CRS.create_lonlat()
         else:
-            raise ValueError('Unknown projection: ' + map_proj)
+            assert False, f'invalid projection: {map_proj}'
 
     @property
     def domain_count(self) -> int:
@@ -244,7 +249,7 @@ class Project(object):
         ''' Updated computed fields in each domain object like cell size. '''
         domains = self.data.get('domains')
         if domains is None:
-            raise RuntimeError('Domains not configured yet')
+            raise UserError('Domains are not configured yet')
 
         innermost_domain = domains[0]
         outermost_domain = domains[-1]
@@ -384,6 +389,8 @@ class Project(object):
     # TODO move prepare functions into separate module together with functions for running
     def prepare_wps_run(self, wps_folder: str) -> None:
         # TODO create separate functions that clean outputs from previous runs, selectively for geogrid etc.
+        if not os.path.exists(wps_folder):
+            raise WPSDistributionError(f'{wps_folder} does not exist')
         self.update_wps_namelist()
         os.makedirs(self.run_wps_folder, exist_ok=True)
         # We use the default relative folder locations (./geogrid, ./metgrid)
@@ -396,7 +403,7 @@ class Project(object):
         os.makedirs(metgrid_folder, exist_ok=True)
         metgrid_tbl_src_path = os.path.join(wps_folder, 'metgrid', 'METGRID.TBL.ARW')
         if not os.path.exists(metgrid_tbl_src_path):
-            raise RuntimeError('File missing in WPS distribution: ' + metgrid_tbl_src_path)
+            raise WPSDistributionError(f'{metgrid_tbl_src_path} is missing')
         shutil.copy(metgrid_tbl_src_path,
                     os.path.join(metgrid_folder, 'METGRID.TBL'))
 
@@ -425,6 +432,8 @@ class Project(object):
                     link_or_copy(path, link_path)
 
     def prepare_wrf_run(self, wrf_folder: str) -> None:
+        if not os.path.exists(wrf_folder):
+            raise WRFDistributionError(f'{wrf_folder} does not exist')
         self.update_wrf_namelist()
         os.makedirs(self.run_wrf_folder, exist_ok=True)
 
@@ -443,7 +452,7 @@ class Project(object):
 
         static_data_dir = os.path.join(wrf_folder, 'test', 'em_real')
         if not os.path.exists(static_data_dir):
-            raise RuntimeError('Folder missing in WRF distribution: ' + static_data_dir)
+            raise WRFDistributionError(f'{static_data_dir} is missing')
         for filename in os.listdir(static_data_dir):
             if any(pattern in filename for pattern in static_data_exclude):
                 continue

@@ -15,7 +15,8 @@ from qgis.gui import QgisInterface
 
 from gis4wrf.core import (
     LonLat, Coordinate2D, CRS, Project, read_namelist, write_namelist,
-    convert_wps_nml_to_project, convert_project_to_wps_namelist
+    convert_wps_nml_to_project, convert_project_to_wps_namelist,
+    UserError
 )
 from gis4wrf.plugin.geo import update_domain_outline_layers, update_domain_grid_layers, get_qgis_crs, rect_to_bbox
 from gis4wrf.plugin.ui.helpers import (
@@ -278,7 +279,7 @@ class DomainWidget(QWidget):
 
     @pyqtSlot()
     def on_import_from_namelist_button_clicked(self) -> None:
-        file_path, _ = QFileDialog.getOpenFileName(caption='Open wps namelist')
+        file_path, _ = QFileDialog.getOpenFileName(caption='Open WPS namelist')
         if not file_path:
             return
         nml = read_namelist(file_path, schema_name='wps')
@@ -288,8 +289,8 @@ class DomainWidget(QWidget):
     @pyqtSlot()
     def on_export_geogrid_namelist_button_clicked(self):
         if not self.update_project():
-            raise ValueError('Input invalid, check fields')
-        file_path, _ = QFileDialog.getSaveFileName(caption='Save wps namelist as', \
+            raise UserError('Domain configuration invalid, check fields')
+        file_path, _ = QFileDialog.getSaveFileName(caption='Save WPS namelist as', \
                                                    directory='namelist.wps')
         if not file_path:
             return
@@ -306,7 +307,7 @@ class DomainWidget(QWidget):
     def create_domain_crs(self) -> CRS:
         proj = self.get_proj_kwargs()
         if proj is None:
-            raise ValueError('Incomplete projection definition')
+            raise UserError('Incomplete projection definition')
 
         origin_valid = all(map(lambda w: w.is_valid(), [self.center_lat, self.center_lon]))
         if origin_valid:
@@ -319,7 +320,7 @@ class DomainWidget(QWidget):
         elif proj['map_proj'] == 'lat-lon':
             crs = CRS.create_lonlat()
         else:
-            raise NotImplementedError('unknown proj: ' + proj['map_proj'])
+            assert False, 'unknown proj: ' + proj['map_proj']
         return crs
 
     @pyqtSlot()
@@ -339,6 +340,9 @@ class DomainWidget(QWidget):
         if not self.resolution.is_valid():
             return
         layer = self.iface.activeLayer() # type: QgsMapLayer
+        if layer is None:
+            print('foo')
+            raise UserError('No layer selected, use the "Layers" panel')
 
         layer_crs = layer.crs() # type: QgsCoordinateReferenceSystem
 
@@ -420,6 +424,7 @@ class DomainWidget(QWidget):
         is_undefined = proj_id == 'undefined'
         is_lat_lon = proj_id == 'lat-lon'
 
+        self.domain_pb_set_projection.setDisabled(is_undefined)
         self.group_box_resol.setDisabled(is_undefined)
         self.group_box_auto_domain.setDisabled(is_undefined)
         self.group_box_manual_domain.setDisabled(is_undefined)

@@ -105,7 +105,7 @@ def remove_dir(path: Union[str,Path]) -> None:
     retry(lambda: path.rename(tmp))
     retry(lambda: shutil.rmtree(tmp))
 
-def retry(fn, retries=3, sleep=1):
+def retry(fn, retries=5, sleep=1):
     while True:
         try:
             return fn()

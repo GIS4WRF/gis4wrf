@@ -20,7 +20,7 @@ from gis4wrf.core import get_wps_dist_url, get_wrf_dist_url, download_and_extrac
 from gis4wrf.core.util import export
 from gis4wrf.plugin.options import get_options
 from gis4wrf.plugin.constants import PLUGIN_NAME, GIS4WRF_LOGO_PATH, MSMPI_DOWNLOAD_PAGE
-from gis4wrf.plugin.ui.helpers import WaitDialog, create_file_input, reraise, wrap_error
+from gis4wrf.plugin.ui.helpers import WaitDialog, create_file_input, reraise
 from gis4wrf.plugin.ui.thread import TaskThread
 
 @export
@@ -189,7 +189,7 @@ class ConfigOptionsPage(QgsOptionsPageWidget):
 
     def download_wps(self) -> None:
         mpi = self.mpi_enabled.isChecked()
-        url = wrap_error(self, lambda: get_wps_dist_url(mpi))
+        url = get_wps_dist_url(mpi)
         if not url:
             return
 
@@ -197,7 +197,7 @@ class ConfigOptionsPage(QgsOptionsPageWidget):
 
     def download_wrf(self) -> None:
         mpi = self.mpi_enabled.isChecked()
-        url = wrap_error(self, lambda: get_wrf_dist_url(mpi))
+        url = get_wrf_dist_url(mpi)
         if not url:
             return
 

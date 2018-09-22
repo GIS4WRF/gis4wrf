@@ -13,7 +13,7 @@ from PyQt5.QtWidgets import (
 
 from gis4wrf.core import (
     met_datasets, get_met_products, is_met_dataset_downloaded, get_met_dataset_path, download_met_dataset,
-    CRS)
+    CRS, UserError)
 from gis4wrf.plugin.options import get_options
 from gis4wrf.plugin.geo import rect_to_bbox
 from gis4wrf.plugin.broadcast import Broadcast
@@ -167,6 +167,8 @@ class MetToolsDownloadManager(QWidget):
         product_name = self.cbox_product.currentData()
         start_date = self.dedit_start_date.dateTime().toPyDateTime()
         end_date = self.dedit_end_date.dateTime().toPyDateTime()
+        if dataset_name is None or product_name is None:
+            raise UserError('Dataset/Product not selected')
 
         args = [self.options.met_dir, dataset_name, product_name, start_date, end_date]
         if is_met_dataset_downloaded(*args):

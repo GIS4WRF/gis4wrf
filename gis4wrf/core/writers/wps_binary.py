@@ -13,6 +13,7 @@ import numpy as np
 import numpy.ma as ma
 
 from gis4wrf.core.constants import WRF_EARTH_RADIUS
+from gis4wrf.core.errors import UserError, UnsupportedError
 from gis4wrf.core.util import export, gdal, gdal_array, osr
 from gis4wrf.core.crs import CRS, Coordinate2D
 
@@ -105,19 +106,19 @@ def convert_to_wps_binary(input_path: str, output_folder: str, is_categorical: b
     '''
     os.makedirs(output_folder, exist_ok=True)
     if os.listdir(output_folder):
-        raise ValueError("Output folder must be empty")
+        raise ValueError('Output folder must be empty')
 
     # FIXME if there is no nodata value, ask the user if it really has no nodata or ask for the value
 
     src_ds = gdal.Open(input_path) # type: gdal.Dataset
     xsize, ysize = src_ds.RasterXSize, src_ds.RasterYSize
     if xsize > MAX_SIZE or ysize > MAX_SIZE:
-        raise ValueError('Dataset has more than {} rows or columns: {} x {}'.format(MAX_SIZE, ysize, xsize))
+        raise UserError(f'Dataset has more than {MAX_SIZE} rows or columns: {ysize} x {xsize}, consider downsampling')
 
     filename_digits = 6 if xsize > 99999 or ysize > 99999 else 5
 
     if src_ds.GetLayerCount() > 1:
-        raise ValueError('Dataset has more than one layer')
+        raise UnsupportedError('Dataset has more than one layer which is unsupported')
 
     band = src_ds.GetRasterBand(1) # type: gdal.Band
     src_no_data_value = band.GetNoDataValue()
@@ -134,10 +135,10 @@ def convert_to_wps_binary(input_path: str, output_folder: str, is_categorical: b
         tile_bdr = 3
 
     if tile_bdr > 0 and not has_no_data_value:
-        raise ValueError('No-data value required as dataset is continuous and halo is non-zero')
+        raise UserError('No-data value required as dataset is continuous and halo is non-zero')
 
     if not is_perfect_tiling and not has_no_data_value:
-        raise ValueError('No-data value required as no perfect tile size could be found')
+        raise UserError('No-data value required as no perfect tile size could be found')
 
     tilesize_bdr_x = tilesize_x + 2*tile_bdr
     tilesize_bdr_y = tilesize_y + 2*tile_bdr
@@ -265,10 +266,10 @@ def create_index_dict(dataset: gdal.Dataset, tilesize_x: int, tilesize_y: int, y
         scale_factor = band.GetScale()
         inv_scale_factor = None
         if band.GetOffset() != 0:
-            raise NotImplementedError('Integer data with offset not supported')
+            raise UnsupportedError('Integer data with offset not supported')
     elif dtype in DTYPE_FLOAT:
         if is_categorical:
-            raise ValueError('Categorical data must have integer-type data but is float')
+            raise UserError('Categorical data must have integer-type data but is float')
         assert band.GetOffset() == 0
         assert band.GetScale() == 1
         # WPS binary doesn't support floating point data.
@@ -312,14 +313,16 @@ def create_index_dict(dataset: gdal.Dataset, tilesize_x: int, tilesize_y: int, y
 
     if srs.IsGeographic():
         if srs.EPSGTreatsAsLatLong():
-            raise ValueError("Unsupported axis order: Lat/Lon, must be Lon/Lat")
+            raise UnsupportedError("Unsupported axis order: Lat/Lon, must be Lon/Lat")
 
         if not CRS.is_wrf_sphere_datum(srs):
-            datum_mismatch = DatumMismatch(expected='WRF Sphere (6370km)', actual='a={}m b={}m'.format(srs.GetSemiMajor(), srs.GetSemiMinor()))
+            datum_mismatch = DatumMismatch(
+                expected='WRF Sphere (6370km)',
+                actual='a={}m b={}m'.format(srs.GetSemiMajor(), srs.GetSemiMinor()))
         if datum_mismatch and strict_datum:
-            raise ValueError(
-                "Unsupported datum, must be based on a sphere with " +
-                "radius {}m, but is an ellipsoid with a={}m b={}m".format(WRF_EARTH_RADIUS, srs.GetSemiMajor(), srs.GetSemiMinor()))
+            raise UnsupportedError("Unsupported datum, must be based on a sphere with " +
+                "radius {}m, but is an ellipsoid with a={}m b={}m".format(
+                    WRF_EARTH_RADIUS, srs.GetSemiMajor(), srs.GetSemiMinor()))
 
         projection = 'regular_ll'
 
@@ -366,9 +369,9 @@ def create_index_dict(dataset: gdal.Dataset, tilesize_x: int, tilesize_y: int, y
             projection = 'polar'
 
         if projection is None or (datum_mismatch and strict_datum):
-            raise ValueError("Unsupported projection/datum: {}; {}".format(proj, datum))
+            raise UnsupportedError("Unsupported projection/datum: {}; {}".format(proj, datum))
     else:
-        raise ValueError("Unsupported SRS type, must be geographic or projected")
+        raise UnsupportedError("Unsupported SRS type, must be geographic or projected")
 
     if units is None and is_categorical:
         units = 'category'

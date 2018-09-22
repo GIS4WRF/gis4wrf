@@ -7,6 +7,7 @@ import multiprocessing
 import time
 
 from gis4wrf.core.util import export
+from gis4wrf.core.errors import UserError, UnsupportedError
 
 STARTUPINFO = None
 if os.name == 'nt':
@@ -30,7 +31,7 @@ def find_mpiexec() -> str:
         # Sometimes /usr/local/bin is not in PATH.
         paths.append('/usr/local/bin/mpiexec')
     else:
-        raise RuntimeError('Unsupported platform')
+        raise UnsupportedError(f'Platform "{plat}" is not supported')
     
     mpiexec_path = None
     for path in paths:
@@ -43,7 +44,7 @@ def find_mpiexec() -> str:
             break
     
     if mpiexec_path is None:
-        raise RuntimeError('MPI not found')
+        raise UserError('MPI not found')
     
     return mpiexec_path
 

@@ -6,6 +6,7 @@ import os
 from configparser import ConfigParser
 
 from gis4wrf.core.util import export
+from gis4wrf.core.errors import UserError, UnsupportedError
 from gis4wrf.core.crs import LonLat, Coordinate2D
 from gis4wrf.core.readers.categories import LANDUSE, LANDUSE_FIELDS
 
@@ -94,7 +95,7 @@ class WPSBinaryIndexMetadata(object):
         elif scheme == 'MODIFIED_IGBP_MODIS_NOAH':
             water.add(17)
         else:
-            raise NotImplementedError('Unknown landuse scheme: ' + scheme)
+            raise UnsupportedError(f'Land use scheme {scheme} is not supported')
 
         return sorted(water)
 
@@ -107,7 +108,7 @@ class WPSBinaryIndexMetadata(object):
 def read_wps_binary_index_file(folder: str) -> WPSBinaryIndexMetadata:
     index_path = os.path.join(folder, 'index')
     if not os.path.exists(index_path):
-        raise ValueError(f'{index_path} file missing, this is not a valid WPS Binary dataset')
+        raise UserError(f'{index_path} is missing, this is not a valid WPS Binary dataset')
     with open(index_path) as f:
         index = '\n'.join(line.strip() for line in f.readlines())
     parser = ConfigParser()

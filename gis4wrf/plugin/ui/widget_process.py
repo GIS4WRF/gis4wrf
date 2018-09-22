@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QFileDialog, QMessageBox, QPushButton, QVBoxLayout, 
 
 from gis4wrf.plugin.constants import *
 from gis4wrf.plugin.ui.helpers import ensure_folder_empty
-from gis4wrf.core import convert_to_wps_binary
+from gis4wrf.core import convert_to_wps_binary, UserError, UnsupportedError
 
 
 class Process(QWidget):
@@ -28,12 +28,13 @@ class Process(QWidget):
     def run_convert_to_wps_binary(self) -> None:
         msg_bar = self.iface.messageBar() # type: QgsMessageBar
         layer = self.iface.activeLayer() # type: QgsMapLayer
+        if layer is None:
+            raise UserError('No layer selected, use the "Layers" panel')
         source = layer.source()
         if not os.path.exists(source):
             # Currently in-memory layers are not supported, but QGIS in most cases saves
             # layers to temporary files on disk during processing operations, so this is not a big issue.
-            msg_bar.pushCritical(PLUGIN_NAME, 'Layer must exist on the filesystem')
-            return
+            raise UnsupportedError('Only layers that exist on the filesystem are supported')
         reply = QMessageBox.question(self.iface.mainWindow(), 'Layer type',
                  "Is this layer's data categorical?", QMessageBox.Yes, QMessageBox.No)
         is_categorical = reply == QMessageBox.Yes
