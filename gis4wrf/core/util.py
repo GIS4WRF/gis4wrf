@@ -94,12 +94,19 @@ def link_or_copy(src: str, dst: str) -> None:
 def try_enable_ntfs_compression(path: str) -> None:
     if platform.system() != 'Windows':
         return
+    
+    # TODO check if https://superuser.com/q/1330063 is relevant here and resolved by now
+
     # Calling `compact /C` marks the folder such that any new files
     # will be compressed, existing files are not affected.
     # Note that the call to `compact` can fail, e.g. if the file system
     # is not NTFS. We ignore such errors silently.
     subprocess.run(['compact', '/C', path],
-                    stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                   stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+    # Compress all existing not yet compressed files, ignoring errors.
+    subprocess.run(['compact', '/C', '/I', '/S'], cwd=path,
+                   stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 def get_temp_dir() -> str:
     return tempfile.mkdtemp(prefix='gis4wrf')

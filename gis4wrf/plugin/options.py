@@ -4,7 +4,6 @@
 from typing import Optional, List
 import os
 import platform
-import subprocess
 import multiprocessing
 
 from qgis.core import QgsSettings
@@ -82,7 +81,7 @@ class Options(object):
             os.makedirs(path, exist_ok=True)
 
         # Geographical data is stored in WPS Binary format which is uncompressed
-        # and can typically be shrunken by a factor of 10 using NTFS compression
+        # and can typically be shrunken by a factor of 3-10 using NTFS compression
         # on Windows without noticeably affecting performance.
         try_enable_ntfs_compression(self.geog_dir)
     
