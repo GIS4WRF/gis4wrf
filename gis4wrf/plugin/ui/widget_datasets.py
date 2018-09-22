@@ -81,6 +81,11 @@ class DatasetsWidget(QWidget):
         vbox_geodata = QVBoxLayout()
         self.gbox_geodata.setLayout(vbox_geodata)
 
+        self.label_geodata_wps_not_setup = QLabel(
+            'NOTE: WPS is currently not setup! Update your settings, then return here to configure geographical data.')
+        self.label_geodata_wps_not_setup.setVisible(False)
+        vbox_geodata.addWidget(self.label_geodata_wps_not_setup)
+
         gbox_avail_datasets = QGroupBox('Available Datasets')
         vbox_geodata.addWidget(gbox_avail_datasets)
 
@@ -256,9 +261,14 @@ class DatasetsWidget(QWidget):
         try:
             tbl = self.geogrid_tbl = self.project.read_geogrid_tbl()
         except FileNotFoundError:
+            # This happens when WPS is not setup.
+            self.gbox_geodata.setEnabled(False)
+            self.label_geodata_wps_not_setup.setVisible(True)
             return
         if tbl is None:
             return
+        self.gbox_geodata.setEnabled(True)
+        self.label_geodata_wps_not_setup.setVisible(False)
         add_derived_metadata_to_geogrid_tbl(tbl, self.options.geog_dir)
 
         for group_name in sorted(tbl.group_names):
