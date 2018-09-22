@@ -296,7 +296,7 @@ def install_user_error_handler(iface: QgisInterface) -> None:
         DistributionError: lambda e: (
             f'<html>There is a problem with your {e.dist_name} distribution: {e}. ' +
              'If you need help with the configuration, have a look at the ' +
-             '<a href="https://gis4wrf.github.io/configuration/">GIS4WRF online documentation</a>.</html>',
+             '<a href="https://gis4wrf.github.io/configuration/">online documentation</a>.</html>',
             'Error', QMessageBox.critical),
 
         UserError: lambda e: (

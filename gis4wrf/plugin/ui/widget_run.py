@@ -21,7 +21,7 @@ from PyQt5.QtWidgets import (
 
 from qgis.gui import QgisInterface
 
-from gis4wrf.core import Project, get_namelist_schema, UserError
+from gis4wrf.core import Project, get_namelist_schema, UserError, WRFDistributionError, WPSDistributionError
 
 from gis4wrf.plugin.constants import PLUGIN_NAME
 from gis4wrf.plugin.options import get_options
@@ -97,12 +97,12 @@ class RunWidget(QWidget):
 
     def prepare_wps_run(self) -> None:
         if not self.options.wps_dir:
-            raise UserError('WPS is not setup, see QGIS settings')
+            raise WPSDistributionError('WPS is not setup')
         self.project.prepare_wps_run(self.options.wps_dir)
 
     def prepare_wrf_run(self) -> None:
         if not self.options.wrf_dir:
-            raise UserError('WRF is not setup, see QGIS settings')
+            raise WRFDistributionError('WRF is not setup')
         self.project.prepare_wrf_run(self.options.wrf_dir)
 
     def on_open_namelist_wps_clicked(self) -> None:
