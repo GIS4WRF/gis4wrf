@@ -1,7 +1,7 @@
 # GIS4WRF (https://doi.org/10.5281/zenodo.1288569)
 # Copyright (c) 2018 D. Meyer and M. Riechert. Licensed under MIT.
 
-from typing import List, Dict
+from typing import List, Dict, Iterable, Tuple
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout, QProgressBar, QTreeWidget, QTreeWidgetItem
@@ -9,12 +9,15 @@ from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout, QProgressBar, QTr
 from gis4wrf.core import (
     geo_datasets, geo_datasets_mandatory_hires, geo_datasets_mandatory_lores,
     download_and_extract_geo_dataset, is_geo_dataset_downloaded, get_geo_dataset_path,
-    dd_to_dms, formatted_dd_to_dms
+    dd_to_dms, formatted_dd_to_dms, logger
 )
 from gis4wrf.plugin.options import get_options
 from gis4wrf.plugin.broadcast import Broadcast
 from gis4wrf.plugin.ui.helpers import reraise, MessageBar
 from gis4wrf.plugin.ui.thread import TaskThread
+
+# higher resolution than default (100)
+PROGRESS_BAR_MAX = 1000
 
 class GeoToolsDownloadManager(QWidget):
     def __init__(self, iface) -> None:
@@ -36,7 +39,7 @@ class GeoToolsDownloadManager(QWidget):
         self.download_button.clicked.connect(self.on_download_button_clicked)
 
         self.progress_bar = QProgressBar()
-        self.progress_bar.setRange(0, 0)
+        self.progress_bar.setRange(0, PROGRESS_BAR_MAX)
         self.progress_bar.setTextVisible(False)
         self.progress_bar.hide()
 
@@ -102,9 +105,9 @@ class GeoToolsDownloadManager(QWidget):
             if item.checkState(0) == Qt.Checked:
                 datasets_to_download.append(name)
 
-        # TODO report progress
-        thread = TaskThread(lambda: self.download_datasets(datasets_to_download))
+        thread = TaskThread(lambda: self.download_datasets(datasets_to_download), yields_progress=True)
         thread.started.connect(self.on_started_download)
+        thread.progress.connect(self.on_progress_download)
         thread.finished.connect(self.on_finished_download)
         thread.succeeded.connect(self.on_successful_download)
         thread.failed.connect(reraise)
@@ -114,6 +117,12 @@ class GeoToolsDownloadManager(QWidget):
         self.download_button.hide()
         self.progress_bar.show()
         self.tree_widget.setEnabled(False)
+
+    def on_progress_download(self, progress: float, status: str) -> None:
+        bar_value = int(progress * PROGRESS_BAR_MAX)
+        self.progress_bar.setValue(bar_value)
+        self.progress_bar.repaint() # otherwise just updates in 1% steps
+        logger.debug(f'Geo data download: {progress*100:.1f}% - {status}')
 
     def on_finished_download(self) -> None:
         self.download_button.show()
@@ -126,6 +135,10 @@ class GeoToolsDownloadManager(QWidget):
     def on_successful_download(self) -> None:
         self.msg_bar.success('Geographical datasets downloaded successfully.')
 
-    def download_datasets(self, dataset_names: List[str]) -> None:
-        for name in dataset_names:
-            download_and_extract_geo_dataset(name, self.options.geog_dir)
+    def download_datasets(self, dataset_names: List[str]) -> Iterable[Tuple[float,str]]:
+        yield 0.0, 'selected: ' + ', '.join(dataset_names)
+        for i, name in enumerate(dataset_names):
+            for dataset_progress in download_and_extract_geo_dataset(name, self.options.geog_dir):
+                total_progress = (i + dataset_progress) / len(dataset_names)
+                yield total_progress, f'downloading {name} ({dataset_progress*100:.1f}%)'
+

@@ -1,7 +1,7 @@
 # GIS4WRF (https://doi.org/10.5281/zenodo.1288569)
 # Copyright (c) 2018 D. Meyer and M. Riechert. Licensed under MIT.
 
-from typing import Union
+from typing import Union, Iterable
 import platform
 import os
 import shutil
@@ -9,7 +9,7 @@ from pathlib import Path
 import tarfile
 
 from gis4wrf.core.util import export
-from .util import download_file
+from .util import download_file_with_progress
 
 # TODO we may want to host the datasets somewhere else, the UCAR website is often down
 EXT = '.tar.bz2'
@@ -26,7 +26,7 @@ def get_geo_dataset_path(dataset_name: str, base_dir: Union[str,Path]) -> Path:
     return dataset_folder
 
 @export
-def download_and_extract_geo_dataset(dataset_name: str, base_dir: Union[str,Path]) -> None:
+def download_and_extract_geo_dataset(dataset_name: str, base_dir: Union[str,Path]) -> Iterable[float]:
     base_dir = Path(base_dir)
     url = URL_TEMPLATE.format(dataset_name=dataset_name)
     path_to_archive = base_dir / (dataset_name + EXT)
@@ -38,7 +38,8 @@ def download_and_extract_geo_dataset(dataset_name: str, base_dir: Union[str,Path
     base_dir.mkdir(parents=True, exist_ok=True)
     
     try:
-        download_file(url, path_to_archive)
+        for progress in download_file_with_progress(url, path_to_archive):
+            yield progress * 0.9
         if dataset_name.startswith('orogwd') and platform.system() == 'Windows':
             # The orogwd* datasets contain a folder with name 'con' which
             # is reserved on Windows and has to be handled specially.
@@ -51,6 +52,7 @@ def download_and_extract_geo_dataset(dataset_name: str, base_dir: Union[str,Path
     finally:
         if path_to_archive.exists():
             path_to_archive.unlink()
+    yield 1.0
 
 def windows_extract_with_reserved_names(tar_path: str, dst_path: str) -> None:
     ''' 
