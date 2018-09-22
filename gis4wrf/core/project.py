@@ -12,6 +12,7 @@ from datetime import datetime
 import string
 import itertools
 
+from gis4wrf.core.logging import logger
 from gis4wrf.core.util import export, gdal, get_temp_vsi_path, link_or_copy, ogr, read_vsi_string
 from gis4wrf.core.constants import PROJECT_JSON_VERSION
 from gis4wrf.core.crs import CRS, LonLat, BoundingBox2D, Coordinate2D
@@ -375,12 +376,17 @@ class Project(object):
                 old_size = len(nml_old[group_name][var_name])
                 patch_size = len(nml_patch[group_name][var_name])
                 if old_size == patch_size:
+                    logger.debug(f'{nml_path}: size of {group_name}/{var_name} as expected, skipping patch')
                     del nml_patch[group_name][var_name]
                     continue
                 var_old = nml_old[group_name][var_name]
                 if old_size < patch_size:
+                    logger.debug(f'{nml_path}: size of {group_name}/{var_name} smaller than expected,' +
+                        f' extending to correct size by repeating last array value {var_old[-1]}')
                     var_patch = var_old + [var_old[-1]] * (patch_size - old_size)
                 else:
+                    logger.debug(f'{nml_path}: size of {group_name}/{var_name} bigger than expected,' +
+                        ' truncating to correct size')
                     var_patch = var_old[:patch_size]
                 nml_patch[group_name][var_name] = var_patch
 

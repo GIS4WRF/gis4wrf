@@ -8,26 +8,31 @@ import f90nml
 
 from gis4wrf.core.util import export
 from gis4wrf.core.readers.namelist import read_namelist
-
+from gis4wrf.core.logging import logger
 
 @export
 def write_namelist(namelist: dict, path: str) -> None:
+    logger.info(f'writing namelist to {path}')
     nml = f90nml.Namelist(namelist)
     nml.indent = 0
     nml.write(path, force=True)
 
 
 def patch_namelist(path: str, patch: dict, delete_vars: List[str]=[]) -> None:
+    logger.debug(f'patching {path}')
     nml = read_namelist(path)
     for group_name, group_patch in patch.items():
         if group_name not in nml:
+            logger.debug(f'{path}: group {group_name} not found, inserting from patch')
             nml[group_name] = group_patch
             continue
         for var_name, val in group_patch.items():
+            logger.debug(f'{path}: patching {group_name}/{var_name} = {val}')
             nml[group_name][var_name] = val
         for var_name in delete_vars:
             try:
                 del nml[group_name][var_name]
+                logger.debug(f'{path}: removing {group_name}/{var_name}')
             except KeyError:
                 pass
     nml.indent = 0
