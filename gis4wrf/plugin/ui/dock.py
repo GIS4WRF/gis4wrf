@@ -9,6 +9,7 @@ from gis4wrf.plugin.ui.tab_home import HomeTab
 from gis4wrf.plugin.ui.tab_datasets import DatasetsTab
 from gis4wrf.plugin.ui.tab_simulation import SimulationTab
 from gis4wrf.plugin.ui.widget_view import ViewWidget
+from gis4wrf.plugin.ui.helpers import WhiteScroll
 
 class MainDock(QDockWidget):
     """Set up the principle side dock"""
@@ -16,7 +17,7 @@ class MainDock(QDockWidget):
         super().__init__('GIS4WRF')
 
         tabs = QTabWidget()
-        tabs.addTab(HomeTab(), 'Home')
+        tabs.addTab(WhiteScroll(HomeTab()), 'Home')
         tabs.addTab(DatasetsTab(iface), "Datasets")
         self.simulation_tab = SimulationTab(iface)
         tabs.addTab(self.simulation_tab, "Simulation")

@@ -31,9 +31,12 @@ def export(fn):
         mod.__all__ = [fn.__name__]
     return fn
 
-Number = Union[int,np.integer,float,np.floating]
+Number = Union[int,np.integer,float,np.floating,np.ma.MaskedArray]
 
 def as_float(val: Number) -> float:
+    if isinstance(val, np.ma.MaskedArray):
+        assert val.ndim == 0
+        val = val.item()
     if isinstance(val, float):
         return val
     if isinstance(val, np.floating):

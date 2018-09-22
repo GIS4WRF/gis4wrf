@@ -102,6 +102,11 @@ class Project(object):
                 continue
             if not os.path.exists(dst_path):
                 shutil.copyfile(src_path, dst_path)
+                if src_path == wrf_namelist_path:
+                    # We generate the end_* variables, so remove run_* otherwise we would
+                    # have to fix them up. Users can add them manually again if they need to.
+                    delete_from_wrf_namelist = ['run_days', 'run_hours', 'run_minutes', 'run_seconds']
+                    patch_namelist(dst_path, {}, delete_from_wrf_namelist)
 
     @property
     def wps_namelist_path(self) -> str:
@@ -380,10 +385,7 @@ class Project(object):
                     var_patch = var_old[:patch_size]
                 nml_patch[group_name][var_name] = var_patch
 
-        # We use the end_* variables instead.
-        delete_from_wrf_namelist = ['run_days', 'run_hours', 'run_minutes', 'run_seconds']
-
-        patch_namelist(self.wrf_namelist_path, nml_patch, delete_from_wrf_namelist)
+        patch_namelist(self.wrf_namelist_path, nml_patch)
 
     # TODO move prepare functions into separate module together with functions for running
     def prepare_wps_run(self, wps_folder: str) -> None:

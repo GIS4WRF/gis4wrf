@@ -7,6 +7,7 @@ from enum import Enum
 from functools import partial
 import os
 
+import numpy as np
 import netCDF4 as nc
 
 # Optional import for wrf-python as binary wheels are not yet available for all platforms.
@@ -107,27 +108,6 @@ def convert_wrf_nc_var_to_gdal_dataset(
     path: str, var_name: str, extra_dim_index: Optional[int],
     interp_level: Optional[float], interp_vert_name: Optional[str],
     fmt: GDALFormat=GDALFormat.GTIFF, use_vsi: bool=False) -> Tuple[str,Callable[[],None]]:
-    ''' IMPORTANT: The NetCDF VRT datasets returned by this function require the
-        GDAL config option GDAL_NETCDF_BOTTOMUP to be set to 'NO'.
-        The default of GDAL is 'YES' which would work as well (by flipping the y axis
-        part of the geo transform) but is extremely slow as GDAL can then
-        only read one line at a time, compared to a whole block otherwise.
-        This is a performance bug which we can work around here since we construct
-        the geotransform ourselves anyway.
-        References:
-        http://lists.osgeo.org/pipermail/gdal-dev/2016-November/045573.html
-        https://github.com/perrygeo/ncvrt#--flip-or-invert-latitude-of-bottom-up-data
-    '''
-    if fmt == GDALFormat.GTIFF:
-        # LU_INDEX has a color table which is unsupported with TIFF, so we force HDF5_VRT instead.
-        # (GDAL: "SetColorTable() not supported for multi-sample TIFF files.")
-        if var_name == 'LU_INDEX':
-            fmt = GDALFormat.HDF5_VRT
-
-    if fmt == GDALFormat.HDF5_VRT:
-        # TODO remove once gdal bug is fixed: https://github.com/OSGeo/gdal/issues/622 
-        if var_name in ['E', 'F']:
-            fmt = GDALFormat.NETCDF_VRT
 
     if var_name in DIAG_VARS:
         assert wrf is not None
@@ -145,118 +125,158 @@ def convert_wrf_nc_var_to_gdal_dataset(
     time_steps = get_wrf_nc_time_steps(path)
 
     ds = nc.Dataset(path)
-    attrs = ds.__dict__ # type: dict
+    try:
+        attrs = ds.__dict__ # type: dict
 
-    rows = ds.dimensions['south_north'].size
-    cols = ds.dimensions['west_east'].size
+        rows = ds.dimensions['south_north'].size
+        cols = ds.dimensions['west_east'].size
 
-    crs = get_crs(ds)
-    geo_transform = get_geo_transform(ds, crs)
+        crs = get_crs(ds)
+        geo_transform = get_geo_transform(ds, crs)
 
-    if var_name == 'LU_INDEX':
-        landuse_color_table, landuse_cat_names = get_landuse_categories(ds)
-    
-    if var_name in DIAG_VARS or interp_level is not None:
-        try:
-            var = wrf.getvar(ds, var_name, timeidx=wrf.ALL_TIMES, missing=no_data, meta=False)
-        except:
-            var = wrf.getvar(ds, var_name, timeidx=wrf.ALL_TIMES, meta=False)
-        if interp_level is not None:
-            vert = wrf.getvar(ds, interp_vert_name, timeidx=wrf.ALL_TIMES, meta=False)
-            var = wrf.interplevel(var, vert, interp_level, missing=no_data, meta=False)
-            dims = MASS
-        else:
-            dims = DIAG_DIMS[var_name]
-        shape = var.shape
-    else:
-        var = ds.variables[var_name]
-        dims = var.dimensions
-        shape = var.shape
-
-    assert len(dims) == len(shape)
-    if len(dims) == 4:
-        # TODO remove once performance issues with VRT are resolved
-        #      (see below)
-        fmt = GDALFormat.GTIFF
-
-    ds.close()
-
-    use_vrt = fmt.is_vrt
-    ext = fmt.value
-
-    if use_vsi:
-        out_path = get_temp_vsi_path(ext)
-    else:
-        out_dir = get_temp_dir()
-        out_path = os.path.join(out_dir, 'tmp' + ext)
-
-    if use_vrt:
-        driver_name = 'VRT'
-    elif fmt == GDALFormat.GTIFF:
-        driver_name = 'GTIFF'
-
-    driver = gdal.GetDriverByName(driver_name) # type: gdal.Driver
-
-    is_4d = len(shape) == 4
-    if is_4d:
-        assert extra_dim_index is not None
-        extra_dim_size = shape[1]
-        assert extra_dim_index < extra_dim_size
-    else:
-        assert extra_dim_index is None
-
-    print('Adding {}'.format(var_name))
-    type_code = gdal_array.NumericTypeCodeToGDALTypeCode(var.dtype)
-
-    times = shape[0]
-
-    gdal_ds = driver.Create(out_path, cols, rows, times, type_code) # type: gdal.Dataset
-    gdal_ds.SetProjection(crs.wkt)
-    gdal_ds.SetGeoTransform(geo_transform)
-
-    for band_idx in range(1, times + 1):
-        band = gdal_ds.GetRasterBand(band_idx) # type: gdal.Band
-        band.SetNoDataValue(no_data)
-
-        time_step = time_steps[band_idx-1]
-        band.SetDescription(time_step)
-
-        if var_name == 'LU_INDEX' and landuse_cat_names:
-            band.SetRasterColorInterpretation(gdal.GCI_PaletteIndex)
-            band.SetRasterColorTable(landuse_color_table)
-            band.SetRasterCategoryNames(landuse_cat_names)
+        if var_name == 'LU_INDEX':
+            landuse_color_table, landuse_cat_names = get_landuse_categories(ds)
         
+        if var_name in DIAG_VARS or interp_level is not None:
+            try:
+                var = wrf.getvar(ds, var_name, timeidx=wrf.ALL_TIMES, missing=no_data, squeeze=False, meta=False)
+            except:
+                var = wrf.getvar(ds, var_name, timeidx=wrf.ALL_TIMES, squeeze=False, meta=False)
+            if interp_level is not None:
+                vert = wrf.getvar(ds, interp_vert_name, timeidx=wrf.ALL_TIMES, squeeze=False, meta=False)
+                var = wrf.interplevel(var, vert, interp_level, missing=no_data, meta=False)
+                dims = MASS
+            else:
+                dims = DIAG_DIMS[var_name]
+            shape = var.shape
+        else:
+            var = ds.variables[var_name]
+            dims = var.dimensions
+            shape = var.shape
+
+        assert len(dims) == len(shape), f'|{dims}| != |{shape}|'
+        if len(dims) == 4:
+            # TODO remove once performance issues with VRT are resolved
+            #      (see below)
+            fmt = GDALFormat.GTIFF
+
+        use_vrt = fmt.is_vrt
+        ext = fmt.value
+
+        if use_vsi:
+            out_path = get_temp_vsi_path(ext)
+        else:
+            out_dir = get_temp_dir()
+            out_path = os.path.join(out_dir, 'tmp' + ext)
+
         if use_vrt:
-            # GDAL's HDF5 driver does not support reading 4D variables
-            # whereas the NetCDF driver exposes 4D as 2D with many bands but has performance issues
-            # (see https://github.com/OSGeo/gdal/issues/620). Therefore, for now, 4D is only
-            # supported as GeoTIFF and not VRT.
-            assert not is_4d
-
-            if fmt == GDALFormat.HDF5_VRT:
-                subdataset_name = 'HDF5:"{path}"://{var_name}'.format(path=path, var_name=var_name)
-            elif fmt == GDALFormat.NETCDF_VRT:
-                subdataset_name = 'NETCDF:"{path}":{var_name}'.format(path=path, var_name=var_name)
-
-            band.SetMetadata({'source_0': ('''
-                <SimpleSource>
-                    <SourceFilename relativeToVRT="0">{name}</SourceFilename>
-                    <SourceBand>{band}</SourceBand>
-                    <SrcRect xOff="0" yOff="0" xSize="{cols}" ySize="{rows}" />
-                    <DstRect xOff="0" yOff="0" xSize="{cols}" ySize="{rows}" />
-                </SimpleSource>''').format(name=subdataset_name, band=band_idx, rows=rows, cols=cols)}, 'vrt_sources')
+            driver_name = 'VRT'
         elif fmt == GDALFormat.GTIFF:
-            data = var[band_idx - 1]
-            if is_4d:
-                data = data[extra_dim_index]
-            band.WriteArray(data)
+            driver_name = 'GTIFF'
 
-    gdal_ds.FlushCache()
+        driver = gdal.GetDriverByName(driver_name) # type: gdal.Driver
+
+        is_4d = len(shape) == 4
+        if is_4d:
+            assert extra_dim_index is not None
+            extra_dim_size = shape[1]
+            assert extra_dim_index < extra_dim_size
+        else:
+            assert extra_dim_index is None
+
+        print('Adding {}'.format(var_name))
+        
+        if fmt == GDALFormat.GTIFF and var_name == 'LU_INDEX' and landuse_cat_names:
+            # All time steps contain the same data, so use only the first here.
+            # This also works around the problem that color tables in GDAL's TIFF driver
+            # can only be used with single band datasets.
+            times = 1
+            # Required for color table support in TIFF.
+            np_dtype = np.uint8
+        else:
+            times = shape[0]
+            np_dtype = var.dtype
+        
+        type_code = gdal_array.NumericTypeCodeToGDALTypeCode(np_dtype)
+
+        gdal_ds = driver.Create(out_path, cols, rows, times, type_code) # type: gdal.Dataset
+        gdal_ds.SetProjection(crs.wkt)
+        gdal_ds.SetGeoTransform(geo_transform)
+
+        for band_idx in range(1, times + 1):
+            band = gdal_ds.GetRasterBand(band_idx) # type: gdal.Band
+            band.SetNoDataValue(no_data)
+
+            time_step = time_steps[band_idx-1]
+            band.SetDescription(time_step)
+
+            if var_name == 'LU_INDEX' and landuse_cat_names:
+                band.SetRasterColorInterpretation(gdal.GCI_PaletteIndex)
+                band.SetRasterColorTable(landuse_color_table)
+                band.SetRasterCategoryNames(landuse_cat_names)
+            
+            if use_vrt:
+                # GDAL's HDF5 driver does not support reading 4D variables
+                # whereas the NetCDF driver exposes 4D as 2D with many bands but has performance issues
+                # (see https://github.com/OSGeo/gdal/issues/620). Therefore, for now, 4D is only
+                # supported as GeoTIFF and not VRT.
+                assert not is_4d
+
+                def set_band_metadata(fmt: GDALFormat) -> None:
+                    if fmt == GDALFormat.HDF5_VRT:
+                        subdataset_name = 'HDF5:"{path}"://{var_name}'.format(path=path, var_name=var_name)
+                    elif fmt == GDALFormat.NETCDF_VRT:
+                        subdataset_name = 'NETCDF:"{path}":{var_name}'.format(path=path, var_name=var_name)
+                    band.SetMetadata({'source_0': ('''
+                        <SimpleSource>
+                            <SourceFilename relativeToVRT="0">{name}</SourceFilename>
+                            <SourceBand>{band}</SourceBand>
+                            <SrcRect xOff="0" yOff="0" xSize="{cols}" ySize="{rows}" />
+                            <DstRect xOff="0" yOff="0" xSize="{cols}" ySize="{rows}" />
+                        </SimpleSource>''').format(name=subdataset_name, band=band_idx, rows=rows, cols=cols)}, 'vrt_sources')
+                
+                try:
+                    set_band_metadata(fmt)
+                except RuntimeError:
+                    # Work-around gdal bug where sometimes files cannot be opened with a specific driver.
+                    # E.g. "RuntimeError: `HDF5:"C:/.../geo_em.d02.nc"://LU_INDEX' does not exist in the file system,
+                    #       and is not recognized as a supported dataset name."
+                    if fmt == GDALFormat.HDF5_VRT:
+                        fmt = GDALFormat.NETCDF_VRT
+                    else:
+                        fmt = GDALFormat.HDF5_VRT
+                    set_band_metadata(fmt)
+                
+            elif fmt == GDALFormat.GTIFF:
+                data = var[band_idx - 1]
+                if is_4d:
+                    data = data[extra_dim_index]
+                band.WriteArray(data.astype(np_dtype, copy=False))
+
+        gdal_ds.FlushCache()
+    finally:
+        ds.close()
 
     if use_vsi:
         dispose = partial(remove_vsis, [out_path])
     else:
         dispose = partial(remove_dir, out_dir)
+
+    if fmt == GDALFormat.NETCDF_VRT:
+        # NetCDF VRT datasets returned by this function require the
+        # GDAL config option GDAL_NETCDF_BOTTOMUP to be set to 'NO'.
+        # The default of GDAL is 'YES' which would work as well (by flipping the y axis
+        # part of the geo transform) but is extremely slow as GDAL can then
+        # only read one line at a time, compared to a whole block otherwise.
+        # This is a performance bug which we can work around here since we construct
+        # the geotransform ourselves anyway.
+        # There is no reliable way to set the config option only for a specific dataset,
+        # therefore it is modified globally. This is suboptimal and the ultimate goal
+        # is to avoid using the NetCDF driver completely (see above why this is impossible still).
+        # References:
+        # http://lists.osgeo.org/pipermail/gdal-dev/2016-November/045573.html
+        # https://github.com/perrygeo/ncvrt#--flip-or-invert-latitude-of-bottom-up-data
+        gdal.SetConfigOption('GDAL_NETCDF_BOTTOMUP', 'NO')
 
     return out_path, dispose
 
@@ -265,94 +285,97 @@ def get_supported_wrf_nc_variables(path: str) -> Dict[str,WRFNetCDFVariable]:
     ''' Returns all variables supported by `convert_wrf_nc_var_to_gdal_dataset`.'''
     extra_dims = get_wrf_nc_extra_dims(path)
     ds = nc.Dataset(path)
-    variables = {}
-    for var_name in ds.variables:
-        if var_name in COORD_VARS:
-            print('Ignoring {}, coord var'.format(var_name))
-            continue
-
-        var = ds.variables[var_name]
-        dims = var.dimensions
-        shape = var.shape
-
-        if len(dims) > 4:
-            # should never happen
-            print('Ignoring {}, too many dims: {}'.format(var_name, dims))
-            continue
-
-        if dims[0] != 'Time':
-            # should never happen
-            print('Ignoring {}, time dim missing, dims: {}'.format(var_name, dims))
-            continue
-
-        # TODO support staggered vars
-        if dims[-2:] != ('south_north', 'west_east'):
-            print('Ignoring {}, staggered, dims: {}'.format(var_name, dims))
-            continue
-
-        if len(dims) == 4:
-            extra_dim = dims[1]
-            if extra_dim not in extra_dims:
-                print('Ignoring {}, unsupported z dimension: {}'.format(var_name, extra_dim))
+    try:
+        variables = {}
+        for var_name in ds.variables:
+            if var_name in COORD_VARS:
+                print('Ignoring {}, coord var'.format(var_name))
                 continue
-        else:
-            extra_dim = None
 
-        try:
-            description = var.getncattr('description')
-        except AttributeError:
-            description = None
-        try:
-            units = var.getncattr('units')
-        except AttributeError:
-            units = None
+            var = ds.variables[var_name]
+            dims = var.dimensions
+            shape = var.shape
 
-        label = var_name
-        if units and units != '-':
-            label += ' in ' + units
-        if description and description != '-':
-            label += ' (' + description.lower() + ')'
+            if len(dims) > 4:
+                # should never happen
+                print('Ignoring {}, too many dims: {}'.format(var_name, dims))
+                continue
 
-        variables[var_name] = WRFNetCDFVariable(name=var_name, label=label, extra_dim_name=extra_dim)
+            if dims[0] != 'Time':
+                # should never happen
+                print('Ignoring {}, time dim missing, dims: {}'.format(var_name, dims))
+                continue
 
-    if wrf is not None:
-        is_wps = 'bottom_top' not in ds.dimensions
-        if not is_wps:
-            variables.update(DIAG_VARS)
+            # TODO support staggered vars
+            if dims[-2:] != ('south_north', 'west_east'):
+                print('Ignoring {}, staggered, dims: {}'.format(var_name, dims))
+                continue
 
-    ds.close()
+            if len(dims) == 4:
+                extra_dim = dims[1]
+                if extra_dim not in extra_dims:
+                    print('Ignoring {}, unsupported z dimension: {}'.format(var_name, extra_dim))
+                    continue
+            else:
+                extra_dim = None
+
+            try:
+                description = var.getncattr('description')
+            except AttributeError:
+                description = None
+            try:
+                units = var.getncattr('units')
+            except AttributeError:
+                units = None
+
+            label = var_name
+            if units and units != '-':
+                label += ' in ' + units
+            if description and description != '-':
+                label += ' (' + description.lower() + ')'
+
+            variables[var_name] = WRFNetCDFVariable(name=var_name, label=label, extra_dim_name=extra_dim)
+
+        if wrf is not None:
+            is_wps = 'bottom_top' not in ds.dimensions
+            if not is_wps:
+                variables.update(DIAG_VARS)
+    finally:
+        ds.close()
 
     return variables
 
 @export
 def get_wrf_nc_extra_dims(path: str) -> Dict[str,WRFNetCDFExtraDim]:
     ds = nc.Dataset(path)
-    dims = ds.dimensions
-    attrs = ds.__dict__
-    extra_dims = {} # type: Dict[str,WRFNetCDFExtraDim]
-    ds.close()
+    try:
+        dims = ds.dimensions
+        attrs = ds.__dict__
+        extra_dims = {} # type: Dict[str,WRFNetCDFExtraDim]
+        
+        def add_dim(name: str, label: str, step_fn: Optional[Callable[[int],Any]]=None):
+            if name not in dims:
+                return
+            if step_fn is None:
+                step_fn = lambda i: i
+            steps = [str(step_fn(i)) for i in range(1, dims[name].size + 1)]
+            extra_dims[name] = WRFNetCDFExtraDim(name=name, label=label, steps=steps)
 
-    def add_dim(name: str, label: str, step_fn: Optional[Callable[[int],Any]]=None):
-        if name not in dims:
-            return
-        if step_fn is None:
-            step_fn = lambda i: i
-        steps = [str(step_fn(i)) for i in range(1, dims[name].size + 1)]
-        extra_dims[name] = WRFNetCDFExtraDim(name=name, label=label, steps=steps)
+        add_dim('bottom_top', 'Vertical Level')
+        add_dim('soil_layers_stag', 'Soil Depth Layer')
 
-    add_dim('bottom_top', 'Vertical Level')
-    add_dim('soil_layers_stag', 'Soil Depth Layer')
+        # the following exist in geogrid output only
+        landuse_scheme = attrs.get('MMINLU')
+        landuse_categories = LANDUSE.get(landuse_scheme, {})
+        add_dim('land_cat', 'Land Use Category', lambda i: landuse_categories.get(i, (str(i), ''))[0])
+        add_dim('soil_cat', 'Soil Type Category')
+        add_dim('month', 'Month')
 
-    # the following exist in geogrid output only
-    landuse_scheme = attrs.get('MMINLU')
-    landuse_categories = LANDUSE.get(landuse_scheme, {})
-    add_dim('land_cat', 'Land Use Category', lambda i: landuse_categories.get(i, (str(i), ''))[0])
-    add_dim('soil_cat', 'Soil Type Category')
-    add_dim('month', 'Month')
-
-    # the following exist in metgrid output only
-    add_dim('num_metgrid_levels', 'Vertical Level')
-    # TODO add num_st_layers, num_sm_layers, z-dimension00**
+        # the following exist in metgrid output only
+        add_dim('num_metgrid_levels', 'Vertical Level')
+        # TODO add num_st_layers, num_sm_layers, z-dimension00**
+    finally:
+        ds.close()
 
     return extra_dims
 
