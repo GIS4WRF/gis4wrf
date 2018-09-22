@@ -20,7 +20,7 @@ geo_datasets = {
     "modis_landuse_21class_30s": ("Noah-modified 21-category IGBP-MODIS landuse", 0.00833333),
     "nlcd2006_ll_30s": ("National Land Cover Database 2006", 0.00833333),
     "nlcd2006_ll_9s": ("National Land Cover Database 2006", 0.0025),
-    "nlcd2011_imp_ll_9s.tar": ("National Land Cover Database 2011 -- imperviousness percent", 0.0025),
+    "nlcd2011_imp_ll_9s": ("National Land Cover Database 2011 -- imperviousness percent", 0.0025),
     "nlcd2011_can_ll_9s": ("National Land Cover Database 2011 -- canopy percent", 0.0025),
     "nlcd2011_ll_9s": ("National Land Cover Database 2011", 0.0025),
     "ssib_landuse_10m": ("12-category Simplified Simple Biosphere Model (SSiB) land use", 0.1666667),
