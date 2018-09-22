@@ -24,6 +24,8 @@ from gis4wrf.plugin.ui.thread import TaskThread
 DECIMALS = 50
 LON_VALIDATOR = QDoubleValidator(-180.0, 180.0, DECIMALS)
 LAT_VALIDATOR = QDoubleValidator(-90.0, 90.0, DECIMALS)
+# higher resolution than default (100)
+PROGRESS_BAR_MAX = 1000
 
 # TODO display bbox as vector layer if not global extent
 
@@ -113,6 +115,7 @@ class MetToolsDownloadManager(QWidget):
         vbox.addWidget(self.btn_download)
 
         self.progress_bar = QProgressBar()
+        self.progress_bar.setRange(0, PROGRESS_BAR_MAX)
         self.progress_bar.setTextVisible(False)
         self.progress_bar.hide()
         vbox.addWidget(self.progress_bar)
@@ -201,13 +204,15 @@ class MetToolsDownloadManager(QWidget):
         self.btn_download.hide()
         self.progress_bar.show()
         
-    def on_progress_download(self, percent: int, status: str) -> None:
-        self.progress_bar.setValue(percent)
+    def on_progress_download(self, progress: float, status: str) -> None:
+        bar_value = int(progress * PROGRESS_BAR_MAX)
+        self.progress_bar.setValue(bar_value)
+        self.progress_bar.repaint() # otherwise just updates in 1% steps
         if status == 'submitted':
             self.msg_bar.info('Met dataset download request submitted successfully, waiting until available for download...')
         elif status == 'ready':
             self.msg_bar.info('Met dataset download request is now ready, downloading...')
-        logger.debug(f'Met data download: {percent}% - {status}')
+        logger.debug(f'Met data download: {progress*100:.1f}% - {status}')
     
     def on_finished_download(self) -> None:
         self.btn_download.show()

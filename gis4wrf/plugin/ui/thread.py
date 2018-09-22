@@ -13,7 +13,7 @@ _THREADS = [] # type: List[QThread]
 class Task(QObject):
     ''' Non-threaded alternative to TaskThread, useful for debugging. '''
     started = pyqtSignal()
-    progress = pyqtSignal(int, str)
+    progress = pyqtSignal(float, str)
     succeeded = pyqtSignal(object)
     failed = pyqtSignal(tuple)
     finished = pyqtSignal()
@@ -29,8 +29,8 @@ class Task(QObject):
         self.started.emit()
         try:
             if self.yields_progress:
-                for percent, status in self.fn():
-                    self.progress.emit(percent, status)
+                for progress, status in self.fn():
+                    self.progress.emit(progress, status)
             else:
                 self.result = self.fn()
             self.succeeded.emit(self.result)
@@ -41,7 +41,7 @@ class Task(QObject):
             self.finished.emit()
 
 class TaskThread(QThread):
-    progress = pyqtSignal(int, str)
+    progress = pyqtSignal(float, str)
     succeeded = pyqtSignal(object)
     failed = pyqtSignal(tuple)
     # QThread provides started & finished signals.

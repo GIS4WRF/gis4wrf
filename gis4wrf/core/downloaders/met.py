@@ -9,7 +9,7 @@ import requests
 from pathlib import Path
 from datetime import datetime
 
-from .util import download_file, requests_retry_session
+from .util import download_file_with_progress, requests_retry_session
 from gis4wrf.core.util import export, remove_dir
 
 DATE_FORMAT = '%Y%m%d%H%M'
@@ -77,7 +77,7 @@ def download_met_dataset(base_dir: Union[str,Path], auth: tuple,
                          dataset_name: str, product_name: str, param_names: List[str],
                          start_date: datetime, end_date: datetime,
                          lat_south: float, lat_north: float, lon_west: float, lon_east: float
-                         ) -> Iterable[Tuple[int,str]]:
+                         ) -> Iterable[Tuple[float,str]]:
     path = get_met_dataset_path(base_dir, dataset_name, product_name, start_date, end_date)
 
     if path.exists():
@@ -94,31 +94,31 @@ def download_met_dataset(base_dir: Union[str,Path], auth: tuple,
         "elon": lon_east
     }
 
-    yield 5, 'submitting'
+    yield 0.05, 'submitting'
     request_id = rda_submit_request(request_data, auth)
-    yield 10, 'submitted'
+    yield 0.1, 'submitted'
 
     # Check when the dataset is available for download
     # simply by checking the status of the request every 1 minute.
     rda_status = rda_check_status(request_id, auth)
     while rda_status != 'O - Online' and not rda_is_error_status(rda_status):
-        yield 10, 'RDA: ' + rda_status
+        yield 0.1, 'RDA: ' + rda_status
         time.sleep(60)
         rda_status = rda_check_status(request_id, auth)
     
-    yield 10, 'RDA: ' + rda_status
+    yield 0.1, 'RDA: ' + rda_status
     if rda_is_error_status(rda_status):
         raise RuntimeError('Unexpected status from RDA: ' + rda_status)
 
-    yield 20, 'ready'
+    yield 0.2, 'ready'
     try:
-        for ratio, url in rda_download_dataset(request_id, auth, path):
-            yield 20 + int((95 - 20) * ratio), f'downloading {url}'
+        for dataset_progress, file_progress, url in rda_download_dataset(request_id, auth, path):
+            yield 0.2 + (0.95 - 0.2) * dataset_progress, f'downloading {url} ({file_progress*100:.1f}%)'
     finally:
-        yield 95, 'purging'
+        yield 0.95, 'purging'
         rda_purge_request(request_id, auth)
     
-    yield 100, 'complete'
+    yield 1.0, 'complete'
     
 
 def rda_submit_request(request_data: dict, auth: tuple) -> str:
@@ -143,21 +143,22 @@ def rda_check_status(request_id: str, auth: tuple) -> str:
 def rda_is_error_status(status: str) -> bool:
     return any(error_status in status for error_status in ERROR_STATUS)
 
-def rda_download_dataset(request_id: str, auth: tuple, path: Path) -> Iterable[float]:
+def rda_download_dataset(request_id: str, auth: tuple, path: Path) -> Iterable[Tuple[float,float,str]]:
     path_tmp = path.with_name(path.name + '_tmp')
     if path_tmp.exists():
         remove_dir(path_tmp)
     path_tmp.mkdir(parents=True)
     urls = rda_get_urls_from_request_id(request_id, auth)
-    count = len(urls)
     with requests_retry_session() as session:
         login_data = {'email': auth[0], 'passwd': auth[1], 'action': 'login'}
         response = session.post('https://rda.ucar.edu/cgi-bin/login', login_data)
         response.raise_for_status()
         for i, url in enumerate(urls):
-            yield i / count, url
             file_name = url.split('/')[-1]
-            download_file(url, path_tmp / file_name, session=session)
+            for file_progress in download_file_with_progress(url, path_tmp / file_name, session=session):
+                dataset_progress = (i + file_progress) / len(urls)
+                yield dataset_progress, file_progress, url
+
     path_tmp.rename(path)
 
 def rda_get_urls_from_request_id(request_id: str, auth: tuple) -> List[str]:
