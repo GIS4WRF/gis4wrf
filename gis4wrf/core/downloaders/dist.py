@@ -40,7 +40,7 @@ def get_dist_url(dist: dict, mpi: bool) -> str:
 @export
 def download_and_extract_dist(url: str, folder: str) -> None:
     tmp_dir = tempfile.mkdtemp()
-    tmp_path = os.path.join(tmp_dir, 'archive.tar.xz')
+    tmp_path = os.path.join(tmp_dir, url.split('/')[-1])
     if os.path.exists(folder):
         remove_dir(folder)
     os.makedirs(folder)

@@ -35,7 +35,7 @@ def rect_to_bbox(rect: QgsRectangle) -> BoundingBox2D:
 
 def update_domain_outline_layers(canvas: QgsMapCanvas, project: gis4wrf.core.Project,
                                  zoom_out=True) -> None:
-    gdal_ds = gis4wrf.core.get_gdal_from_domains(project)
+    gdal_ds = gis4wrf.core.convert_project_to_gdal_outlines(project)
     gdal_layer = gdal_ds.GetLayer(0) # type: ogr.Layer
     gdal_srs = gdal_layer.GetSpatialRef() # type: osr.SpatialReference
     proj4 = gdal_srs.ExportToProj4()
@@ -84,7 +84,7 @@ def update_domain_outline_layers(canvas: QgsMapCanvas, project: gis4wrf.core.Pro
             zoom_out_to_layer(canvas, layer)
 
 def update_domain_grid_layers(project: gis4wrf.core.Project) -> None:
-    vrts = gis4wrf.core.get_gdal_grid_vrt_from_domains(project)
+    vrts = gis4wrf.core.convert_project_to_gdal_checkerboards(project)
     vrt_and_titles = [(vrt, 'Domain {}'.format(i + 1), None) for i, vrt in enumerate(vrts)]
     load_layers(vrt_and_titles, 'WRF Domains (Grid)', visible=False, expanded=False)
 
@@ -102,12 +102,7 @@ def zoom_out_to_layer(canvas: QgsMapCanvas, layer: QgsVectorLayer) -> None:
     canvas.refresh()
 
 def load_layers(uris_and_names: List[Tuple[str,str,Optional[str]]], group_name=None,
-                visible: Union[bool,int]=0, expanded: bool=True,
-                netcdf_bottomup=None) -> List[QgsRasterLayer]:
-    if netcdf_bottomup is False:
-        config_bak = gdal.GetConfigOption('GDAL_NETCDF_BOTTOMUP')
-        gdal.SetConfigOption('GDAL_NETCDF_BOTTOMUP', 'NO')
-
+                visible: Union[bool,int]=0, expanded: bool=True) -> List[QgsRasterLayer]:
     registry = QgsProject.instance() # type: QgsProject
     root = registry.layerTreeRoot() # type: QgsLayerTree
     if group_name:
@@ -135,9 +130,6 @@ def load_layers(uris_and_names: List[Tuple[str,str,Optional[str]]], group_name=N
             visibility = (type(visible) == bool and visible) or (type(visible) == int and i == visible)
         layer_node.setItemVisibilityChecked(visibility)
         layers.append(layer)
-
-    if netcdf_bottomup is False:
-        gdal.SetConfigOption('GDAL_NETCDF_BOTTOMUP', config_bak)
 
     return layers
 

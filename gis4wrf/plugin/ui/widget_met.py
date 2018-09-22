@@ -14,10 +14,11 @@ from PyQt5.QtWidgets import (
 from gis4wrf.core import (
     met_datasets, get_met_products, is_met_dataset_downloaded, get_met_dataset_path, download_met_dataset,
     CRS)
-from gis4wrf.plugin.ui.helpers import add_grid_lineedit, TaskThread, MessageBar, reraise
 from gis4wrf.plugin.options import get_options
 from gis4wrf.plugin.geo import rect_to_bbox
-from .broadcast import Broadcast
+from gis4wrf.plugin.broadcast import Broadcast
+from gis4wrf.plugin.ui.helpers import add_grid_lineedit, MessageBar, reraise
+from gis4wrf.plugin.ui.thread import TaskThread
 
 
 DECIMALS = 50
@@ -25,7 +26,6 @@ LON_VALIDATOR = QDoubleValidator(-180.0, 180.0, DECIMALS)
 LAT_VALIDATOR = QDoubleValidator(-90.0, 90.0, DECIMALS)
 
 # TODO display bbox as vector layer if not global extent
-# TODO update simulation-data subtab after downloading new data
 
 class MetToolsDownloadManager(QWidget):
     def __init__(self, iface) -> None:

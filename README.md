@@ -1,51 +1,54 @@
-<p align="center"><img src="https://github.com/GIS4WRF/gis4wrf-docs/blob/master/images/gis4wrf.png"></p>
+<p align="center"><img src="https://gis4wrf.github.io/assets/images/gis4wrf_logo.png"></p>
 
 # GIS4WRF
-GIS4WRF (Meyer and Riechert, 2018a, 2018b) is a free and open source QGIS plug-in to help researchers and practitioners with their Advanced Research Weather Research and Forecasting modelling (Skamarock et al., 2008) workflows. GIS4WRF can be used to pre-process input data, run simulations and visualize or post-process results on Windows, Linux, and macOS.
+GIS4WRF is a free and open source [QGIS](https://qgis.org/) plug-in to help researchers and practitioners with their [Advanced Research Weather Research and Forecasting](https://www.mmm.ucar.edu/weather-research-and-forecasting-model) modelling workflows. GIS4WRF can be used to pre-process input data, run simulations, and visualize or post-process results. We offer MPI-enabled pre-built binary distributions for Windows, macOS and Linux through [WRF-CMake](https://github.com/WRF-CMake/WRF).
 
-## Table of Contents
-- [Installation](#installation)
-- [Documentation](#documentation)
-- [Versioning](#versioning)
-- [Contributing](#contributing)
-- [Copyright and license](#copyright-and-licence)
-- [How to cite](#how-to-cite)
-- [References](#references)
+**For information on how to install GIS4WRF, or check out the main documentation and tutorials, please refer to the GIS4WRF website at https://gis4wrf.github.io.**
 
-## Installation
-GIS4WRF requires the latest version of QGIS 3 installed on your system. Instructions on how to install QGIS for your operating system are found on the [QGIS download page](https://qgis.org/en/site/forusers/download.html). 
+<p align="center"><img src="https://gis4wrf.github.io/assets/images/gis4wrf-demo.gif"></p>
+<p align="center">Configure, run and visualize a WRF simulation in GIS4WRF</p>
 
-To install the latest version of GIS4WRF, download the latest version at https://github.com/GIS4WRF/gis4wrf/releases and install it using the QGIS `Plugins | Install from ZIP` window found in QGIS under `Plugins` > `Manage and Install Plugins...` > `Install from ZIP` as shown below. You may need to restart QGIS after installation is complete.
+## How to reference GIS4WRF
+We ask to please acknowledge our work by citing and referencing both, the GIS4WRF paper and the GIS4WRF software in the following way:
 
-![QGIS Plugins | Install from ZIP](https://github.com/GIS4WRF/gis4wrf-docs/blob/master/images/qgis_plugins_install_from_zip.png)
+- For in-text citations, please cite both the paper and the software.
 
-## Documentation
-For up-to-date documentation, please refer to the [GIS4WRF documentation page](https://github.com/GIS4WRF/gis4wrf-docs).
+    E.g.: *"We used GIS4WRF (Meyer and Riechert, 2018a, 2018b) for ..."*
 
-## Versioning
+- For the full citation in the reference list, adapt using your chosen style from the example below.
 
-This project uses [semantic versioning](https://semver.org/).
+    E.g. — reference list using the American Meteorological Society (AMS) style:
+
+    ```
+    Meyer, D., and M. Riechert, 2018a: GIS4WRF: an integrated open source QGIS toolkit
+        for the Advanced Research WRF Framework. Manuscript submitted for publication.
+
+    Meyer, D., and M. Riechert, 2018b: The GIS4WRF Plugin.
+        doi:10.5281/zenodo.1288569.
+    ```
+- Alternatively, you can add the following to your BibTex file:
+
+    ```bibtex
+    @unpublished{meyer_riechert_2018_article,
+        author       = {D. Meyer and M. Riechert},
+        title={GIS4WRF: an integrated open source QGIS toolkit for the Advanced Research WRF Framework},
+        note={Manuscript submitted for publication}
+    }
+
+    @misc{meyer_riechert_2018_software,
+        author       = {D. Meyer and M. Riechert},
+        title        = {The GIS4WRF Plugin},
+        year         = 2018,
+        doi          = {10.5281/zenodo.1288569},
+        url          = {https://doi.org/10.5281/zenodo.1288569}
+    }
+    ```
 
 ## Contributing
-If you would like to update the current documentation, clone this repository, make your changes, and create a pull request with a **clear description** of your changes. If your changes are merged, you will appear as one of our [Contributors](https://github.com/GIS4WRF/gis4wrf/graphs/contributors).
+If you would like to contribute to the GIS4WRF project, clone this repository, make your changes, and create a pull request with a **clear description** of your changes. If your changes are merged, you will appear as one of our [Contributors](https://github.com/GIS4WRF/gis4wrf/graphs/contributors).
+
+## Versioning
+This project uses [semantic versioning](https://semver.org/).
 
 ## Copyright and Licence
-Copyright 2018 D. Meyer and M. Riechert.
-Released under [MIT License](LICENSE.txt).
-
-## How to cite
-Please refer to the [How to cite the GIS4WRF Plug-in page](https://doi.org/10.5281/zenodo.1288569).
-
-## References
-
-```
-Meyer, D., and M. Riechert (2018a). GIS4WRF: an integrated open source QGIS toolkit for the Advanced 
-    Research WRF Framework. Manuscript submitted for publication.
-
-Meyer, D., and M. Riechert (2018b). GIS4WRF (Version 0.8.0) [Software].
-    doi: 10.5281/zenodo.1288570.
-
-Skamarock, W. C., Klemp, J. B., Dudhia, J., Gill, D. O., Barker, D. M., Duda, M. G., Huang, X.-Y.,
-    Wang, W. and Powers, J. G. (2008) ‘A Description of the Advanced Research WRF Version 3’,
-    NCAR Technical Note NCAR/TN-475+STR, p. 113. doi: 10.5065/D68S4MVH.
-```
+Copyright 2018 D. Meyer and M. Riechert. Released under [MIT License](LICENSE.txt).

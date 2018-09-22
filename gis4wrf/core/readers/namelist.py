@@ -23,8 +23,21 @@ SCHEMA_VAR_TYPES = {
 SCHEMA_CACHE = {} # type: Dict[str,Any]
 
 @export
-def read_namelist(path: str) -> dict:
-    return f90nml.read(path)
+def read_namelist(path: str, schema_name: Optional[str]=None) -> dict:
+    nml = f90nml.read(path)
+    
+    # If a schema is specified, use it to fix single-element lists which are parsed as
+    # primitive value since there is nothing to distinguish them from each other in the namelist format.
+    if schema_name:
+        schema = get_namelist_schema(schema_name)
+        for group_name, group in nml.items():
+            schema_group = schema[group_name]
+            for var_name, var_val in group.items():
+                schema_var = schema_group[var_name]
+                schema_type = SCHEMA_VAR_TYPES[schema_var['type']]
+                if schema_type is list and not isinstance(var_val, list):
+                    group[var_name] = [var_val]
+    return nml
 
 @export
 def get_namelist_schema(name: str) -> dict:
@@ -101,9 +114,12 @@ def verify_namelist_var(var_name: str, var_val: Union[str,int,float,bool,list],
                         var_name, val_regex, list_val))
 
 @export
-def verify_namelist(namelist: dict, schema_name: str) -> None:
+def verify_namelist(namelist: dict, schema_or_name: Union[dict,str]) -> None:
     # TODO collect and return all validation errors
-    schema = get_namelist_schema(schema_name)
+    if isinstance(schema_or_name, str):
+        schema = get_namelist_schema(schema_or_name)
+    else:
+        schema = schema_or_name
     if not isinstance(namelist, dict):
         raise TypeError('namelist object must be a dictionary')
     for group_name, group in namelist.items():

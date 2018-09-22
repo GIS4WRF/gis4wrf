@@ -1,2 +1,26 @@
+0.11.0
+- Support latest version of WRF/WPS (v4).
+- Add support for pre-built binaries for macOS with WRF-CMake.
+- Add support for pre-built binaries for Linux (all) with WRF-CMake.
+- Add option to run WRF/WPS in MPI mode on Windows, macOS and Linux.
+- Move documentation and tutorials to website at https://gis4wrf.github.io/
+- Bug fixes.
+
+0.10.0
+- Add support for manually adding met datasets.
+- Add support for importing existing namelist.wps.
+- Fix 'Export to namelist' button.
+- Remove met dataset 'ds090.0' from met download tool.
+
+0.9.0
+- Improve geo downloader UI.
+- Improve documentation.
+- Bug fixes.
+
+0.8.1
+- Add GIS4WRF to QGIS plugin repository.
+- Automatically notify users when a new version becomes available.
+- General cleanup.
+
 0.8.0
 - First public version.

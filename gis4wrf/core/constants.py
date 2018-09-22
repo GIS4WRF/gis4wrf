@@ -17,17 +17,35 @@ class ProjectionTypes(object):
     MERCATOR = 3
     LAT_LON = 6
 
-WRF_WPS_DIST_VERSION = '3.9'
+WRF_WPS_DIST_VERSION = '4.0'
 
 WRF_DIST = {
     # keys: platform.system()
     'Windows': {
-        'serial': 'https://github.com/GIS4WRF/WRFV3/releases/download/V3.9/wrf-3.9-windows-basic-serial-debug.tar.xz',
+        'serial': 'https://github.com/WRF-CMake/WRF/releases/download/WRF-CMake-4.0/wrf-cmake-4.0-serial-basic-release-windows.zip',
+        'dmpar': 'https://github.com/WRF-CMake/WRF/releases/download/WRF-CMake-4.0/wrf-cmake-4.0-dmpar-basic-release-windows.zip'
+    },
+    'Darwin': {
+        'serial': 'https://github.com/WRF-CMake/WRF/releases/download/WRF-CMake-4.0/wrf-cmake-4.0-serial-basic-release-macos.tar.xz',
+        'dmpar': 'https://github.com/WRF-CMake/WRF/releases/download/WRF-CMake-4.0/wrf-cmake-4.0-dmpar-basic-release-macos.tar.xz'
+    },
+    'Linux': {
+        'serial': 'https://github.com/WRF-CMake/WRF/releases/download/WRF-CMake-4.0/wrf-cmake-4.0-serial-basic-release-linux.tar.xz',
+        'dmpar': 'https://github.com/WRF-CMake/WRF/releases/download/WRF-CMake-4.0/wrf-cmake-4.0-dmpar-basic-release-linux.tar.xz'
     }
 }
 
 WPS_DIST = {
     'Windows': {
-        'serial': 'https://github.com/GIS4WRF/WPS/releases/download/RELEASE-3-9/wps-3.9-windows-basic-serial-debug.tar.xz',
+        'serial': 'https://github.com/WRF-CMake/WPS/releases/download/WPS-CMake-4.0/wps-cmake-4.0-serial-basic-release-windows.zip',
+        'dmpar': 'https://github.com/WRF-CMake/WPS/releases/download/WPS-CMake-4.0/wps-cmake-4.0-dmpar-basic-release-windows.zip',
+    },
+    'Darwin': {
+        'serial': 'https://github.com/WRF-CMake/WPS/releases/download/WPS-CMake-4.0/wps-cmake-4.0-serial-basic-release-macos.tar.xz',
+        'dmpar': 'https://github.com/WRF-CMake/WPS/releases/download/WPS-CMake-4.0/wps-cmake-4.0-dmpar-basic-release-macos.tar.xz'
+    },
+    'Linux': {
+        'serial': 'https://github.com/WRF-CMake/WPS/releases/download/WPS-CMake-4.0/wps-cmake-4.0-serial-basic-release-linux.tar.xz',
+        'dmpar': 'https://github.com/WRF-CMake/WPS/releases/download/WPS-CMake-4.0/wps-cmake-4.0-dmpar-basic-release-linux.tar.xz'
     }
 }

@@ -3,6 +3,8 @@
 
 from operator import xor
 import os
+import platform
+from pathlib import Path
 import re
 
 from PyQt5.QtCore import Qt, pyqtSignal
@@ -24,8 +26,9 @@ from gis4wrf.core import (
 from gis4wrf.plugin.options import get_options
 from gis4wrf.plugin.geo import load_wps_binary_layer
 from gis4wrf.plugin.ui.helpers import add_grid_lineedit, add_grid_combobox, clear_layout, create_lineedit, StringValidator
+from gis4wrf.plugin.ui.dialog_custom_met_dataset import CustomMetDatasetDialog
 from gis4wrf.plugin.constants import PLUGIN_NAME
-from .broadcast import Broadcast
+from gis4wrf.plugin.broadcast import Broadcast
 
 class DatasetsWidget(QWidget):
     tab_active = pyqtSignal()
@@ -53,6 +56,7 @@ class DatasetsWidget(QWidget):
 
         Broadcast.geo_datasets_updated.connect(self.populate_geog_data_tree)
         Broadcast.met_datasets_updated.connect(self.populate_met_data_tree)
+        Broadcast.project_updated.connect(self.populate_geog_data_tree)
 
     @property
     def project(self) -> Project:
@@ -249,8 +253,10 @@ class DatasetsWidget(QWidget):
         tree = self.tree_geog_data
         tree.clear()
 
-        # FIXME guard if incorrect WPS path
-        tbl = self.geogrid_tbl = self.project.read_geogrid_tbl()
+        try:
+            tbl = self.geogrid_tbl = self.project.read_geogrid_tbl()
+        except FileNotFoundError:
+            return
         if tbl is None:
             return
         add_derived_metadata_to_geogrid_tbl(tbl, self.options.geog_dir)
@@ -338,8 +344,18 @@ class DatasetsWidget(QWidget):
         for root, subdirs, _ in os.walk(self.options.geog_dir):
             for subdir in subdirs:
                 path = os.path.join(root, subdir)
-                rel_path = os.path.relpath(path, self.options.geog_dir)
-                self.geog_dataset_form_dataset.addItem(rel_path, path)
+                try:
+                    rel_path = os.path.relpath(path, self.options.geog_dir)
+                except ValueError:
+                    if platform.system() == 'Windows':
+                        # Can happen with folder names that are reserved on Windows, like "con".
+                        # Those are silently ignored.
+                        pass
+                    else:
+                        # Should never happen, but who knows.
+                        raise
+                else:
+                    self.geog_dataset_form_dataset.addItem(rel_path, path)
 
         var_names = sorted(self.geogrid_tbl.variables.keys())
         self.geog_dataset_form_variable.clear()
@@ -450,6 +466,10 @@ class DatasetsWidget(QWidget):
         selection_button.clicked.connect(self.on_met_data_selection_button_clicked)
         vbox_datasets_spec.addWidget(selection_button)
 
+        custom_button = QPushButton('Use Custom Dataset')
+        custom_button.clicked.connect(self.on_met_data_custom_button_clicked)
+        vbox_datasets_spec.addWidget(custom_button)
+
         hbox_current_config = QHBoxLayout()
         vbox_datasets_spec.addLayout(hbox_current_config)
         hbox_current_config.addWidget(QLabel('Current Configuration: '))
@@ -465,7 +485,12 @@ class DatasetsWidget(QWidget):
             config = None
         else:
             time_range = [d.strftime('%Y-%m-%d %H:%M') for d in spec['time_range']]
-            config = '{} / {}\n{} -\n{}'.format(spec['dataset'], spec['product'], *time_range)
+            dataset = spec['dataset']
+            product = spec['product']
+            if dataset:
+                config = '{} / {}\n{} -\n{}'.format(spec['dataset'], spec['product'], *time_range)
+            else:
+                config = 'Custom dataset / {} GRIB files\n{} -\n{}'.format(len(spec['paths']), *time_range)
 
         lbl = self.met_data_current_config_label
         if not config:
@@ -516,6 +541,33 @@ class DatasetsWidget(QWidget):
             'product': os.path.basename(product_folder),
             'time_range': meta_all.time_range,
             'interval_seconds': meta_all.interval_seconds
+        }
+        self.set_met_data_current_config_label()
+
+    def on_met_data_custom_button_clicked(self) -> None:
+        try:
+            spec = self.project.met_dataset_spec
+            if spec['dataset']:
+                spec = None # not a custom dataset
+        except KeyError:
+            # met data not configured yet
+            spec = None
+
+        dialog = CustomMetDatasetDialog(self.options.ungrib_vtable_dir, spec)
+        if not dialog.exec_():
+            return
+
+        vtable_path = dialog.vtable_path
+        # only store absolute path if not a standard WPS vtable
+        if Path(vtable_path).parent == Path(self.options.ungrib_vtable_dir):
+            vtable_path = Path(vtable_path).name
+
+        self.project.met_dataset_spec = {
+            'paths': dialog.paths,
+            'base_folder': dialog.base_folder,
+            'vtable': vtable_path,
+            'time_range': [dialog.start_date, dialog.end_date],
+            'interval_seconds': dialog.interval_seconds
         }
         self.set_met_data_current_config_label()
 

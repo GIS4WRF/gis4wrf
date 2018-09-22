@@ -16,6 +16,7 @@ from gis4wrf.core.util import export, gdal, get_temp_vsi_path, link_or_copy, ogr
 from gis4wrf.core.constants import PROJECT_JSON_VERSION
 from gis4wrf.core.crs import CRS, LonLat, BoundingBox2D, Coordinate2D
 from gis4wrf.core.readers.geogrid_tbl import read_geogrid_tbl, GeogridTbl
+from gis4wrf.core.readers.namelist import read_namelist
 from gis4wrf.core.writers.geogrid_tbl import write_geogrid_tbl
 from gis4wrf.core.writers.namelist import patch_namelist, write_namelist
 from gis4wrf.core.downloaders.datasets import met_datasets_vtables
@@ -96,8 +97,15 @@ class Project(object):
             (wrf_namelist_path, self.wrf_namelist_path)
         ]
         for src_path, dst_path in files:
+            if not src_path or not os.path.exists(src_path):
+                continue
             if not os.path.exists(dst_path):
                 shutil.copyfile(src_path, dst_path)
+                if src_path == wrf_namelist_path:
+                    # We generate the end_* variables, so remove run_* otherwise we would
+                    # have to fix them up. Users can add them manually again if they need to.
+                    delete_from_wrf_namelist = ['run_days', 'run_hours', 'run_minutes', 'run_seconds']
+                    patch_namelist(dst_path, {}, delete_from_wrf_namelist)
 
     @property
     def wps_namelist_path(self) -> str:
@@ -138,32 +146,45 @@ class Project(object):
     @property
     def met_dataset_spec(self) -> dict:
         spec = self.data['met_dataset_spec']
-        paths = [os.path.join(self.met_data_path, rel_path) for rel_path in spec['rel_paths']]
+        base_folder = spec.get('base_folder', self.met_data_path)
+        paths = [os.path.join(base_folder, rel_path) for rel_path in spec['rel_paths']]
         if not os.path.exists(paths[0]):
             # This would happen if a dataset was manually deleted from disk
             # or the project was copied to another machine which doesn't have
             # the dataset yet.
             # TODO use as trigger to offer download of missing data
             paths = None
-        return {
+        vtable = spec.get('vtable')
+        if not vtable:
+            vtable = met_datasets_vtables[spec['dataset']]
+        result = {
             'dataset': spec['dataset'],
             'product': spec['product'],
             'time_range': [datetime.strptime(d, '%Y-%m-%d %H:%M') for d in spec['time_range']],
             'interval_seconds': spec['interval_seconds'],
-            'paths': paths
+            'paths': paths,
+            'vtable': vtable
         }
+        if base_folder != self.met_data_path:
+            result['base_folder'] = base_folder
+        return result
 
     @met_dataset_spec.setter
     def met_dataset_spec(self, spec: dict) -> None:
-        rel_paths = [os.path.relpath(path, self.met_data_path) for path in spec['paths']]
+        base_folder = spec.get('base_folder', self.met_data_path)
+        rel_paths = [os.path.relpath(path, base_folder) for path in spec['paths']]
         time_range = [d.strftime('%Y-%m-%d %H:%M') for d in spec['time_range']]
-        self.data['met_dataset_spec'] = {
-            'dataset': spec['dataset'],
-            'product': spec['product'],
+        data_spec = self.data['met_dataset_spec'] = {
+            'dataset': spec.get('dataset'),
+            'product': spec.get('product'),
             'time_range': time_range,
             'interval_seconds': spec['interval_seconds'],
             'rel_paths': rel_paths
         }
+        if base_folder != self.met_data_path:
+            data_spec['base_folder'] = base_folder
+        if 'vtable' in spec:
+            data_spec['vtable'] = spec['vtable']
         self.save()
 
     def set_domains(self, map_proj: str,
@@ -221,7 +242,9 @@ class Project(object):
 
     def fill_domains(self):
         ''' Updated computed fields in each domain object like cell size. '''
-        domains = self.data['domains']
+        domains = self.data.get('domains')
+        if domains is None:
+            raise RuntimeError('Domains not configured yet')
 
         innermost_domain = domains[0]
         outermost_domain = domains[-1]
@@ -326,12 +349,37 @@ class Project(object):
         from gis4wrf.core.transforms.project_to_wrf_namelist import convert_project_to_wrf_namelist
 
         self.fill_domains()
-        wrf = convert_project_to_wrf_namelist(self)
+        nml_patch = convert_project_to_wrf_namelist(self)
 
-        # We use the end_* variables instead.
-        delete_from_wrf_namelist = ['run_days', 'run_hours', 'run_minutes', 'run_seconds']
+        # Allow the user to change the following max_dom sized variables, but patch if the size is wrong.
+        # The size is typically wrong when the template namelist from the WRF distribution is initially
+        # copied and the user has nested domains, since the template assumes no nesting.
+        # If the variable exists already and the size is wrong, then the existing array is cut or extended,
+        # where extension repeats the last value.
+        skip_patch_if_size_matches = {
+            'time_control': ['history_interval', 'frames_per_outfile', 'input_from_file'],
+            'domains': ['e_vert']
+        }
+        nml_old = read_namelist(self.wrf_namelist_path, 'wrf')
+        for group_name, var_names in skip_patch_if_size_matches.items():
+            if group_name not in nml_old:
+                continue
+            for var_name in var_names:
+                if var_name not in nml_old[group_name]:
+                    continue
+                old_size = len(nml_old[group_name][var_name])
+                patch_size = len(nml_patch[group_name][var_name])
+                if old_size == patch_size:
+                    del nml_patch[group_name][var_name]
+                    continue
+                var_old = nml_old[group_name][var_name]
+                if old_size < patch_size:
+                    var_patch = var_old + [var_old[-1]] * (patch_size - old_size)
+                else:
+                    var_patch = var_old[:patch_size]
+                nml_patch[group_name][var_name] = var_patch
 
-        patch_namelist(self.wrf_namelist_path, wrf, delete_from_wrf_namelist)
+        patch_namelist(self.wrf_namelist_path, nml_patch)
 
     # TODO move prepare functions into separate module together with functions for running
     def prepare_wps_run(self, wps_folder: str) -> None:
@@ -360,7 +408,7 @@ class Project(object):
             # met data not configured yet
             pass
         else:
-            vtable_filename = met_datasets_vtables[self.met_dataset_spec['dataset']]
+            vtable_filename = self.met_dataset_spec['vtable']
             shutil.copy(os.path.join(wps_folder, 'ungrib', 'Variable_Tables', vtable_filename),
                         os.path.join(self.run_wps_folder, 'Vtable'))
             
@@ -450,118 +498,4 @@ def get_bbox_center(bbox: BoundingBox2D) -> Tuple[float,float]:
     center_x = (bbox.minx + bbox.maxx) / 2
     center_y = (bbox.miny + bbox.maxy) / 2
     return center_x, center_y
-
-
-def get_bbox_ogr_polygon(bbox: BoundingBox2D) -> ogr.Geometry:
-    ring = ogr.Geometry(ogr.wkbLinearRing)
-    ring.AddPoint(bbox.minx, bbox.miny)
-    ring.AddPoint(bbox.maxx, bbox.miny)
-    ring.AddPoint(bbox.maxx, bbox.maxy)
-    ring.AddPoint(bbox.minx, bbox.maxy)
-    ring.AddPoint(bbox.minx, bbox.miny)
-
-    poly = ogr.Geometry(ogr.wkbPolygon)
-    poly.AddGeometry(ring)
-    return poly
-
-def add_domains_to_ogr_datasource(ds: ogr.DataSource, project: Project) -> None:
-    layer = ds.CreateLayer('domains', srs=project.projection.srs, geom_type=ogr.wkbPolygon) # type: ogr.Layer
-
-    bboxes = project.bboxes
-
-    feature_defn = layer.GetLayerDefn()
-    for bbox in bboxes:
-        geom = get_bbox_ogr_polygon(bbox)
-        feature = ogr.Feature(feature_defn)
-        feature.SetGeometry(geom)
-        layer.CreateFeature(feature)
-
-# TODO move to writers
-@export
-def write_shapefile_from_domains(path: str, project: Project) -> None:
-    drv = ogr.GetDriverByName('ESRI Shapefile') # type: ogr.Driver
-    ds = drv.CreateDataSource(path) # type: ogr.DataSource
-    add_domains_to_ogr_datasource(ds, project)
-
-# TODO move to transforms
-@export
-def get_gdal_from_domains(project: Project) -> ogr.DataSource:
-    drv = ogr.GetDriverByName('Memory') # type: ogr.Driver
-    ds = drv.CreateDataSource('') # type: ogr.DataSource
-    add_domains_to_ogr_datasource(ds, project)
-    return ds
-
-# TODO move to transforms
-@export
-def get_gdal_grid_vrt_from_domains(project: Project) -> List[str]:
-    # https://github.com/OSGeo/gdal/blob/master/autotest/gdrivers/vrtderived.py
-    vsi_path = get_temp_vsi_path()
-
-    domains = project.data['domains']
-    bboxes = project.bboxes
-    vrts = []
-    for idx, domain in enumerate(domains):
-        bbox = bboxes[idx]
-        dx, dy = domain['cell_size']
-        w, h = domain['domain_size_padded']
-
-        geo_transform = (bbox.minx, dx, 0, bbox.maxy, 0, -dy)
-
-        driver = gdal.GetDriverByName('VRT') # type: gdal.Driver
-        vrt_ds = driver.Create(vsi_path, w, h, 0) # type: gdal.Dataset
-        vrt_ds.SetProjection(project.projection.proj4)
-        vrt_ds.SetGeoTransform(geo_transform)
-
-        options = [
-            'subClass=VRTDerivedRasterBand',
-            'PixelFunctionLanguage=Python',
-            'PixelFunctionType=gis4wrf.core.gdal_checkerboard_pixelfunction'
-        ]
-        vrt_ds.AddBand(gdal.GDT_Byte, options)
-        vrt_ds.FlushCache()
-        vrt = read_vsi_string(vsi_path)
-
-        # PixelFunctionLanguage is lost, see https://github.com/OSGeo/gdal/issues/501.
-        # This function call fixes that for older gdal versions.
-        vrt = fix_pixelfunction_vrt(vrt)
-
-        vrts.append(vrt)
-
-    return vrts
-
-def fix_pixelfunction_vrt(vrt: str) -> str:
-    ''' Work-around for https://github.com/OSGeo/gdal/issues/501. '''
-    import xml.etree.ElementTree as ET
-    root = ET.fromstring(vrt)
-    bands = root.findall("./VRTRasterBand[@subClass='VRTDerivedRasterBand']")
-    for band in bands:
-        if band.find('PixelFunctionLanguage') is None:
-            lang = ET.SubElement(band, 'PixelFunctionLanguage')
-            lang.text = 'Python'
-    return ET.tostring(root, encoding='unicode')
-
-@export
-def gdal_checkerboard_pixelfunction(in_ar, out_ar, xoff, yoff, xsize, ysize, raster_xsize,
-                                    raster_ysize, buf_radius, gt):
-    '''
-        Documentation from http://www.gdal.org/gdal_vrttut.html:
-        in_ar: list of input NumPy arrays (one NumPy array for each source)
-        out_ar: output NumPy array to fill. The array is initialized at the right dimensions and with the VRTRasterBand.dataType.
-        xoff: pixel offset to the top left corner of the accessed region of the band. Generally not needed except if the processing depends on the pixel position in the raster.
-        yoff: line offset to the top left corner of the accessed region of the band. Generally not needed.
-        xsize: width of the region of the accessed region of the band. Can be used together with out_ar.shape[1] to determine the horizontal resampling ratio of the request.
-        ysize: height of the region of the accessed region of the band. Can be used together with out_ar.shape[0] to determine the vertical resampling ratio of the request.
-        raster_xsize: total with of the raster band. Generally not needed.
-        raster_ysize: total with of the raster band. Generally not needed.
-        buf_radius: radius of the buffer (in pixels) added to the left, right, top and bottom of in_ar / out_ar.
-                    This is the value of the optional BufferRadius element that can be set so that the original
-                    pixel request is extended by a given amount of pixels.
-        gt: geotransform. Array of 6 double values.
-    '''
-    x_even = xoff % 2 == 0
-    y_even = yoff % 2 == 0
-    is_white = (x_even and y_even) or (not x_even and not y_even)
-    out_ar[:] = 1 - is_white
-    out_ar[::2, 1::2] = is_white
-    out_ar[1::2, ::2] = is_white
 

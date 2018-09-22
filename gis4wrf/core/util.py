@@ -11,6 +11,7 @@ import random
 import tempfile
 import shutil
 import time
+import xml.etree.ElementTree as ET
 
 import numpy as np
 
@@ -32,9 +33,12 @@ def export(fn):
         mod.__all__ = [fn.__name__]
     return fn
 
-Number = Union[int,np.integer,float,np.floating]
+Number = Union[int,np.integer,float,np.floating,np.ma.MaskedArray]
 
 def as_float(val: Number) -> float:
+    if isinstance(val, np.ma.MaskedArray):
+        assert val.ndim == 0
+        val = val.item()
     if isinstance(val, float):
         return val
     if isinstance(val, np.floating):
@@ -57,6 +61,16 @@ def read_vsi_string(path: str, remove: bool=True) -> str:
 def remove_vsis(paths) -> None:
     for path in paths:
         gdal.Unlink(path)
+
+def fix_pixelfunction_vrt(vrt: str) -> str:
+    ''' Work-around for https://github.com/OSGeo/gdal/issues/501. '''
+    root = ET.fromstring(vrt)
+    bands = root.findall("./VRTRasterBand[@subClass='VRTDerivedRasterBand']")
+    for band in bands:
+        if band.find('PixelFunctionLanguage') is None:
+            lang = ET.SubElement(band, 'PixelFunctionLanguage')
+            lang.text = 'Python'
+    return ET.tostring(root, encoding='unicode')
 
 def link(src_path: str, link_path: str) -> None:
     assert os.path.isfile(src_path)

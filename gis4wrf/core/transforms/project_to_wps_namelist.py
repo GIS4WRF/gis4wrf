@@ -35,6 +35,13 @@ def convert_project_to_wps_namelist(project: Project) -> dict:
             end_date = [to_wrf_date(met_spec['time_range'][1])] * num_domains,
             interval_seconds = met_spec['interval_seconds']
         )
+
+    # When a GIS4WRF project is not used, we construct the path 
+    # to the geog folder with a dummy string.
+    try:
+        geog_data_path = project.geog_data_path + '/'
+    except:
+        geog_data_path = '/path/to/geog/folder'
     
     wps['geogrid'] = OrderedDict(
         parent_id = [1] + list(range(1, num_domains)),
@@ -51,7 +58,7 @@ def convert_project_to_wps_namelist(project: Project) -> dict:
         ref_lon = outermost_domain['center_lonlat'][0],
         ref_lat = outermost_domain['center_lonlat'][1],
         geog_data_res = project.geo_dataset_specs[::-1],
-        geog_data_path = project.geog_data_path + '/'
+        geog_data_path = geog_data_path
     )
 
     if map_proj in ['lambert', 'mercator', 'polar']:

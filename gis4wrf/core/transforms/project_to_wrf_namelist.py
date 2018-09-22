@@ -9,6 +9,7 @@ import netCDF4 as nc
 
 from gis4wrf.core.util import export
 from gis4wrf.core.project import Project
+from gis4wrf.core.logging import logger
 
 @export
 def convert_project_to_wrf_namelist(project: Project) -> dict:
@@ -28,16 +29,25 @@ def convert_project_to_wrf_namelist(project: Project) -> dict:
     dy = [] # type: List[float]
     for path in geogrid_nc:
         ds = nc.Dataset(path)
-        dx.append(ds.getncattr('DX'))
-        dy.append(ds.getncattr('DY'))
-        num_land_cat = ds.getncattr('NUM_LAND_CAT')
+        try:
+            dx.append(ds.getncattr('DX'))
+            dy.append(ds.getncattr('DY'))
+            num_land_cat = ds.getncattr('NUM_LAND_CAT')
+        finally:
+            ds.close()
+        logger.debug(f'read metadata from {path}: DX={dx[-1]}, DY={dy[-1]}, NUM_LAND_CAT={num_land_cat}')
 
     metgrid_nc = glob.glob(os.path.join(project.run_wps_folder, 'met_em.d01.*.nc'))
     if not metgrid_nc:
         raise RuntimeError('Metgrid output files not found, run metgrid first')
     ds = nc.Dataset(metgrid_nc[0])
-    num_metgrid_levels = ds.dimensions['num_metgrid_levels'].size
-    num_metgrid_soil_levels = ds.getncattr('NUM_METGRID_SOIL_LEVELS')
+    try:
+        num_metgrid_levels = ds.dimensions['num_metgrid_levels'].size
+        num_metgrid_soil_levels = ds.getncattr('NUM_METGRID_SOIL_LEVELS')
+    finally:
+        ds.close()
+    logger.debug(f'read metadata from {metgrid_nc[0]}: num_metgrid_levels={num_metgrid_levels}, ' +
+                 f'NUM_METGRID_SOIL_LEVELS={num_metgrid_soil_levels}')
         
     domains = project.data['domains']
     num_domains = len(domains)

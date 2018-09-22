@@ -4,20 +4,23 @@
 from typing import List, Callable
 import webbrowser
 import time
+import logging
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QAction, QWidget
+from qgis.core import QgsMessageLog, Qgis
 from qgis.gui import QgisInterface
 
 from gis4wrf.core import (
-    get_latest_gis4wrf_version, get_installed_gis4wrf_version, is_newer_version)
+    get_latest_gis4wrf_version, get_installed_gis4wrf_version, is_newer_version,
+    logger)
 
 # Initialize Qt resources from auto-generated file resources.py
 import gis4wrf.plugin.resources
 
-from gis4wrf.plugin.ui.helpers import TaskThread
+from gis4wrf.plugin.ui.thread import TaskThread
 
 from gis4wrf.plugin.ui.options import OptionsFactory
 from gis4wrf.plugin.ui.dock import MainDock
@@ -39,6 +42,8 @@ class QGISPlugin():
         """Create the menu entries and toolbar icons inside the QGIS GUI.
            Note: This method is called by QGIS.
         """
+        self.init_logging()
+
         self.menu = '&' + PLUGIN_NAME
         self.add_action(GIS4WRF_LOGO_PATH, text=PLUGIN_NAME, callback=self.show_dock, add_to_toolbar=True,
                         parent=self.iface.mainWindow(), status_tip='Run GIS4WRF')
@@ -68,6 +73,8 @@ class QGISPlugin():
             self.iface.removeDockWidget(self.dock_widget)
         self.iface.unregisterOptionsWidgetFactory(self.options_factory)
 
+        self.destroy_logging()
+
     def show_dock(self) -> None:
         if not self.dock_widget:
             self.dock_widget = MainDock(self.iface, self.dock_widget)
@@ -76,8 +83,7 @@ class QGISPlugin():
         add_default_basemap()
 
     def show_about(self) -> None:
-        self.dlg = AboutDialog()
-        self.dlg.show()
+        AboutDialog().exec_()
 
     def add_wrf_layer(self) -> None:
         path, _ = QFileDialog.getOpenFileName(caption='Open WRF NetCDF File')
@@ -96,6 +102,27 @@ class QGISPlugin():
 
     def report_bug(self) -> None:
         webbrowser.open('https://github.com/GIS4WRF/gis4wrf/issues')
+
+    def init_logging(self) -> None:
+        levels = {
+            logging.NOTSET: getattr(Qgis, 'None'),
+            logging.DEBUG: Qgis.Info,
+            logging.INFO: Qgis.Info,
+            logging.WARN: Qgis.Warning,
+            logging.ERROR: Qgis.Critical,
+            logging.CRITICAL: Qgis.Critical,
+        }
+        class QgsLogHandler(logging.Handler):
+            def emit(self, record: logging.LogRecord) -> None:
+                log_entry = self.format(record)
+                level = levels[record.levelno]                
+                QgsMessageLog.logMessage(log_entry, PLUGIN_NAME, level, False)
+        
+        self.log_handler = QgsLogHandler()
+        logger.addHandler(self.log_handler)
+
+    def destroy_logging(self) -> None:
+        logger.removeHandler(self.log_handler)
 
     def check_version(self) -> None:
         def get_latest_delayed() -> str:

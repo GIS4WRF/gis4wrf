@@ -1,8 +1,9 @@
 # GIS4WRF (https://doi.org/10.5281/zenodo.1288569)
 # Copyright (c) 2018 D. Meyer and M. Riechert. Licensed under MIT.
 
-from typing import Union, Optional, List, Callable
+from typing import Union, Optional, Tuple, List, Callable
 import os
+import signal
 import sys
 import platform
 import shutil
@@ -13,22 +14,21 @@ from PyQt5.QtGui import (
     QGuiApplication, QPalette, QDoubleValidator, QValidator, QIntValidator,
     QDesktopServices
 )
-from PyQt5.Qt import QWebPage
+
 from PyQt5.QtWidgets import (
     QWidget, QLabel, QLayout, QHBoxLayout, QVBoxLayout, QGridLayout, QComboBox, QMessageBox,
     QScrollArea, QLineEdit, QPushButton, QGroupBox, QRadioButton, QFileDialog, QTreeWidget, QTreeWidgetItem,
-    QSizePolicy, QDialog, QProgressBar
+    QSizePolicy, QDialog, QProgressBar, QToolButton, QAction
 )
 
-# TODO: QWebView is deprecated. We should use QWebEngineView instead.
-#       Currently not possible due to a bug in QGIS (https://issues.qgis.org/issues/18155).
-from PyQt5.QtWebKitWidgets import QWebView
-# from PyQt5.QtWebEngineWidgets import QWebEngineView
-
 from qgis.gui import QgisInterface
-from qgis.core import QgsMapLayer
+from qgis.core import QgsApplication, QgsMapLayer
+
+# NOTE: Do not import anything from gis4wrf.core or other gis4wrf.plugin module depending on core here.
+#       The helpers module is used in the bootstrapping UI.
 
 from gis4wrf.plugin.constants import PLUGIN_NAME
+
 
 DIM_VALIDATOR = QIntValidator()
 DIM_VALIDATOR.setBottom(0)
@@ -72,15 +72,6 @@ class MyLineEdit(QLineEdit):
     def is_valid(self) -> bool:
         state = self.validator().validate(self.text(), 0)[0]
         return state == QValidator.Acceptable
-
-class FormattedLabel(QLabel):
-    def __init__(self, text: QLabel, align: bool=False) -> None:
-        super().__init__()
-        self.setText(text)
-        self.setTextInteractionFlags(Qt.TextSelectableByMouse)
-        if align:
-            self.setWordWrap(True)
-            self.setAlignment(Qt.AlignJustify | Qt.AlignTop)
 
 class WhiteScroll(QScrollArea):
     def __init__(self, widget: QWidget) -> None:
@@ -138,9 +129,8 @@ def add_grid_lineedit(grid: QGridLayout, row: int, label_name: str, validator: O
     """Helper to return a 'validator-ready' grid layout
     composed of a name label, line edit and optional unit.
     """
-    grid.addWidget(QLabel(label_name + ':'), row, 0)
     lineedit = create_lineedit(validator, required)
-    grid.addWidget(lineedit, row, 1)
+    add_grid_labeled_widget(grid, row, label_name, lineedit)
     if unit:
         grid.addWidget(QLabel(unit), row, 2)
     return lineedit
@@ -149,10 +139,49 @@ def add_grid_combobox(grid: QGridLayout, row: int, label_name: str) -> QComboBox
     """Helper to return a 'validator-ready' grid layout
     composed of a name label, line edit and optional unit.
     """
-    grid.addWidget(QLabel(label_name + ':'), row, 0)
     combo = QComboBox()
-    grid.addWidget(combo, row, 1)
+    add_grid_labeled_widget(grid, row, label_name, combo)
     return combo
+
+def add_grid_labeled_widget(grid: QGridLayout, row: int, label_name: str, widget: Union[QWidget,QLayout]) -> None:
+    grid.addWidget(QLabel(label_name + ':'), row, 0)
+    if isinstance(widget, QWidget):
+        grid.addWidget(widget, row, 1)
+    else:
+        grid.addLayout(widget, row, 1)
+
+def create_file_input(start_folder: str, dialog_caption: Optional[str]=None, input_label: Optional[str]=None, is_folder=False, value: Optional[str]=None) -> Tuple[QLineEdit, QHBoxLayout]:
+    hbox = QHBoxLayout()
+
+    if value is None:
+        value = ''
+    field = QLineEdit(value)
+
+    button = QToolButton()
+    tooltip_suffix = 'Folder' if is_folder else 'File'
+    action = QAction(QgsApplication.getThemeIcon('/mActionFileOpen.svg'), 'Choose ' + tooltip_suffix)
+    button.setDefaultAction(action)
+
+    if dialog_caption is None and input_label:
+        dialog_caption = 'Select ' + input_label
+
+    def on_button_triggered():
+        if is_folder:
+            path = QFileDialog.getExistingDirectory(caption=dialog_caption, directory=start_folder)
+        else:
+            path, _ = QFileDialog.getOpenFileName(caption=dialog_caption, directory=start_folder)
+        if not path:
+            return
+        field.setText(path)
+
+    button.triggered.connect(on_button_triggered)
+
+    if input_label:
+        hbox.addWidget(QLabel(input_label))
+    hbox.addWidget(field)
+    hbox.addWidget(button)
+
+    return field, hbox
 
 def create_two_radio_group_box(radio1_name: str, radio2_name: str,
                                gbox_name: str) -> QGroupBox:
@@ -186,38 +215,6 @@ class RadioWithButtonWidget(QGroupBox):
     def radiostate(self,b):
         for radio_button in radio_list:
             print(self.radio_button.text())
-
-
-# TODO: implement use remote url if internet connection is
-# available, else default to the local page
-def create_browser_layout(web_page: str) -> QVBoxLayout:
-    path = THIS_DIR.parents[1] / 'resources' / 'meta' / 'site' / web_page
-    url = QUrl(path.as_uri())
-    vbox = QVBoxLayout()
-    vbox.setContentsMargins(2,2,2,2)
-    
-    browser = QWebView()
-    browser.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding))
-    
-    if platform.system() == 'Windows':
-        # On Windows, QWebView does not adapt according to system scaling settings.
-        # This leads to tiny fonts on high-dpi displays where scaling
-        # is typically 200%. The work-around below sets the right scaling
-        # via the browser's zoom factor.
-        screen = QGuiApplication.primaryScreen()
-        dpi = screen.logicalDotsPerInchX()
-        zoom = dpi / 96
-        browser.setZoomFactor(zoom)
-    
-    # Open external links with the default browser.
-    browser.page().setLinkDelegationPolicy(QWebPage.DelegateExternalLinks)
-    browser.linkClicked.connect(QDesktopServices.openUrl)
-
-    browser.load(url)
-    
-    vbox.addWidget(browser)
-    return vbox
-
 
 def ensure_folder_empty(folder: str, iface: QgisInterface) -> bool:
     existing_files = os.listdir(folder)
@@ -256,6 +253,9 @@ def wrap_error(parent, fn):
         return
 
 def dispose_after_delete(layer: QgsMapLayer, dispose: Callable[[],None]) -> None:
+    # Lazy import to work around restriction explained at top of this file.
+    from gis4wrf.plugin.ui.thread import TaskThread
+
     # There is no signal indicating that the layer has been fully removed.
     # Therefore in the willBeDeleted signal we need to give control back to
     # the main event loop and run the dispose operation asynchronously. Note that
@@ -287,59 +287,6 @@ class WaitDialog(IgnoreKeyPressesDialog):
         self.setMaximumHeight(0)
         self.setFixedWidth(parent.width() * 0.5)
         self.show()
-
-class Task(QObject):
-    ''' Non-threaded alternative to TaskThread, useful for debugging. '''
-    started = pyqtSignal()
-    progress = pyqtSignal(int, str)
-    succeeded = pyqtSignal(object)
-    failed = pyqtSignal(tuple)
-    finished = pyqtSignal()
-
-    def __init__(self, fn, yields_progress: bool=False) -> None:
-        super().__init__()
-        self.fn = fn
-        self.yields_progress = yields_progress
-        self.result = None
-        self.exc_info = None
-
-    def start(self):
-        self.started.emit()
-        try:
-            if self.yields_progress:
-                for percent, status in self.fn():
-                    self.progress.emit(percent, status)
-            else:
-                self.result = self.fn()
-            self.succeeded.emit(self.result)
-        except:
-            self.exc_info = sys.exc_info()
-            self.failed.emit(self.exc_info)
-        finally:
-            self.finished.emit()
-
-_THREADS = [] # type: List[QThread]
-
-class TaskThread(QThread):
-    progress = pyqtSignal(int, str)
-    succeeded = pyqtSignal(object)
-    failed = pyqtSignal(tuple)
-    # QThread provides started & finished signals.
-
-    def __init__(self, fn, yields_progress: bool=False) -> None:
-        super().__init__()
-        
-        task = Task(fn, yields_progress)
-        task.progress.connect(self.progress)
-        task.succeeded.connect(self.succeeded)
-        task.failed.connect(self.failed)
-        self.task = task
-
-        # need to keep reference alive while thread is running
-        _THREADS.append(self)
-
-    def run(self):
-        self.task.start()
 
 def reraise(exc_info) -> None:
     raise exc_info[0].with_traceback(*exc_info[1:])

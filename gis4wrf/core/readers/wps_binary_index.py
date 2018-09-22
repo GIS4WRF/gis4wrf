@@ -107,7 +107,7 @@ class WPSBinaryIndexMetadata(object):
 def read_wps_binary_index_file(folder: str) -> WPSBinaryIndexMetadata:
     index_path = os.path.join(folder, 'index')
     if not os.path.exists(index_path):
-        raise ValueError('"index" file missing, this is not a WPS Binary dataset')
+        raise ValueError(f'{index_path} file missing, this is not a valid WPS Binary dataset')
     with open(index_path) as f:
         index = '\n'.join(line.strip() for line in f.readlines())
     parser = ConfigParser()

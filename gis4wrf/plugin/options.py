@@ -1,15 +1,17 @@
 # GIS4WRF (https://doi.org/10.5281/zenodo.1288569)
 # Copyright (c) 2018 D. Meyer and M. Riechert. Licensed under MIT.
 
-from typing import Optional
+from typing import Optional, List
 import os
 import platform
 import subprocess
+import multiprocessing
 
 from qgis.core import QgsSettings
 
 from gis4wrf.core.util import export
 from gis4wrf.core import try_enable_ntfs_compression
+from gis4wrf.plugin.broadcast import Broadcast
 
 WORKING_DIR_DEFAULT_NAME = 'gis4wrf'
 
@@ -19,6 +21,7 @@ class Keys(object):
     WRF_DIR = SETTINGS_NAMESPACE + 'wrf_dir'
     WPS_DIR = SETTINGS_NAMESPACE + 'wps_dir'
     MPI_ENABLED = SETTINGS_NAMESPACE + 'mpi_enabled'
+    MPI_PROCESSES = SETTINGS_NAMESPACE + 'mpi_processes'
     RDA_USERNAME = SETTINGS_NAMESPACE + 'rda_username'
     RDA_PASSWORD = SETTINGS_NAMESPACE + 'rda_password'
 
@@ -53,7 +56,9 @@ class Options(object):
 
         self._wrf_dir = settings.value(Keys.WRF_DIR, None)
         self._wps_dir = settings.value(Keys.WPS_DIR, None)
+
         self._mpi_enabled = settings.value(Keys.MPI_ENABLED, False, type=bool)
+        self._mpi_processes = settings.value(Keys.MPI_PROCESSES, multiprocessing.cpu_count(), type=int)
 
         self._rda_username = settings.value(Keys.RDA_USERNAME)
         self._rda_password = settings.value(Keys.RDA_PASSWORD)
@@ -64,11 +69,13 @@ class Options(object):
         settings = QgsSettings()
         settings.setValue(Keys.WORKING_DIR, self._working_dir)
         settings.setValue(Keys.MPI_ENABLED, self._mpi_enabled)
+        settings.setValue(Keys.MPI_PROCESSES, self._mpi_processes)
         settings.setValue(Keys.WRF_DIR, self._wrf_dir)
         settings.setValue(Keys.WPS_DIR, self._wps_dir)
         settings.setValue(Keys.RDA_USERNAME, self._rda_username)
         settings.setValue(Keys.RDA_PASSWORD, self._rda_password)
         self.after_load_save()
+        Broadcast.options_updated.emit()
 
     def after_load_save(self) -> None:
         for path in [self.working_dir, self.datasets_dir, self.geog_dir, self.projects_dir, self.distributions_dir]:
@@ -95,6 +102,14 @@ class Options(object):
     @mpi_enabled.setter
     def mpi_enabled(self, enabled: bool) -> None:
         self._mpi_enabled = enabled
+
+    @property
+    def mpi_processes(self) -> int:
+        return self._mpi_processes
+
+    @mpi_processes.setter
+    def mpi_processes(self, count: int) -> None:
+        self._mpi_processes = count
 
     @property
     def wrf_dir(self) -> Optional[str]:
@@ -137,22 +152,38 @@ class Options(object):
         return os.path.join(self.wps_dir, 'ungrib.exe')
 
     @property
+    def ungrib_vtable_dir(self) -> Optional[str]:
+        if not self.wps_dir:
+            return None
+        return os.path.join(self.wps_dir, 'ungrib', 'Variable_Tables')
+
+    @property
     def metgrid_exe(self) -> Optional[str]:
         if not self.wps_dir:
             return None
         return os.path.join(self.wps_dir, 'metgrid.exe')
 
     @property
+    def wrf_bin_dir(self) -> Optional[str]:
+        if not self.wrf_dir:
+            return None
+        bin_dir = os.path.join(self.wrf_dir, 'main')
+        if not os.path.exists(bin_dir):
+            # fall-back for older gis4wrf WRF Windows distributions
+            bin_dir = os.path.join(self.wrf_dir, 'run')
+        return bin_dir
+
+    @property
     def real_exe(self) -> Optional[str]:
         if not self.wrf_dir:
             return None
-        return os.path.join(self.wrf_dir, 'run', 'real.exe')
+        return os.path.join(self.wrf_bin_dir, 'real.exe')
 
     @property
     def wrf_exe(self) -> Optional[str]:
         if not self.wrf_dir:
             return None
-        return os.path.join(self.wrf_dir, 'run', 'wrf.exe')
+        return os.path.join(self.wrf_bin_dir, 'wrf.exe')
 
     @property
     def wrf_namelist_path(self) -> Optional[str]:

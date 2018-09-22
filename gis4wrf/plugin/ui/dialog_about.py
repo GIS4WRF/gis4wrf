@@ -29,34 +29,40 @@ class AboutDialog(QDialog):
         geom = QGuiApplication.primaryScreen().geometry()
         w, h = geom.width(), geom.height()
         self.setWindowTitle("About")
-        self.setMinimumSize(w * 0.3, h * 0.5)
+        self.setMinimumSize(w * 0.5, h * 0.5)
+        font = QFont('Monospace', 9)
+        font.setStyleHint(QFont.TypeWriter)
         
         with open(CHANGELOG_PATH) as f:
             changelog = f.read()
         text_changelog = QTextBrowser()
+        text_changelog.setFont(font)
         text_changelog.setPlainText(changelog)
+
+        text_how_to_cite = QTextBrowser()
+        text_how_to_cite.setOpenExternalLinks(True)
+        how_to_cite = "Please see <a href='https://gis4wrf.github.io/cite'>How to reference GIS4WRF</a> \
+                       for up-to-date referencing information."
+        text_how_to_cite.setFont(font)
+        text_how_to_cite.setText(how_to_cite)
 
         with open(CREDITS_PATH) as f:
             credits = f.read()
         text_credits = QTextBrowser()
+        text_credits.setFont(font)
         text_credits.setPlainText(credits)
 
         with open(LICENSE_PATH) as f:
-            credits = f.read()
+            license = f.read()
         text_license = QTextBrowser()
-        text_license.setPlainText(credits)
-
-        text_how_to_cite = QTextBrowser()
-        text_how_to_cite.setOpenExternalLinks(True)
-        how_to_cite = "Please see <a href='https://zenodo.org/'>GIS4WRF on Zenodo</a> \
-                       for up-to-date referencing information."
-        text_how_to_cite.setText(how_to_cite)
+        text_license.setFont(font)
+        text_license.setPlainText(license)
 
         tabs = QTabWidget()
-        tabs.addTab(text_changelog,"What's New")
+        tabs.addTab(text_changelog,"What's new")
+        tabs.addTab(text_how_to_cite, 'How to reference GIS4WRF')
         tabs.addTab(text_credits,'Credits')
         tabs.addTab(text_license, 'License')
-        tabs.addTab(text_how_to_cite, 'How to Cite')
         
         vbox = QVBoxLayout()
         vbox.addWidget(tabs)
