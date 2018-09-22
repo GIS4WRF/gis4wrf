@@ -13,7 +13,7 @@ from PyQt5.QtWidgets import (
 
 from gis4wrf.core import (
     met_datasets, get_met_products, is_met_dataset_downloaded, get_met_dataset_path, download_met_dataset,
-    CRS)
+    CRS, logger)
 from gis4wrf.plugin.options import get_options
 from gis4wrf.plugin.geo import rect_to_bbox
 from gis4wrf.plugin.broadcast import Broadcast
@@ -207,8 +207,7 @@ class MetToolsDownloadManager(QWidget):
             self.msg_bar.info('Met dataset download request submitted successfully, waiting until available for download...')
         elif status == 'ready':
             self.msg_bar.info('Met dataset download request is now ready, downloading...')
-        else:
-            print(status)
+        logger.debug(f'Met data download: {percent}% - {status}')
     
     def on_finished_download(self) -> None:
         self.btn_download.show()

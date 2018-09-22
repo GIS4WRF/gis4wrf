@@ -19,10 +19,12 @@ IGNORE_FILES = ['.csh']
 @export
 def get_met_products(dataset_name: str, auth: tuple) -> dict:
     # Retrieve raw metadata
-    response = requests_retry_session().get(f'https://rda.ucar.edu/apps/metadata/{dataset_name}', auth=auth)
-    response.raise_for_status()
+    with requests_retry_session() as session:
+        response = session.get(f'https://rda.ucar.edu/apps/metadata/{dataset_name}', auth=auth)
+        response.raise_for_status()
+        text = response.text
     # Split into rows and columns
-    all_rows = [x.split('|') for x in response.text.splitlines()]
+    all_rows = [x.split('|') for x in text.splitlines()]
     # filter out non-data rows like header and footer
     data_rows = [row for row in all_rows if len(row) >= 12][1:]
     products = {} # type: dict
@@ -100,20 +102,23 @@ def download_met_dataset(base_dir: Union[str,Path], auth: tuple,
     # simply by checking the status of the request every 1 minute.
     rda_status = rda_check_status(request_id, auth)
     while rda_status != 'O - Online' and not rda_is_error_status(rda_status):
+        yield 10, 'RDA: ' + rda_status
         time.sleep(60)
         rda_status = rda_check_status(request_id, auth)
-        yield 10, 'RDA: ' + rda_status
     
+    yield 10, 'RDA: ' + rda_status
     if rda_is_error_status(rda_status):
         raise RuntimeError('Unexpected status from RDA: ' + rda_status)
 
     yield 20, 'ready'
     try:
-        for ratio in rda_download_dataset(request_id, auth, path):
-            yield 20 + int((95 - 20) * ratio), 'downloading'
+        for ratio, url in rda_download_dataset(request_id, auth, path):
+            yield 20 + int((95 - 20) * ratio), f'downloading {url}'
     finally:
         yield 95, 'purging'
-        rda_purge_request(request_id, auth)    
+        rda_purge_request(request_id, auth)
+    
+    yield 100, 'complete'
     
 
 def rda_submit_request(request_data: dict, auth: tuple) -> str:
@@ -130,9 +135,10 @@ def rda_submit_request(request_data: dict, auth: tuple) -> str:
     return request_id
 
 def rda_check_status(request_id: str, auth: tuple) -> str:
-    response = requests_retry_session().get(f'https://rda.ucar.edu/apps/request/{request_id}/-proc_status', auth=auth)
-    # We don't invoke raise_for_status() here to account for temporary network issues.
-    return response.text
+    with requests_retry_session() as session:
+        response = session.get(f'https://rda.ucar.edu/apps/request/{request_id}/-proc_status', auth=auth)
+        # We don't invoke raise_for_status() here to account for temporary server/proxy issues.
+        return response.text
 
 def rda_is_error_status(status: str) -> bool:
     return any(error_status in status for error_status in ERROR_STATUS)
@@ -144,20 +150,21 @@ def rda_download_dataset(request_id: str, auth: tuple, path: Path) -> Iterable[f
     path_tmp.mkdir(parents=True)
     urls = rda_get_urls_from_request_id(request_id, auth)
     count = len(urls)
-    with requests_retry_session() as s:
+    with requests_retry_session() as session:
         login_data = {'email': auth[0], 'passwd': auth[1], 'action': 'login'}
-        response = s.post('https://rda.ucar.edu/cgi-bin/login', login_data)
+        response = session.post('https://rda.ucar.edu/cgi-bin/login', login_data)
         response.raise_for_status()
         for i, url in enumerate(urls):
+            yield i / count, url
             file_name = url.split('/')[-1]
-            download_file(url, path_tmp / file_name, session=s)
-            yield (i + 1) / count
+            download_file(url, path_tmp / file_name, session=session)
     path_tmp.rename(path)
 
 def rda_get_urls_from_request_id(request_id: str, auth: tuple) -> List[str]:
-    response = requests_retry_session().get(f'https://rda.ucar.edu/apps/request/{request_id}/filelist', auth=auth)
-    response.raise_for_status()
-    urls = response.json()
+    with requests_retry_session() as session:
+        response = session.get(f'https://rda.ucar.edu/apps/request/{request_id}/filelist', auth=auth)
+        response.raise_for_status()
+        urls = response.json()
     filtered = []
     for url in urls:
         if any(url.endswith(ignore) for ignore in IGNORE_FILES):
@@ -166,5 +173,6 @@ def rda_get_urls_from_request_id(request_id: str, auth: tuple) -> List[str]:
     return filtered
 
 def rda_purge_request(request_id: str, auth: tuple) -> None:
-    response = requests_retry_session().delete(f'https://rda.ucar.edu/apps/request/{request_id}', auth=auth)
-    response.raise_for_status()
+    with requests_retry_session() as session:
+        response = session.delete(f'https://rda.ucar.edu/apps/request/{request_id}', auth=auth)
+        response.raise_for_status()

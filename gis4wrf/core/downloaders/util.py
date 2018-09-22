@@ -6,11 +6,17 @@ from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 
 def download_file(url: str, path: str, session=None) -> None:
-    session = requests_retry_session(session=session)
-    response = session.get(url)
-    response.raise_for_status()
-    with open(path, 'wb') as f:
-        f.write(response.content)
+    new_session = session is None
+    if new_session:
+        session = requests_retry_session()
+    try:
+        response = session.get(url)
+        response.raise_for_status()
+        with open(path, 'wb') as f:
+            f.write(response.content)
+    finally:
+        if new_session:
+            session.close()
 
 # https://www.peterbe.com/plog/best-practice-with-retries-with-requests
 def requests_retry_session(retries=3, backoff_factor=0.3, status_forcelist=(500, 502, 503, 504), session=None):
