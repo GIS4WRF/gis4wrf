@@ -2,6 +2,7 @@
 # Copyright (c) 2018 D. Meyer and M. Riechert. Licensed under MIT.
 
 from typing import List, Callable
+import os
 import webbrowser
 import time
 import logging
@@ -15,7 +16,7 @@ from qgis.gui import QgisInterface
 
 from gis4wrf.core import (
     get_latest_gis4wrf_version, get_installed_gis4wrf_version, is_newer_version,
-    logger)
+    WRF_WPS_DIST_VERSION, WRF_WPS_DIST_OLD_VERSIONS, logger)
 
 # Initialize Qt resources from auto-generated file resources.py
 import gis4wrf.plugin.resources
@@ -27,6 +28,7 @@ from gis4wrf.plugin.ui.options import OptionsFactory
 from gis4wrf.plugin.ui.dock import MainDock
 from gis4wrf.plugin.ui.dialog_about import AboutDialog
 
+from gis4wrf.plugin.options import get_options
 from gis4wrf.plugin.geo import add_default_basemap, load_wps_binary_layer
 from gis4wrf.plugin.constants import (
     PLUGIN_NAME, GIS4WRF_LOGO_PATH, ADD_WRF_NETCDF_LAYER_ICON_PATH, 
@@ -60,8 +62,9 @@ class QGISPlugin():
 
         self.options_factory = OptionsFactory()
         self.iface.registerOptionsWidgetFactory(self.options_factory)
+        self.options = get_options()
 
-        self.check_version()
+        self.check_versions()
 
     def unload(self) -> None:
         """Removes the plugin menu item and icon from QGIS GUI.
@@ -126,7 +129,11 @@ class QGISPlugin():
     def destroy_logging(self) -> None:
         logger.removeHandler(self.log_handler)
 
-    def check_version(self) -> None:
+    def check_versions(self) -> None:
+        self.check_plugin_version()
+        self.check_prebuilt_distribution_version()
+
+    def check_plugin_version(self) -> None:
         def get_latest_delayed() -> str:
             # When QGIS is started, display messages after QGIS 
             # is fully loaded by waiting for 2 mins as plugins
@@ -142,6 +149,37 @@ class QGISPlugin():
                    'Installed: ' + installed + ', Latest: ' + latest, QMessageBox.Ok)
         
         thread = TaskThread(get_latest_delayed)
+        thread.succeeded.connect(on_succeeded)
+        thread.start()
+
+    def check_prebuilt_distribution_version(self) -> None:
+        def delayed() -> None:
+            # See check_plugin_version().
+            time.sleep(120)
+
+        variants = ['nompi', 'mpi']
+
+        def on_succeeded() -> None:
+            dist_root_dir = os.path.normpath(self.options.distributions_dir)
+            old_found = None
+            for dist_name, current_dir in [('WPS', self.options.wps_dir), ('WRF', self.options.wrf_dir)]:
+                if current_dir is None:
+                    continue
+                for old_version in WRF_WPS_DIST_OLD_VERSIONS:
+                    for variant in variants:
+                        # We assume that a match of this folder path would only happen
+                        # if the user downloaded a pre-built distribution via the settings interface.
+                        old_dir = os.path.join(dist_root_dir, f'{dist_name}-{old_version}-{variant}')
+                        if os.path.normpath(old_dir) == os.path.normpath(current_dir):
+                            old_found = old_version
+            if old_found:
+                QMessageBox.information(self.iface.mainWindow(), PLUGIN_NAME,
+                   f'<html>Pre-built WRF/WPS {WRF_WPS_DIST_VERSION} distributions are available. ' +
+                   f'You are currently using version {old_found}. Please update. '
+                    'See the <a href="https://gis4wrf.github.io/configuration/">online documentation</a> for details.</html>',
+                   QMessageBox.Ok)
+        
+        thread = TaskThread(delayed)
         thread.succeeded.connect(on_succeeded)
         thread.start()
 
