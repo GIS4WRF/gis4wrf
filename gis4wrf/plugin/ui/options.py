@@ -210,10 +210,11 @@ class ConfigOptionsPage(QgsOptionsPageWidget):
         if not self.confirm_dist_download(name, mpi, url):
             return
 
-        wait_dialog = WaitDialog(self, 'Downloading...')
+        wait_dialog = WaitDialog(self, 'Downloading...', progress=True)
                 
         folder = self.get_dist_download_folder(name, mpi)
-        thread = TaskThread(lambda: download_and_extract_dist(url, folder))
+        thread = TaskThread(lambda: download_and_extract_dist(url, folder), yields_progress=True)
+        thread.progress.connect(lambda progress, _: wait_dialog.update_progress(progress))
         thread.finished.connect(lambda: wait_dialog.accept())
         thread.succeeded.connect(lambda: on_success(folder))
         thread.failed.connect(reraise)
