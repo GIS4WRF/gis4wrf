@@ -266,20 +266,28 @@ class IgnoreKeyPressesDialog(QDialog):
         # Overriding this method prevents this behaviour.
         pass
 
+# higher resolution than default (100)
+PROGRESS_BAR_MAX = 1000
+
 class WaitDialog(IgnoreKeyPressesDialog):
-    def __init__(self, parent, title):
+    def __init__(self, parent, title, progress=False) -> None:
         super().__init__(parent, Qt.WindowTitleHint)
         vbox = QVBoxLayout()
-        bar = QProgressBar()
-        bar.setRange(0, 0)
-        bar.setTextVisible(False)
-        vbox.addWidget(bar)
+        self.progress_bar = QProgressBar()
+        max_val = PROGRESS_BAR_MAX if progress else 0
+        self.progress_bar.setRange(0, max_val)
+        self.progress_bar.setTextVisible(False)
+        vbox.addWidget(self.progress_bar)
         self.setModal(True)
         self.setWindowTitle(title)
         self.setLayout(vbox)
         self.setMaximumHeight(0)
         self.setFixedWidth(parent.width() * 0.5)
         self.show()
+    
+    def update_progress(self, progress: float) -> None:
+        self.progress_bar.setValue(int(progress * PROGRESS_BAR_MAX))
+        self.progress_bar.repaint() # otherwise just updates in 1% steps
 
 def install_user_error_handler(iface: QgisInterface) -> None:
     # Lazy import to work around restriction explained at top of this file.
