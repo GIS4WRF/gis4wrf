@@ -110,8 +110,8 @@ class ConfigOptionsPage(QgsOptionsPageWidget):
         vbox.addLayout(hbox)
 
         hbox = QHBoxLayout()
-        download_wps = QPushButton('Download Pre-Compiled WPS Distribution...')
-        download_wrf = QPushButton('Download Pre-Compiled WRF Distribution...')
+        download_wps = QPushButton(f'Download Pre-Compiled WPS {WRF_WPS_DIST_VERSION} Distribution...')
+        download_wrf = QPushButton(f'Download Pre-Compiled WRF {WRF_WPS_DIST_VERSION} Distribution...')
         download_wps.clicked.connect(self.download_wps)
         download_wrf.clicked.connect(self.download_wrf)
         hbox.addWidget(download_wps)
