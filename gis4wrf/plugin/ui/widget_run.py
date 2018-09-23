@@ -181,7 +181,11 @@ class RunWidget(QWidget):
         self.wps_box.setVisible(False)
         self.wrf_box.setVisible(False)
         self.control_box.setVisible(True)
-        self.run_program_in_background(path, cwd, self.on_program_execution_done, supports_mpi)
+        try:
+            self.run_program_in_background(path, cwd, self.on_program_execution_done, supports_mpi)
+        except:
+            self.on_program_execution_done(path, None)
+            raise
 
     def on_program_execution_done(self, path: str, error: Union[bool, str, None]) -> None:
         self.wps_box.setVisible(True)
@@ -269,10 +273,16 @@ class RunWidget(QWidget):
         # TODO add 'FATAL' as patterm
         wrf_error_pattern = 'ERROR'
 
+        use_mpi = supports_mpi and self.options.mpi_enabled
+        if use_mpi and '-nompi' in path:
+            raise UserError(
+                'MPI is enabled but your WRF/WPS distribution does not support it.\n'
+                'In the plugin options, either choose/download a distribution with MPI support or disable MPI')
+
         # Using QThread and signals (instead of a plain Python thread) is necessary
         # so that the on_done callback is run on the UI thread, instead of the worker thread.
         thread = ProgramThread(path, cwd, wrf_error_pattern,
-                               use_mpi=supports_mpi and self.options.mpi_enabled,
+                               use_mpi=use_mpi,
                                mpi_processes=self.options.mpi_processes)
 
         def on_output(out: str) -> None:

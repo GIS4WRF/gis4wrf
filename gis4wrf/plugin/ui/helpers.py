@@ -91,9 +91,12 @@ class MessageBar(object):
     def success(self, msg: str) -> None:
         self.msg_bar.pushSuccess(PLUGIN_NAME, msg)
 
+    def warning(self, msg: str) -> None:
+        self.msg_bar.pushWarning(PLUGIN_NAME, msg)
+
     def error(self, msg: str) -> None:
         self.msg_bar.pushCritical(PLUGIN_NAME, msg)
-
+    
 
 def update_input_validation_style(widget: MyLineEdit) -> None:
     """Updates the background color of a line edit.
