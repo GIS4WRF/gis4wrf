@@ -8,6 +8,7 @@ import glob
 import netCDF4 as nc
 
 from gis4wrf.core.util import export
+from gis4wrf.core.errors import UserError
 from gis4wrf.core.project import Project
 from gis4wrf.core.logging import logger
 
@@ -18,12 +19,12 @@ def convert_project_to_wrf_namelist(project: Project) -> dict:
     try:
         met_spec = project.met_dataset_spec
     except KeyError:
-        raise RuntimeError('Meteorological data not selected')
+        raise UserError('Meteorological data not selected')
 
     geogrid_nc = [os.path.join(project.run_wps_folder, 'geo_em.d{:02d}.nc'.format(i))
                   for i in range(1, project.domain_count + 1)]
     if not all(map(os.path.exists, geogrid_nc)):
-        raise RuntimeError('Geogrid output files not found, run geogrid first')
+        raise UserError('Geogrid output files not found, run geogrid first')
     
     dx = [] # type: List[float]
     dy = [] # type: List[float]
@@ -39,7 +40,7 @@ def convert_project_to_wrf_namelist(project: Project) -> dict:
 
     metgrid_nc = glob.glob(os.path.join(project.run_wps_folder, 'met_em.d01.*.nc'))
     if not metgrid_nc:
-        raise RuntimeError('Metgrid output files not found, run metgrid first')
+        raise UserError('Metgrid output files not found, run metgrid first')
     ds = nc.Dataset(metgrid_nc[0])
     try:
         num_metgrid_levels = ds.dimensions['num_metgrid_levels'].size

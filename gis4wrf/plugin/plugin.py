@@ -21,6 +21,7 @@ from gis4wrf.core import (
 import gis4wrf.plugin.resources
 
 from gis4wrf.plugin.ui.thread import TaskThread
+from gis4wrf.plugin.ui.helpers import install_user_error_handler
 
 from gis4wrf.plugin.ui.options import OptionsFactory
 from gis4wrf.plugin.ui.dock import MainDock
@@ -43,6 +44,7 @@ class QGISPlugin():
            Note: This method is called by QGIS.
         """
         self.init_logging()
+        install_user_error_handler(self.iface)
 
         self.menu = '&' + PLUGIN_NAME
         self.add_action(GIS4WRF_LOGO_PATH, text=PLUGIN_NAME, callback=self.show_dock, add_to_toolbar=True,

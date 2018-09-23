@@ -19,6 +19,7 @@ except ImportError:
     wrf = None
 
 from gis4wrf.core.util import export, gdal, gdal_array, get_temp_dir, get_temp_vsi_path, remove_dir, remove_vsis
+from gis4wrf.core.errors import UnsupportedError
 from gis4wrf.core.crs import CRS, LonLat
 from gis4wrf.core.constants import ProjectionTypes
 from gis4wrf.core.readers.categories import LANDUSE, LANDUSE_FIELDS
@@ -407,7 +408,7 @@ def get_crs(ds: nc.Dataset) -> CRS:
         pole_lat = attrs['POLE_LAT']
         pole_lon = attrs['POLE_LON']
         if pole_lat != 90.0 or pole_lon != 0.0:
-            raise NotImplementedError('Rotated pole not supported')
+            raise UnsupportedError('Geographic coordinate system with rotated pole is not supported')
         crs = CRS.create_lonlat()
 
     elif proj_id == ProjectionTypes.LAMBERT_CONFORMAL:
@@ -427,7 +428,7 @@ def get_crs(ds: nc.Dataset) -> CRS:
             origin_lon=attrs['STAND_LON'])
 
     else:
-        raise NotImplementedError('Projection {} not supported'.format(proj_id))
+        raise UnsupportedError('Projection {} is not supported'.format(proj_id))
 
     return crs
 

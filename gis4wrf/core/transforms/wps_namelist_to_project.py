@@ -2,14 +2,19 @@
 # Copyright (c) 2018 D. Meyer and M. Riechert. Licensed under MIT.
 
 from typing import List
+
 from gis4wrf.core.util import export
+from gis4wrf.core.errors import UserError, UnsupportedError
 from gis4wrf.core.project import Project
 from gis4wrf.core.crs import CRS, Coordinate2D, LonLat
 
 @export
 def convert_wps_nml_to_project(nml: dict, existing_project: Project) -> Project:
     data = existing_project.data.copy()
-    data['domains'] = convert_nml_to_project_domains(nml)
+    try:
+        data['domains'] = convert_nml_to_project_domains(nml)
+    except KeyError as e:
+        raise UserError(f'Invalid namelist, section/variable {e} not found')
     project = Project(data, existing_project.path)
     return project
 
@@ -34,23 +39,24 @@ def convert_nml_to_project_domains(nml: dict) -> List[dict]:
 
     # Check that there are no domains with 2 nests on the same level
     if parent_id != [1] + list(range(1, max_dom)):
-        raise RuntimeError('We only support 1 nested domain per parent domain.')
+        raise UserError('Due to the way domains are represented in GIS4WRF '
+                        'each parent domain can have only one nested domain')
 
     # Check whether ref_x/ref_y is omitted, so that we can assume ref == center.
     if 'ref_x' in nml or 'ref_y' in nml:
-        raise NotImplementedError('ref_x/ref_y not supported in namelist.')
+        raise UnsupportedError('ref_x/ref_y is not supported in namelist')
 
     # Create CRS object from projection metadata.
     if map_proj == 'lat-lon':
         if standlon != 0.0:
-            raise NotImplementedError('Rotated lat-lon projection not supported.')
+            raise UnsupportedError('Rotated lat-lon projection is not supported')
         crs = CRS.create_lonlat()
     elif map_proj == 'lambert':
         # It doesn't matter what the origin is. See wps_binary_to_gdal.py for details.
         origin = LonLat(lon=standlon, lat=(truelat1 + truelat2)/2)
         crs = CRS.create_lambert(truelat1, truelat2, origin)
     else:
-        raise NotImplementedError(f'Map projection "{map_proj}"" not currently supported.')
+        raise UnsupportedError(f'Map projection "{map_proj}" is not supported')
 
     ref_xy = crs.to_xy(LonLat(lon=ref_lon, lat=ref_lat))
     ref_x = [ref_xy.x] # type: List[float]

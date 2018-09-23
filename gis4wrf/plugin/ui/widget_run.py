@@ -21,7 +21,7 @@ from PyQt5.QtWidgets import (
 
 from qgis.gui import QgisInterface
 
-from gis4wrf.core import Project, get_namelist_schema
+from gis4wrf.core import Project, get_namelist_schema, UserError, WRFDistributionError, WPSDistributionError
 
 from gis4wrf.plugin.constants import PLUGIN_NAME
 from gis4wrf.plugin.options import get_options
@@ -97,12 +97,12 @@ class RunWidget(QWidget):
 
     def prepare_wps_run(self) -> None:
         if not self.options.wps_dir:
-            raise RuntimeError('WPS is not available!')
+            raise WPSDistributionError('WPS is not setup')
         self.project.prepare_wps_run(self.options.wps_dir)
 
     def prepare_wrf_run(self) -> None:
         if not self.options.wrf_dir:
-            raise RuntimeError('WRF is not available!')
+            raise WRFDistributionError('WRF is not setup')
         self.project.prepare_wrf_run(self.options.wrf_dir)
 
     def on_open_namelist_wps_clicked(self) -> None:
@@ -200,11 +200,9 @@ class RunWidget(QWidget):
             return
         if error:
             if isinstance(error, str):
-                QMessageBox.critical(self.iface.mainWindow(), PLUGIN_NAME, 
-                    'Program {} failed: {}'.format(os.path.basename(path), error))
+                raise UserError('Program {} failed: {}'.format(os.path.basename(path), error))
             else:
-                QMessageBox.critical(self.iface.mainWindow(), PLUGIN_NAME, 
-                    'Program {} failed with errors, check the logs.'.format(os.path.basename(path)))
+                raise UserError('Program {} failed with errors, check the logs'.format(os.path.basename(path)))
         else:
             QMessageBox.information(self.iface.mainWindow(), PLUGIN_NAME, 
                 'Program {} finished without errors!'.format(os.path.basename(path)))

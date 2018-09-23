@@ -64,6 +64,7 @@ class ViewWidget(QWidget):
         self.time_selector.setSingleStep(1)
         self.time_selector.setPageStep(1)
         self.time_selector.setMinimum(0)
+        self.time_selector.setMaximum(0)
         self.time_selector.valueChanged.connect(self.on_time_selected)
         self.vbox.addWidget(self.time_label)
         self.vbox.addWidget(self.time_selector)

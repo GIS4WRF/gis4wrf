@@ -8,6 +8,7 @@ from functools import partial
 
 
 from gis4wrf.core.util import export, gdal, get_temp_dir, get_temp_vsi_path, remove_dir, remove_vsis
+from gis4wrf.core.errors import UserError, UnsupportedError
 from gis4wrf.core.crs import CRS, LonLat
 from gis4wrf.core.readers.wps_binary_index import read_wps_binary_index_file
 from .categories_to_gdal import get_gdal_categories
@@ -19,7 +20,7 @@ def convert_wps_binary_to_vrt_dataset(folder: str, use_vsi: bool=False) -> Tuple
     m = read_wps_binary_index_file(folder)
 
     if m.proj_id == 'regular_ll' and m.stdlon is not None:
-        raise NotImplementedError('stdlon not supported for regular_ll')
+        raise UnsupportedError('Rotated pole system is not supported')
 
     # scan folder for available tiles
     tile_filename_re = re.compile('^({d})-({d})\.({d})-({d})$'.format(d='\d{' + str(m.filename_digits) + '}'))
@@ -36,7 +37,7 @@ def convert_wps_binary_to_vrt_dataset(folder: str, use_vsi: bool=False) -> Tuple
                 'end_y': int(match.group(4))
             })
     if not tiles:
-        raise ValueError('No tiles found')
+        raise UserError(f'No tiles found in {folder}')
 
     # determine raster dimensions
     xsize = max(tile['end_x'] for tile in tiles) # type: int
@@ -54,7 +55,7 @@ def convert_wps_binary_to_vrt_dataset(folder: str, use_vsi: bool=False) -> Tuple
     try:
         dtype = dtype_mapping[(m.word_size, m.signed)]
     except KeyError:
-        raise ValueError('word_size/signed combination not supported')
+        raise UnsupportedError('word_size/signed combination is not supported')
 
     if m.proj_id == 'regular_ll':
         crs = CRS.create_lonlat()
@@ -80,7 +81,7 @@ def convert_wps_binary_to_vrt_dataset(folder: str, use_vsi: bool=False) -> Tuple
     elif m.proj_id == 'polar_wgs84':
         crs = CRS.create_polar(m.truelat1, m.stdlon)
     else:
-        raise NotImplementedError('Unsupported projection')
+        raise UnsupportedError(f'Projection {m.proj_id} is not supported')
 
     known_x_idx_gdal = m.known_idx.x - 0.5
     if m.top_bottom:

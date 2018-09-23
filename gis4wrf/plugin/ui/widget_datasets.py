@@ -81,6 +81,15 @@ class DatasetsWidget(QWidget):
         vbox_geodata = QVBoxLayout()
         self.gbox_geodata.setLayout(vbox_geodata)
 
+        self.label_geodata_wps_not_setup = QLabel(
+            '<html>NOTE: Your project does not yet have a copy of a GEOGRID.TBL file.<br>'
+            'This is required for configuring geographical data.<br>'
+            'You need to <a href="https://gis4wrf.github.io/configuration/">setup WPS</a> first '
+            'so that GIS4WRF can do an automatic<br>copy of that file. When you are done, return here.</html>')
+        self.label_geodata_wps_not_setup.setOpenExternalLinks(True)
+        self.label_geodata_wps_not_setup.setVisible(False)
+        vbox_geodata.addWidget(self.label_geodata_wps_not_setup)
+
         gbox_avail_datasets = QGroupBox('Available Datasets')
         vbox_geodata.addWidget(gbox_avail_datasets)
 
@@ -108,6 +117,8 @@ class DatasetsWidget(QWidget):
         vbox_geodata.addWidget(gbox_datasets_spec)
         self.vbox_geo_datasets_spec = QVBoxLayout()
         gbox_datasets_spec.setLayout(self.vbox_geo_datasets_spec)
+
+        self.geodata_gboxes = [gbox_avail_datasets, gbox_datasets_spec]
 
         # selection fields get created in the on_tab_active handler
         self.geo_dataset_spec_inputs = []
@@ -256,9 +267,16 @@ class DatasetsWidget(QWidget):
         try:
             tbl = self.geogrid_tbl = self.project.read_geogrid_tbl()
         except FileNotFoundError:
+            # This happens when WPS is not setup.
+            for box in self.geodata_gboxes:
+                box.setEnabled(False)
+            self.label_geodata_wps_not_setup.setVisible(True)
             return
         if tbl is None:
             return
+        for box in self.geodata_gboxes:
+            box.setEnabled(True)
+        self.label_geodata_wps_not_setup.setVisible(False)
         add_derived_metadata_to_geogrid_tbl(tbl, self.options.geog_dir)
 
         for group_name in sorted(tbl.group_names):

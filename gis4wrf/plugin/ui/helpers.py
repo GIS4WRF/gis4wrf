@@ -94,7 +94,7 @@ class MessageBar(object):
     def error(self, msg: str) -> None:
         self.msg_bar.pushCritical(PLUGIN_NAME, msg)
 
-    
+
 def update_input_validation_style(widget: MyLineEdit) -> None:
     """Updates the background color of a line edit.
     Source: https://snorfalorpagus.net/blog/2014/08/09/validating-user-input-in-pyqt4-using-qvalidator/
@@ -245,13 +245,6 @@ def clear_layout(layout: QLayout) -> None:
         else:
             clear_layout(item.layout())
 
-def wrap_error(parent, fn):
-    try:
-        return fn()
-    except Exception as e:
-        QMessageBox.critical(parent, PLUGIN_NAME, str(e))
-        return
-
 def dispose_after_delete(layer: QgsMapLayer, dispose: Callable[[],None]) -> None:
     # Lazy import to work around restriction explained at top of this file.
     from gis4wrf.plugin.ui.thread import TaskThread
@@ -287,6 +280,43 @@ class WaitDialog(IgnoreKeyPressesDialog):
         self.setMaximumHeight(0)
         self.setFixedWidth(parent.width() * 0.5)
         self.show()
+
+def install_user_error_handler(iface: QgisInterface) -> None:
+    # Lazy import to work around restriction explained at top of this file.
+    from gis4wrf.core import UserError, UnsupportedError, DistributionError
+
+    # The most-specific one is used when handling a user error.
+    formatters = {
+        UnsupportedError: lambda e: (
+            f'<html>{e}. Interested in making GIS4WRF better? ' +
+             'Consider <a href="https://github.com/GIS4WRF/gis4wrf#contributing">contributing</a> code ' +
+             'or adding a <a href="https://github.com/GIS4WRF/gis4wrf/issues">feature request</a>.</html>',
+            'Unsupported feature', QMessageBox.information),
+        
+        DistributionError: lambda e: (
+            f'<html>There is a problem with your {e.dist_name} distribution: {e}. ' +
+             'If you need help with the configuration, have a look at the ' +
+             '<a href="https://gis4wrf.github.io/configuration/">online documentation</a>.</html>',
+            'Error', QMessageBox.critical),
+
+        UserError: lambda e: (
+            f'{e}.',
+            'Error', QMessageBox.critical)
+    }
+
+    old = sys.excepthook
+
+    def handle_user_error(etype, value, traceback):
+        if not isinstance(value, UserError):
+            old(etype, value, traceback)
+            return
+        for clazz in etype.mro():
+            if clazz in formatters:
+                break
+        msg, title, fn = formatters[clazz](value)
+        fn(iface.mainWindow(), f'{PLUGIN_NAME} - {title}', msg)
+
+    sys.excepthook = handle_user_error
 
 def reraise(exc_info) -> None:
     raise exc_info[0].with_traceback(*exc_info[1:])

@@ -8,6 +8,7 @@ import platform
 
 from gis4wrf.core.util import export, remove_dir
 from gis4wrf.core.constants import WPS_DIST, WRF_DIST
+from gis4wrf.core.errors import UnsupportedError
 from .util import download_file
 
 @export
@@ -22,19 +23,19 @@ def get_dist_url(dist: dict, mpi: bool) -> str:
     try:
         os_dist = dist[platform.system()]
     except KeyError:
-        raise RuntimeError('Pre-compiled distributions are not yet available for your operating system.')
+        raise UnsupportedError('Pre-compiled distributions are not available for your operating system')
     if mpi:
         try:
             url = os_dist['dmpar']
         except KeyError:
             assert 'serial' in os_dist
-            raise RuntimeError('A pre-compiled MPI distribution is not yet available for your operating system, please untick MPI and try again.')
+            raise UnsupportedError('A pre-compiled MPI distribution is not available for your operating system')
     else:
         try:
             url = os_dist['serial']
         except KeyError:
             assert 'dmpar' in os_dist
-            raise RuntimeError('A pre-compiled non-MPI distribution is not yet available for your operating system, please tick MPI and try again.')
+            raise UnsupportedError('A pre-compiled non-MPI distribution is not available for your operating system')
     return url
 
 @export

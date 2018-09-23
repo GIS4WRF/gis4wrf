@@ -29,7 +29,7 @@ class HomeTab(QWidget):
                         <p>If you have not done so already, make sure to download the latest V4 releases for your system.
                            For more info see: <a href="https://gis4wrf.github.io/configuration">https://gis4wrf.github.io/configuration</a></p>
                         <br>
-                        <p>Make sure to check out all the new features with this version under <code>Plugins</code> > <code>GIS4WRF</code> > <code>GIS4WRF</code> > <code>About</code> > <code>What's new</code></p>
+                        <p>Make sure to check out all the new features with this version under <code>Plugins</code> > <code>GIS4WRF</code> > <code>About</code> > <code>What's new</code></p>
                   </html>
                """
 
