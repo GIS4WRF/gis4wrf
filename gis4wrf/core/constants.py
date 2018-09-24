@@ -17,6 +17,7 @@ class ProjectionTypes(object):
     MERCATOR = 3
     LAT_LON = 6
 
+WRF_WPS_DIST_OLD_VERSIONS = ['3.9']
 WRF_WPS_DIST_VERSION = '4.0'
 
 WRF_DIST = {
