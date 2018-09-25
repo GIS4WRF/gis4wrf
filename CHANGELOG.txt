@@ -1,3 +1,11 @@
+0.12.0
+- Notify user if old pre-built WRF/WPS distributions are used.
+- Error if MPI is enabled but pre-built distribution without MPI support is used.
+- Show progress during WRF/WPS distribution download.
+- Improvements to error detection and treatment  enhancement.
+- Improved downloading, progress bars & logging  enhancement.
+- Bug fix: Cannot rerun WPS/WRF on Windows if output file is open or has been viewed.
+
 0.11.0
 - Support latest version of WRF/WPS (v4).
 - Add support for pre-built binaries for macOS with WRF-CMake.

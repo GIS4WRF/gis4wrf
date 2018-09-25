@@ -30,17 +30,17 @@ We ask to please acknowledge our work by citing and referencing both, the GIS4WR
 
     ```bibtex
     @unpublished{meyer_riechert_2018_article,
-        author       = {D. Meyer and M. Riechert},
-        title={GIS4WRF: an integrated open source QGIS toolkit for the Advanced Research WRF Framework},
-        note={Manuscript submitted for publication}
+        author  = {D. Meyer and M. Riechert},
+        title   = {GIS4WRF: an integrated open source QGIS toolkit for the Advanced Research WRF Framework},
+        note    = {Manuscript submitted for publication}
     }
 
     @misc{meyer_riechert_2018_software,
-        author       = {D. Meyer and M. Riechert},
-        title        = {The GIS4WRF Plugin},
-        year         = 2018,
-        doi          = {10.5281/zenodo.1288569},
-        url          = {https://doi.org/10.5281/zenodo.1288569}
+        author  = {D. Meyer and M. Riechert},
+        title   = {The GIS4WRF Plugin},
+        year    = 2018,
+        doi     = {10.5281/zenodo.1288569},
+        url     = {https://doi.org/10.5281/zenodo.1288569}
     }
     ```
 
@@ -51,4 +51,4 @@ If you would like to contribute to the GIS4WRF project, clone this repository, m
 This project uses [semantic versioning](https://semver.org/).
 
 ## Copyright and Licence
-Copyright 2018 D. Meyer and M. Riechert. Released under [MIT License](LICENSE.txt).
+Copyright 2018 D. Meyer and M. Riechert. Licensed under the [MIT License](LICENSE.txt).
