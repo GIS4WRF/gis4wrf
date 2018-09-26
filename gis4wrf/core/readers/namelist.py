@@ -3,6 +3,7 @@
 
 from typing import Dict, Any, Union, Optional
 import os
+from io import StringIO
 import re
 
 import yaml
@@ -24,8 +25,8 @@ SCHEMA_VAR_TYPES = {
 SCHEMA_CACHE = {} # type: Dict[str,Any]
 
 @export
-def read_namelist(path: str, schema_name: Optional[str]=None) -> dict:
-    if not os.path.exists(path):
+def read_namelist(path: Union[str, StringIO], schema_name: Optional[str]=None) -> dict:
+    if isinstance(path, str) and not os.path.exists(path):
         raise UserError(f'Namelist file {path} does not exist')
     try:
         nml = f90nml.read(path)
