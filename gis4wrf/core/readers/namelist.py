@@ -50,7 +50,7 @@ def read_namelist(path: str, schema_name: Optional[str]=None) -> dict:
 def get_namelist_schema(name: str) -> dict:
     if name not in SCHEMA_CACHE:
         schema_path = os.path.join(SCHEMA_DIR, name + '.yml')
-        with open(schema_path) as f:
+        with open(schema_path, encoding='utf-8') as f:
             schema = yaml.load(f)
         # Enforce lower-case keys to ease processing.
         # Note that Fortran is case-insensitive.
