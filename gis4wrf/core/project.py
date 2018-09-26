@@ -367,6 +367,7 @@ class Project(object):
             'domains': ['e_vert']
         }
         nml_old = read_namelist(self.wrf_namelist_path, 'wrf')
+        nml_path = self.wrf_namelist_path
         for group_name, var_names in skip_patch_if_size_matches.items():
             if group_name not in nml_old:
                 continue
