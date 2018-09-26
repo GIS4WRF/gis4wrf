@@ -8,6 +8,7 @@ from functools import partial
 import os
 
 import numpy as np
+import numpy.ma as ma
 import netCDF4 as nc
 
 # Optional import for wrf-python as binary wheels are not yet available for all platforms.
@@ -252,6 +253,8 @@ def convert_wrf_nc_var_to_gdal_dataset(
                 data = var[band_idx - 1]
                 if is_4d:
                     data = data[extra_dim_index]
+                if ma.is_masked(data):
+                    data = data.data
                 band.WriteArray(data.astype(np_dtype, copy=False))
 
         gdal_ds.FlushCache()
