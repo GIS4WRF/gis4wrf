@@ -1,3 +1,8 @@
+0.12.1
+- Fix error when trying to run `Real` or `WRF` from Simulation > Run tab (#68).
+- Fix error when opening WPS configuration file from `Simulation` > `Run` tab (#69).
+- Fix error when saving WPS/WRF namelists in namelist editor (#70).
+
 0.12.0
 - Notify user if old pre-built WRF/WPS distributions are used.
 - Error if MPI is enabled but pre-built distribution without MPI support is used.
