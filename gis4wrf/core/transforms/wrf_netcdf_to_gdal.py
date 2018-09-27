@@ -253,8 +253,7 @@ def convert_wrf_nc_var_to_gdal_dataset(
                 data = var[band_idx - 1]
                 if is_4d:
                     data = data[extra_dim_index]
-                if ma.is_masked(data):
-                    data = data.data
+                data = ma.getdata(data)
                 band.WriteArray(data.astype(np_dtype, copy=False))
 
         gdal_ds.FlushCache()
