@@ -167,7 +167,7 @@ class RunWidget(QWidget):
         path, _ = QFileDialog.getOpenFileName(
             caption='Open WRF NetCDF File',
             directory=self.project.run_wrf_folder,
-            filter='wrfinput*;wrfbdy*;wrfout*')
+            filter='wrfinput*;wrfout*')
         if not path:
             return
         self.view_wrf_nc_file.emit(path)
