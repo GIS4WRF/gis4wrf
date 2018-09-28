@@ -3,7 +3,7 @@
 
 from typing import Mapping, Tuple, List, Optional, Dict, Callable, Any
 from collections import namedtuple
-from enum import Enum
+from enum import Enum, auto
 from functools import partial
 import os
 
@@ -27,10 +27,15 @@ from gis4wrf.core.readers.categories import LANDUSE, LANDUSE_FIELDS
 from gis4wrf.core.readers.wrf_netcdf_metadata import get_wrf_nc_time_steps
 from gis4wrf.core.transforms.categories_to_gdal import get_gdal_categories
 
-WRFNetCDFVariable = namedtuple('WRFNetCDFVariable', ['name', 'label', 'extra_dim_name'])
+WRFNetCDFVariable = namedtuple('WRFNetCDFVariable', ['name', 'label', 'extra_dim_name', 'source'])
 WRFNetCDFExtraDim = namedtuple('WRFNetCDFExtraDim', ['name', 'label', 'steps'])
 
 __all__ = ['WRFNetCDFVariable', 'WRFNetCDFExtraDim']
+
+@export
+class WRFNetCDFVariableSource(Enum):
+    FILE = auto()
+    WRF_PYTHON = auto()
 
 # from wrf-python
 COORD_VARS = ["XLAT", "XLONG", "XLAT_M", "XLONG_M", "XLAT_U", "XLONG_U",
@@ -66,7 +71,7 @@ DIAG_DIMS = {
     'z': BOTTOM_TOP_MASS,
 }
 DIAG_VARS = {
-    name: WRFNetCDFVariable(name, label, DIAG_DIMS[name][1] if len(DIAG_DIMS[name]) == 4 else None)
+    name: WRFNetCDFVariable(name, label, DIAG_DIMS[name][1] if len(DIAG_DIMS[name]) == 4 else None, WRFNetCDFVariableSource.WRF_PYTHON)
     for name, label in [
         ('avo', 'AVO* in 10-5 s-1 (Absolute Vorticity)'),
         ('eth', 'ETH* in K (Equivalent Potential Temperature)'),
@@ -337,7 +342,9 @@ def get_supported_wrf_nc_variables(path: str) -> Dict[str,WRFNetCDFVariable]:
             if description and description != '-':
                 label += ' (' + description.lower() + ')'
 
-            variables[var_name] = WRFNetCDFVariable(name=var_name, label=label, extra_dim_name=extra_dim)
+            variables[var_name] = WRFNetCDFVariable(
+                name=var_name, label=label, extra_dim_name=extra_dim,
+                source=WRFNetCDFVariableSource.FILE)
 
         if wrf is not None:
             is_wps = 'bottom_top' not in ds.dimensions

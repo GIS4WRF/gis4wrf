@@ -15,7 +15,7 @@ from PyQt5.QtWidgets import (
 )
 
 import gis4wrf.core
-from gis4wrf.core import WRFNetCDFVariable
+from gis4wrf.core import WRFNetCDFVariable, WRFNetCDFVariableSource
 import gis4wrf.plugin.geo
 from gis4wrf.plugin.ui.helpers import add_grid_lineedit, add_grid_combobox, dispose_after_delete
 
@@ -136,6 +136,8 @@ class ViewWidget(QWidget):
         for var_name, variable in sorted(dataset.variables.items(), key=lambda v: v[1].label):
             item = QListWidgetItem(variable.label)
             item.setData(Qt.UserRole, var_name)
+            if variable.source == WRFNetCDFVariableSource.WRF_PYTHON:
+                item.setToolTip("Derived variable (computed by wrf-python)")
             self.variable_selector.addItem(item)
             if var_name == selected:
                 self.variable_selector.setCurrentItem(item)
