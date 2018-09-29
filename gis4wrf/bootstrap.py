@@ -6,7 +6,6 @@ from collections import namedtuple
 import os
 import sys
 import platform
-import time
 from pathlib import Path
 import shutil
 import subprocess
