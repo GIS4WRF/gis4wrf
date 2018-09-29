@@ -6,6 +6,7 @@ from collections import namedtuple
 import os
 import sys
 import platform
+import time
 from pathlib import Path
 import shutil
 import subprocess
@@ -14,6 +15,9 @@ import site
 import pkg_resources
 
 DID_BOOTSTRAP = False
+
+# Python x.y version tuple, e.g. ('3', '6').
+PY_MAJORMINOR = platform.python_version_tuple()[:2]
 
 # name: distribution name, min: minimum version we require, install: version to be installed
 Dependency = namedtuple('Dep', ['name', 'min', 'install'])
@@ -58,7 +62,7 @@ DEPS = [
 # wrf-python does not have official wheels yet, see https://github.com/NCAR/wrf-python/issues/42.
 # Instead, at least for Windows, we install our own.
 # macOS/Linux wheels are built via Travis CI which doesn't provide free artifact storage.
-if platform.system() == 'Windows':
+if platform.system() == 'Windows' and PY_MAJORMINOR == ('3', '6'):
     DEPS += [
         Dependency('wrf-python',
                    install='https://ci.appveyor.com/api/buildjobs/62bl4ng5gg62qcpl/artifacts/wrf_python-1.1.2-cp36-none-win_amd64.whl',
@@ -67,9 +71,9 @@ if platform.system() == 'Windows':
 
 # Use a custom folder for the packages to avoid polluting the per-user site-packages.
 # This also avoids any permission issues.
-# Windows: ~\AppData\Local\gis4wrf\python
-# macOS: ~/Library/Application Support/gis4wrf/python
-# Linux: ~/.local/share/gis4wrf/python
+# Windows: ~\AppData\Local\gis4wrf\python<xy>
+# macOS: ~/Library/Application Support/gis4wrf/python<xy>
+# Linux: ~/.local/share/gis4wrf/python<xy>
 if platform.system() == 'Windows':
     DATA_HOME = os.getenv('LOCALAPPDATA')
     assert DATA_HOME, '%LOCALAPPDATA% not found'
@@ -79,7 +83,7 @@ else:
     DATA_HOME = os.getenv('XDG_DATA_HOME')
     if not DATA_HOME:
         DATA_HOME = os.path.join(os.path.expanduser('~'), '.local', 'share')
-INSTALL_PREFIX = os.path.join(DATA_HOME, 'gis4wrf', 'python')
+INSTALL_PREFIX = os.path.join(DATA_HOME, 'gis4wrf', 'python' + ''.join(PY_MAJORMINOR))
 LOG_PATH = os.path.join(INSTALL_PREFIX, 'pip.log')
 
 def bootstrap() -> Iterable[Tuple[str,Any]]:
@@ -144,7 +148,12 @@ def bootstrap() -> Iterable[Tuple[str,Any]]:
         # Remove everything as we can't upgrade packages when using --prefix
         # which may lead to multiple pkg-0.20.3.dist-info folders for different versions
         # and that would lead to false positives with pkg_resources.get_distribution().
-        shutil.rmtree(INSTALL_PREFIX, ignore_errors=True)
+        if os.path.exists(INSTALL_PREFIX):
+            tmp_dir = INSTALL_PREFIX + '_tmp'
+            # On Windows, rename + delete allows to re-create the folder immediately,
+            # otherwise it may still be locked and we get "Permission denied" errors.
+            os.rename(INSTALL_PREFIX, tmp_dir)
+            shutil.rmtree(tmp_dir)
         os.makedirs(INSTALL_PREFIX, exist_ok=True)
 
         # Determine packages to install.
