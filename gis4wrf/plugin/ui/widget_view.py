@@ -6,12 +6,12 @@ from collections import namedtuple
 import os
 
 from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtGui import QDoubleValidator, QIntValidator, QPalette#, QHeaderView
+from PyQt5.QtGui import QDoubleValidator, QIntValidator, QPalette, QBrush, QColor
 from PyQt5.QtWidgets import (
     QWidget, QTabWidget, QPushButton, QLayout, QVBoxLayout, QDialog, QGridLayout, QGroupBox, QSpinBox,
     QLabel, QHBoxLayout, QComboBox, QScrollArea, QFileDialog, QRadioButton, QLineEdit, QTableWidget,
     QTableWidgetItem, QTreeWidget, QTreeWidgetItem, QDockWidget, QSlider, QListWidget, QListWidgetItem,
-    QAbstractItemView
+    QAbstractItemView, QHeaderView
 )
 
 import gis4wrf.core
@@ -52,7 +52,13 @@ class ViewWidget(QWidget):
         self.pause_replace_layer = False
 
     def create_variable_selector(self) -> None:
-        self.variable_selector = QListWidget()
+        self.variable_selector = QTreeWidget()
+        self.variable_selector.setHeaderLabels(['Name', 'Units', 'Description'])
+        self.variable_selector.setRootIsDecorated(False)
+        self.variable_selector.setSortingEnabled(True)
+        self.variable_selector.sortByColumn(0, Qt.AscendingOrder)
+        self.variable_selector.header().setSectionsMovable(False)
+        self.variable_selector.header().setSectionResizeMode(2, QHeaderView.Stretch)
         self.variable_selector.currentItemChanged.connect(self.on_variable_selected)
         hbox = QHBoxLayout()
         hbox.addWidget(self.variable_selector)
@@ -133,14 +139,31 @@ class ViewWidget(QWidget):
         dataset = self.get_dataset()
         selected = self.selected_variable.get(dataset.name)
         self.variable_selector.clear()
-        for var_name, variable in sorted(dataset.variables.items(), key=lambda v: v[1].label):
-            item = QListWidgetItem(variable.label)
-            item.setData(Qt.UserRole, var_name)
-            if variable.source == WRFNetCDFVariableSource.WRF_PYTHON:
-                item.setToolTip("Derived variable (computed by wrf-python)")
-            self.variable_selector.addItem(item)
+        derived_bg = QBrush(QColor('#E8FFE9'))
+        for var_name, variable in sorted(dataset.variables.items(), key=lambda v: v[1].name):
+            derived = variable.source != WRFNetCDFVariableSource.FILE
+            item = QTreeWidgetItem(self.variable_selector)
+            item.setData(0, Qt.UserRole, var_name)
+            var_name_text = var_name.upper()
+            item.setText(0, var_name_text)
+            if derived:
+                item.setToolTip(0, f'Derived by {variable.source.value}')
+                for i in range(3):
+                    item.setBackground(i, derived_bg)
+            item.setText(1, variable.units)
+            item.setText(2, variable.description)
+            item.setToolTip(2, variable.description)
             if var_name == selected:
                 self.variable_selector.setCurrentItem(item)
+
+        # Resize Units column to fit contents, and use as basis for Units and Name columns.
+        # Resizing Name to fit contents would make the column too wide as some
+        # derived variables have longer names.
+        self.variable_selector.resizeColumnToContents(1)
+        header = self.variable_selector.header()
+        units_size = header.sectionSize(1)
+        header.setDefaultSectionSize(int(units_size * 1.2))
+        
         if selected is None:
             self.extra_dim_container.hide()
 
@@ -178,15 +201,16 @@ class ViewWidget(QWidget):
         if dataset_init:
             self.interp_vert_selector.clear()
             has_vert = False
-            sorted_variables = sorted(self.get_dataset().variables.values(), key=lambda v: v.label)
+            sorted_variables = sorted(self.get_dataset().variables.values(), key=lambda v: v.name)
             for variable in sorted_variables:
                 if variable.extra_dim_name != 'bottom_top':
                     continue
                 has_vert = True
-                if len(variable.label) > 30:
-                    interp_vert_selector_label = variable.label[:27] + '...'
+                variable_label = self.get_variable_label(variable)
+                if len(variable_label) > 30:
+                    interp_vert_selector_label = variable_label[:27] + '...'
                 else:
-                    interp_vert_selector_label = variable.label
+                    interp_vert_selector_label = variable_label
                 self.interp_vert_selector.addItem(interp_vert_selector_label, variable.name)
             if not has_vert:
                 self.extra_dim_container.setEnabled(True)
@@ -219,10 +243,10 @@ class ViewWidget(QWidget):
             self.replace_variable_layer()
             self.select_time_band_in_variable_layers() 
 
-    def on_variable_selected(self, current: Optional[QListWidgetItem], previous: Optional[QListWidgetItem]) -> None:
+    def on_variable_selected(self, current: Optional[QTreeWidgetItem], previous: Optional[QTreeWidgetItem]) -> None:
         if current is None:
             return
-        var_name = current.data(Qt.UserRole)
+        var_name = current.data(0, Qt.UserRole)
         dataset = self.get_dataset()
         assert var_name == self.get_var_name()
         self.selected_variable[dataset.name] = var_name
@@ -260,6 +284,7 @@ class ViewWidget(QWidget):
             return
         if self.is_interp_enabled() and self.get_interp_level() is None:
             return
+        
         dataset = self.get_dataset()
         variable = self.get_variable()
         extra_dim_index = self.get_extra_dim_index()
@@ -267,9 +292,10 @@ class ViewWidget(QWidget):
         interp_vert_name = self.get_interp_vert_name()
         if interp_level is not None:
             extra_dim_index = None
+        label = self.get_variable_label(variable)
         uri, dispose = gis4wrf.core.convert_wrf_nc_var_to_gdal_dataset(
             dataset.path, variable.name, extra_dim_index, interp_level, interp_vert_name)
-        layer = gis4wrf.plugin.geo.load_layers([(uri, variable.label, variable.name)],
+        layer = gis4wrf.plugin.geo.load_layers([(uri, label, variable.name)],
             group_name=dataset.name, visible=True)[0]
         dispose_after_delete(layer, dispose)
 
@@ -282,11 +308,19 @@ class ViewWidget(QWidget):
             if var_name in dataset.variables:
                 gis4wrf.plugin.geo.switch_band(layer, time_idx)
     
+    def get_variable_label(self, variable: WRFNetCDFVariable) -> str:
+        label = variable.name.upper()
+        if variable.units:
+            label += ' in ' + variable.units
+        if variable.description:
+            label += ' (' + variable.description + ')'
+        return label
+    
     def get_dataset_name(self) -> str:
         return self.dataset_selector.currentData()
 
     def get_var_name(self) -> str:
-        return self.variable_selector.currentItem().data(Qt.UserRole)   
+        return self.variable_selector.currentItem().data(0, Qt.UserRole)   
 
     def get_time_index(self) -> int:
         return self.time_selector.value()
