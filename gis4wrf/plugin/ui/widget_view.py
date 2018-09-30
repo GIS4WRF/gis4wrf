@@ -156,7 +156,7 @@ class ViewWidget(QWidget):
             if var_name == selected:
                 self.variable_selector.setCurrentItem(item)
 
-        # Resize Units column to fit contents, and use as basis for Name column.
+        # Resize Units column to fit contents, and use as basis for Units and Name columns.
         # Resizing Name to fit contents would make the column too wide as some
         # derived variables have longer names.
         self.variable_selector.resizeColumnToContents(1)
