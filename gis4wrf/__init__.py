@@ -46,7 +46,7 @@ def bootstrap_with_ui(iface):
                 log += msg_val
             elif msg_type == 'needs_install':
                 QMessageBox.information(parent, PLUGIN_NAME,
-                    PLUGIN_NAME + ' requires additional Python packages to function. ' +
+                    PLUGIN_NAME + ' requires additional or updated versions of Python packages to function. ' +
                     'These will be installed into a separate folder specific to ' + PLUGIN_NAME + ' and ' +
                     'will not influence any existing Python installation.',
                     QMessageBox.Ok)
