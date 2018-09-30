@@ -27,7 +27,7 @@ from gis4wrf.core.readers.categories import LANDUSE, LANDUSE_FIELDS
 from gis4wrf.core.readers.wrf_netcdf_metadata import get_wrf_nc_time_steps
 from gis4wrf.core.transforms.categories_to_gdal import get_gdal_categories
 
-WRFNetCDFVariable = namedtuple('WRFNetCDFVariable', ['name', 'label', 'extra_dim_name', 'source'])
+WRFNetCDFVariable = namedtuple('WRFNetCDFVariable', ['name', 'description', 'units', 'extra_dim_name', 'source'])
 WRFNetCDFExtraDim = namedtuple('WRFNetCDFExtraDim', ['name', 'label', 'steps'])
 
 __all__ = ['WRFNetCDFVariable', 'WRFNetCDFExtraDim']
@@ -35,7 +35,7 @@ __all__ = ['WRFNetCDFVariable', 'WRFNetCDFExtraDim']
 @export
 class WRFNetCDFVariableSource(Enum):
     FILE = auto()
-    WRF_PYTHON = auto()
+    WRF_PYTHON = 'wrf-python'
 
 # from wrf-python
 COORD_VARS = ["XLAT", "XLONG", "XLAT_M", "XLONG_M", "XLAT_U", "XLONG_U",
@@ -71,32 +71,32 @@ DIAG_DIMS = {
     'z': BOTTOM_TOP_MASS,
 }
 DIAG_VARS = {
-    name: WRFNetCDFVariable(name, label, DIAG_DIMS[name][1] if len(DIAG_DIMS[name]) == 4 else None, WRFNetCDFVariableSource.WRF_PYTHON)
-    for name, label in [
-        ('avo', 'AVO* in 10-5 s-1 (Absolute Vorticity)'),
-        ('eth', 'ETH* in K (Equivalent Potential Temperature)'),
-        ('dbz', 'DBZ* in dBZ (Radar Reflectivity)'),
-        ('mdbz', 'MDBZ* in dBZ (Maximum Radar Reflectivity)'),
-        ('geopt', 'GEOPT* in m2 s-2 (Geopotential for the Mass Grid)'),
-        ('helicity', 'HELICITY* in m2 s-2 (Storm Relative Helicity)'),
-        ('omega', 'OMEGA* in Pa s-1 (Omega)'),
-        ('pvo', 'PVO* in PVU (Potential Vorticity)'),
-        ('pw', 'PW* in kg m-2 (Precipitable Water)'),
-        ('rh', 'RH* in % (Relative Humidity)'),
-        ('rh2', 'RH2* in % (2m Relative Humidity)'),
-        ('slp', 'SLP* in hPA (Sea Level Pressure)'),
-        ('td2', 'TD2* in °C (2m Dew Point Temperature)'),
-        ('td', 'TD* in °C (Dew Point Temperature)'),
-        ('tc', 'TC* in °C (Temperature)'),
-        ('theta', 'THETA* in K (Potential Temperature)'),
-        ('tk', 'TK* in K (Temperature)'),
-        ('tv', 'TV* in K (Virtual Temperature)'),
-        ('twb', 'TWB* in K (Wet Bulb Temperature)'),
-        ('updraft_helicity', 'UPDRAFT_HELICITY* in m2 s-2 (Updraft Helicity)'),
-        ('ua', 'UA* in m s-1 (U-component of Wind on Mass Points)'),
-        ('va', 'VA* in m s-1 (V-component of Wind on Mass Points)'),
-        ('wa', 'WA* in m s-1 (W-component of Wind on Mass Points)'),
-        ('z', 'Z* in m (Model Height (MSL))'),
+    name: WRFNetCDFVariable(name, description, units, DIAG_DIMS[name][1] if len(DIAG_DIMS[name]) == 4 else None, WRFNetCDFVariableSource.WRF_PYTHON)
+    for name, description, units in [
+        ('avo', 'Absolute Vorticity', '10-5 s-1'),
+        ('eth', 'Equivalent Potential Temperature', 'K'),
+        ('dbz', 'Radar Reflectivity', 'dBZ'),
+        ('mdbz', 'Maximum Radar Reflectivity', 'dBZ'),
+        ('geopt', 'Geopotential for the Mass Grid', 'm2 s-2'),
+        ('helicity', 'Storm Relative Helicity', 'm2 s-2'),
+        ('omega', 'Omega', 'Pa s-1'),
+        ('pvo', 'Potential Vorticity', 'PVU'),
+        ('pw', 'Precipitable Water', 'kg m-2'),
+        ('rh', 'Relative Humidity', '%'),
+        ('rh2', '2m Relative Humidity', '%'),
+        ('slp', 'Sea Level Pressure', 'hPA'),
+        ('td2', '2m Dew Point Temperature', '°C'),
+        ('td', 'Dew Point Temperature', '°C'),
+        ('tc', 'Temperature', '°C'),
+        ('theta', 'Potential Temperature', 'K'),
+        ('tk', 'Temperature', 'K'),
+        ('tv', 'Virtual Temperature', 'K'),
+        ('twb', 'Wet Bulb Temperature', 'K'),
+        ('updraft_helicity', 'Updraft Helicity', 'm2 s-2'),
+        ('ua', 'U-component of Wind on Mass Points', 'm s-1'),
+        ('va', 'V-component of Wind on Mass Points', 'm s-1'),
+        ('wa', 'W-component of Wind on Mass Points', 'm s-1'),
+        ('z', 'Model Height', 'm'),
     ]
 }
 
@@ -331,19 +331,23 @@ def get_supported_wrf_nc_variables(path: str) -> Dict[str,WRFNetCDFVariable]:
                 description = var.getncattr('description')
             except AttributeError:
                 description = None
+            else:
+                if description == '-':
+                    description = None
+                else:
+                    description = description.lower()
+            
             try:
                 units = var.getncattr('units')
             except AttributeError:
                 units = None
-
-            label = var_name
-            if units and units != '-':
-                label += ' in ' + units
-            if description and description != '-':
-                label += ' (' + description.lower() + ')'
+            else:
+                if units in ['-', 'dimensionless']:
+                    units = None
 
             variables[var_name] = WRFNetCDFVariable(
-                name=var_name, label=label, extra_dim_name=extra_dim,
+                name=var_name, description=description,
+                units=units, extra_dim_name=extra_dim,
                 source=WRFNetCDFVariableSource.FILE)
 
         if wrf is not None:
