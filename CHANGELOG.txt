@@ -1,3 +1,10 @@
+0.13.0
+- Re-style variables list in Geo and View tab (#66, #85).
+- Remove wrfbdy files from list of available files to view (#54).
+- Add restart files (wrfrst) to list of available files to view (#60).
+- Fix bug with re-opening wrfout files (#79).
+- Fix bug with opening WRF netCDF datasets on macOS (#72).
+
 0.12.1
 - Fix error when trying to run `Real` or `WRF` from Simulation > Run tab (#68).
 - Fix error when opening WPS configuration file from `Simulation` > `Run` tab (#69).
