@@ -8,6 +8,7 @@ import multiprocessing
 
 from qgis.core import QgsSettings
 
+from gis4wrf.core import find_mpiexec
 from gis4wrf.core.util import export
 from gis4wrf.plugin.broadcast import Broadcast
 
@@ -61,6 +62,17 @@ class Options(object):
         self._rda_username = settings.value(Keys.RDA_USERNAME)
         self._rda_password = settings.value(Keys.RDA_PASSWORD)
 
+        # Proactively enable MPI if available and if no WRF/WPS distributions are set yet.
+        # This will lead more people to download the pre-built MPI-enabled distributions.
+        if not self._mpi_enabled and not self._wrf_dir and not self._wps_dir:
+            try:
+                find_mpiexec()
+            except:
+                pass
+            else:
+                self.mpi_enabled = True
+                self.save()
+
         self.after_load_save()
 
     def save(self) -> None:
@@ -86,7 +98,6 @@ class Options(object):
     @working_dir.setter
     def working_dir(self, path) -> None:
         self._working_dir = path
-        self.save()
 
     @property
     def mpi_enabled(self) -> bool:
@@ -113,7 +124,6 @@ class Options(object):
         if not path:
             path = None
         self._wrf_dir = path
-        self.save()
 
     @property
     def wps_dir(self) -> Optional[str]:
@@ -124,7 +134,6 @@ class Options(object):
         if not path:
             path = None
         self._wps_dir = path
-        self.save()
 
     @property
     def geogrid_exe(self) -> Optional[str]:
@@ -191,7 +200,6 @@ class Options(object):
     @rda_username.setter
     def rda_username(self, username: str) -> None:
         self._rda_username = username
-        self.save()
 
     @property
     def rda_password(self) -> str:
@@ -200,7 +208,6 @@ class Options(object):
     @rda_password.setter
     def rda_password(self, password: str) -> None:
         self._rda_password = password
-        self.save()
 
     @property
     def projects_dir(self) -> str:
