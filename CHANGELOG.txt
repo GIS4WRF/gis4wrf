@@ -1,5 +1,7 @@
 0.13.1
 - Momentarily limit GIS4WRF installation to QGIS max version 3.2.x due to QGIS bug (#98).
+- Automatically tick MPI checkbox if mpich is detected on the system (#82).
+- Bug fixes (#81).
 
 0.13.0
 - Re-style variables list in Geo and View tab (#66, #85).
