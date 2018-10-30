@@ -1,7 +1,7 @@
 {
     "description": "<p><a href='https://github.com/GIS4WRF/gis4wrf'>GIS4WRF</a> is a free and open source&nbsp;<a href='https://qgis.org/'>QGIS</a>&nbsp;plug-in to help researchers and practitioners with their&nbsp;<a href='https://www.mmm.ucar.edu/weather-research-and-forecasting-model'>Advanced Research Weather Research and Forecasting</a>&nbsp;modelling workflows. GIS4WRF can be used to pre-process input data, run simulations, and visualize or post-process results. For documentation and tutorials see&nbsp;the <a href='https://gis4wrf.github.io'>website</a>.</p>",
     "license": "MIT",
-    "title": "GIS4WRF",
+    "title": "The GIS4WRF Plugin",
     "upload_type": "software",
     "keywords": [
         "GIS",
