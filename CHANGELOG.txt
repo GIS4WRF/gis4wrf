@@ -1,3 +1,6 @@
+0.13.1
+- Momentarily limit GIS4WRF installation to QGIS max version 3.2.x due to QGIS bug (#98).
+
 0.13.0
 - Re-style variables list in Geo and View tab (#66, #85).
 - Remove wrfbdy files from list of available files to view (#54).
