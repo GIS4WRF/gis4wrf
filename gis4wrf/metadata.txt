@@ -16,3 +16,4 @@ tags=WRF, WPS, GIS, NetCDF, GRIB, NWP, weather, atmospheric science, atmospheric
 icon=plugin/resources/gis4wrf_logo.svg
 
 qgisMinimumVersion=3.0
+qgisMaximumVersion=3.2
