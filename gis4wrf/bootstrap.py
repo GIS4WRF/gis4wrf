@@ -61,12 +61,19 @@ DEPS = [
 # wrf-python does not have official wheels yet, see https://github.com/NCAR/wrf-python/issues/42.
 # Instead, at least for Windows, we install our own.
 # macOS/Linux wheels are built via Travis CI which doesn't provide free artifact storage.
-if platform.system() == 'Windows' and PY_MAJORMINOR == ('3', '6'):
-    DEPS += [
-        Dependency('wrf-python',
-                   install='https://ci.appveyor.com/api/buildjobs/62bl4ng5gg62qcpl/artifacts/wrf_python-1.1.2-cp36-none-win_amd64.whl',
-                   min='1.1.2'),
-    ]
+if platform.system() == 'Windows':
+    if PY_MAJORMINOR == ('3', '6'):
+        DEPS += [
+            Dependency('wrf-python',
+                       install='https://ci.appveyor.com/api/buildjobs/sj9br4xl885ncidm/artifacts/wrf_python-1.1.2-cp36-cp36m-win_amd64.whl',
+                       min='1.1.2'),
+        ]
+    elif PY_MAJORMINOR == ('3', '7'):
+        DEPS += [
+            Dependency('wrf-python',
+                       install='https://ci.appveyor.com/api/buildjobs/o3ow5itmyi8nhhk2/artifacts/wrf_python-1.1.2-cp37-cp37m-win_amd64.whl',
+                       min='1.1.2'),
+        ]
 
 # Use a custom folder for the packages to avoid polluting the per-user site-packages.
 # This also avoids any permission issues.
