@@ -1,3 +1,7 @@
+0.13.2
+- Remove restriction of QGIS max version 3.2.x due to QGIS bug (#98).
+- Update wrf-python wheel URLs for Windows to Python 3.7 (#100).
+
 0.13.1
 - Momentarily limit GIS4WRF installation to QGIS max version 3.2.x due to QGIS bug (#98).
 - Automatically tick MPI checkbox if mpich is detected on the system (#82).
