@@ -42,8 +42,6 @@ DEPS = [
     #Dependency('xarray', install='0.10.0', min=None),
     Dependency('f90nml', install='1.0.2', min=None),
     Dependency('pyyaml', install='3.13', min=None),
-    # >= 1.3.0 is built against too recent numpy version
-    Dependency('netCDF4', install='1.2.9', min=None),
 
     # Indirect dependencies.
     # Indirect dependencies are dependencies that we don't import directly in our code but
@@ -67,12 +65,18 @@ if platform.system() == 'Windows':
             Dependency('wrf-python',
                        install='https://ci.appveyor.com/api/buildjobs/sj9br4xl885ncidm/artifacts/wrf_python-1.1.2-cp36-cp36m-win_amd64.whl',
                        min='1.1.2'),
+            Dependency('netCDF4',
+                       install='1.2.9', # >= 1.3.0 is built against too recent numpy version
+                       min='None'),
         ]
     elif PY_MAJORMINOR == ('3', '7'):
         DEPS += [
             Dependency('wrf-python',
                        install='https://ci.appveyor.com/api/buildjobs/o3ow5itmyi8nhhk2/artifacts/wrf_python-1.1.2-cp37-cp37m-win_amd64.whl',
                        min='1.1.2'),
+            Dependency('netCDF4',
+                       install='1.4.2',
+                       min='None'),
         ]
 
 # Use a custom folder for the packages to avoid polluting the per-user site-packages.
