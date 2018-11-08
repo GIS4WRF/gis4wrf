@@ -1,7 +1,7 @@
 0.13.2
 - Remove restriction of QGIS max version 3.2.x due to QGIS bug (#98).
 - Update wrf-python wheel URLs for Windows to Python 3.7 (#100).
-- Add workaround Python 3.7.0 bug in subprocess on Windows (#101)
+- Add workaround for Python 3.7.0 bug in subprocess on Windows (#101)
 
 0.13.1
 - Momentarily limit GIS4WRF installation to QGIS max version 3.2.x due to QGIS bug (#98).
