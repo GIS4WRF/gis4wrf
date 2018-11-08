@@ -209,16 +209,24 @@ def bootstrap() -> Iterable[Tuple[str,Any]]:
         for dep, _ in cannot_update:
             yield ('cannot_update', cannot_update)
 
-def run_subprocess(args: List[str], log_path: str) -> Iterable[str]:
-    startupinfo = None
+def get_startup_info():
+    # This is a function instead of a global because the STARTUPINFO
+    # object has to be freshly created for each subprocess call to
+    # work around a bug in Python 3.7.0 which was fixed in 3.7.1.
+    # See https://bugs.python.org/issue34044.
     if os.name == 'nt':
         # hides the console window
-        startupinfo = subprocess.STARTUPINFO()
-        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        info = subprocess.STARTUPINFO()
+        info.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+    else:
+        info = None
+    return info
+
+def run_subprocess(args: List[str], log_path: str) -> Iterable[str]:
     process = subprocess.Popen(args,
                                stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                                bufsize=1, universal_newlines=True,
-                               startupinfo=startupinfo)
+                               startupinfo=get_startup_info())
     with open(log_path, 'w') as fp:
         while True:
             line = process.stdout.readline()
