@@ -42,8 +42,6 @@ DEPS = [
     #Dependency('xarray', install='0.10.0', min=None),
     Dependency('f90nml', install='1.0.2', min=None),
     Dependency('pyyaml', install='3.13', min=None),
-    # >= 1.3.0 is built against too recent numpy version
-    Dependency('netCDF4', install='1.2.9', min=None),
 
     # Indirect dependencies.
     # Indirect dependencies are dependencies that we don't import directly in our code but
@@ -58,21 +56,34 @@ DEPS = [
     # https://github.com/pandas-dev/pandas/issues/18967
     #Dependency('pandas', install='0.20.3', min=None) # for xarray
 ]
-# wrf-python does not have official wheels yet, see https://github.com/NCAR/wrf-python/issues/42.
+# For some packages we need to use different versions depending on the Python version used.
+# Also, wrf-python does not have official wheels yet, see https://github.com/NCAR/wrf-python/issues/42.
 # Instead, at least for Windows, we install our own.
 # macOS/Linux wheels are built via Travis CI which doesn't provide free artifact storage.
-if platform.system() == 'Windows':
-    if PY_MAJORMINOR == ('3', '6'):
+if PY_MAJORMINOR == ('3', '6'):
+    DEPS += [
+        # NetCDF4 >= 1.3.0 is built against too recent numpy version.
+        Dependency('netCDF4',
+            install='1.2.9',
+            min='None'),
+    ]
+    if platform.system() == 'Windows':
         DEPS += [
             Dependency('wrf-python',
-                       install='https://ci.appveyor.com/api/buildjobs/sj9br4xl885ncidm/artifacts/wrf_python-1.1.2-cp36-cp36m-win_amd64.whl',
-                       min='1.1.2'),
+                install='https://ci.appveyor.com/api/buildjobs/sj9br4xl885ncidm/artifacts/wrf_python-1.1.2-cp36-cp36m-win_amd64.whl',
+                min='1.1.2'),
         ]
-    elif PY_MAJORMINOR == ('3', '7'):
+elif PY_MAJORMINOR == ('3', '7'):
+    DEPS += [
+        Dependency('netCDF4',
+            install='1.4.2',
+            min='None'),
+    ]
+    if platform.system() == 'Windows':
         DEPS += [
             Dependency('wrf-python',
-                       install='https://ci.appveyor.com/api/buildjobs/o3ow5itmyi8nhhk2/artifacts/wrf_python-1.1.2-cp37-cp37m-win_amd64.whl',
-                       min='1.1.2'),
+                install='https://ci.appveyor.com/api/buildjobs/o3ow5itmyi8nhhk2/artifacts/wrf_python-1.1.2-cp37-cp37m-win_amd64.whl',
+                min='1.1.2'),
         ]
 
 # Use a custom folder for the packages to avoid polluting the per-user site-packages.
@@ -147,7 +158,7 @@ def bootstrap() -> Iterable[Tuple[str,Any]]:
 
         except pkg_resources.DistributionNotFound as exc:
             needs_install.append(dep)
-    
+
     if needs_install:
         yield ('needs_install', needs_install)
         yield ('log', 'Package directory: ' + INSTALL_PREFIX)
