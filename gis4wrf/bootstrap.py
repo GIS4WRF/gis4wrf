@@ -216,7 +216,7 @@ def bootstrap() -> Iterable[Tuple[str,Any]]:
 def run_subprocess(args: List[str], log_path: str) -> Iterable[str]:
     startupinfo = None
     if os.name == 'nt':
-        # hides the console window
+         # hides the console window
         startupinfo = subprocess.STARTUPINFO()
         startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
     process = subprocess.Popen(args,
