@@ -59,30 +59,24 @@ DEPS = [
 # wrf-python does not have official wheels yet, see https://github.com/NCAR/wrf-python/issues/42.
 # Instead, at least for Windows, we install our own.
 # macOS/Linux wheels are built via Travis CI which doesn't provide free artifact storage.
-# NetCDF4 >= 1.3.0 is built against too recent numpy version.
-if PY_MAJORMINOR == ('3', '6'):
-    DEPS += [
-        Dependency('netCDF4',
-            install='1.2.9',
-            min='None'),
-    ]
-    if platform.system() == 'Windows':
+if platform.system() == 'Windows':
+    if PY_MAJORMINOR == ('3', '6'):
         DEPS += [
             Dependency('wrf-python',
-                install='https://ci.appveyor.com/api/buildjobs/sj9br4xl885ncidm/artifacts/wrf_python-1.1.2-cp36-cp36m-win_amd64.whl',
-                min='1.1.2'),
+                       install='https://ci.appveyor.com/api/buildjobs/sj9br4xl885ncidm/artifacts/wrf_python-1.1.2-cp36-cp36m-win_amd64.whl',
+                       min='1.1.2'),
+            Dependency('netCDF4',
+                       install='1.2.9', # >= 1.3.0 is built against too recent numpy version
+                       min='None'),
         ]
-elif PY_MAJORMINOR == ('3', '7'):
-    DEPS += [
-        Dependency('netCDF4',
-            install='1.4.2',
-            min='None'),
-    ]
-    if platform.system() == 'Windows':
+    elif PY_MAJORMINOR == ('3', '7'):
         DEPS += [
             Dependency('wrf-python',
-                install='https://ci.appveyor.com/api/buildjobs/o3ow5itmyi8nhhk2/artifacts/wrf_python-1.1.2-cp37-cp37m-win_amd64.whl',
-                min='1.1.2'),
+                       install='https://ci.appveyor.com/api/buildjobs/o3ow5itmyi8nhhk2/artifacts/wrf_python-1.1.2-cp37-cp37m-win_amd64.whl',
+                       min='1.1.2'),
+            Dependency('netCDF4',
+                       install='1.4.2',
+                       min='None'),
         ]
 
 # Use a custom folder for the packages to avoid polluting the per-user site-packages.
