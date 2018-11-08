@@ -75,7 +75,7 @@ if PY_MAJORMINOR == ('3', '6'):
 elif PY_MAJORMINOR == ('3', '7'):
     DEPS += [
         Dependency('netCDF4',
-            install='1.4.1',
+            install='1.4.2',
             min='None'),
     ]
     if platform.system() == 'Windows':
