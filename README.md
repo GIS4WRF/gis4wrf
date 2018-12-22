@@ -9,40 +9,45 @@ GIS4WRF is a free and open source [QGIS](https://qgis.org/) plug-in to help rese
 <p align="center">Configure, run and visualize a WRF simulation in GIS4WRF</p>
 
 ## How to reference GIS4WRF
-We ask to please acknowledge our work by citing and referencing both, the GIS4WRF paper and the GIS4WRF software in the following way:
+When using GIS4WRF, we kindly ask to please acknowledge our work by referencing both the article and the software.
 
-- For in-text citations, please cite both the paper and the software.
+### Example: adapt using your referencing style from the example below
+```
+D. Meyer, & M. Riechert. (2019). Open source QGIS toolkit for the
+Advanced Research WRF modelling system. Environmental Modelling &
+Software, 112, 166–178. https://doi.org/10.1016/j.envsoft.2018.10.018
 
-    E.g.: *"We used GIS4WRF (Meyer and Riechert, 2018a, 2018b) for ..."*
+D. Meyer, & M. Riechert. (2018). The GIS4WRF Plugin.
+Zenodo. https://doi.org/10.5281/zenodo.1288569
+```
 
-- For the full citation in the reference list, adapt using your chosen style from the example below.
+### BibTex
 
-    E.g. — reference list using the American Meteorological Society (AMS) style:
+``` bibtex
+@article{Meyer_Riechert_2019,
+title       = {Open source {QGIS} toolkit for the
+               Advanced Research {WRF} modelling system},
+author      = {D. Meyer and M. Riechert},
+month       = {feb},
+year        = {2019},
+journal     = {Environmental Modelling {\&} Software},
+pages       = {166--178},
+volume      = {112},
+publisher   = {Elsevier {BV}},
+doi         = {10.1016/j.envsoft.2018.10.018},
+issn        = {1364-8152},
+url         = {https://doi.org/10.1016/j.envsoft.2018.10.018}
+}
 
-    ```
-    Meyer, D., and M. Riechert, 2018a: GIS4WRF: an integrated open source QGIS toolkit
-        for the Advanced Research WRF Framework. Manuscript submitted for publication.
-
-    Meyer, D., and M. Riechert, 2018b: The GIS4WRF Plugin.
-        doi:10.5281/zenodo.1288569.
-    ```
-- Alternatively, you can add the following to your BibTex file:
-
-    ```bibtex
-    @unpublished{meyer_riechert_2018_article,
-        author  = {D. Meyer and M. Riechert},
-        title   = {GIS4WRF: an integrated open source QGIS toolkit for the Advanced Research WRF Framework},
-        note    = {Manuscript submitted for publication}
-    }
-
-    @misc{meyer_riechert_2018_software,
-        author  = {D. Meyer and M. Riechert},
-        title   = {The GIS4WRF Plugin},
-        year    = 2018,
-        doi     = {10.5281/zenodo.1288569},
-        url     = {https://doi.org/10.5281/zenodo.1288569}
-    }
-    ```
+@misc{Meyer_Riechert_2018,
+  author       = {D. Meyer and M. Riechert},
+  title        = {The GIS4WRF Plugin},
+  month        = {jun},
+  year         = {2018},
+  doi          = {10.5281/zenodo.1288569},
+  url          = {https://doi.org/10.5281/zenodo.1288569}
+}
+```
 
 ## Contributing
 If you would like to contribute to the GIS4WRF project, clone this repository, make your changes, and create a pull request with a **clear description** of your changes. If your changes are merged, you will appear as one of our [Contributors](https://github.com/GIS4WRF/gis4wrf/graphs/contributors).
