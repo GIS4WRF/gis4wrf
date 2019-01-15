@@ -1,8 +1,6 @@
 {
-    "description": "<p><a href='https://github.com/GIS4WRF/gis4wrf'>GIS4WRF</a> is a free and open source&nbsp;<a href='https://qgis.org/'>QGIS</a>&nbsp;plug-in to help researchers and practitioners with their&nbsp;<a href='https://www.mmm.ucar.edu/weather-research-and-forecasting-model'>Advanced Research Weather Research and Forecasting</a>&nbsp;modelling workflows. GIS4WRF can be used to pre-process input data, run simulations, and visualize or post-process results. For documentation and tutorials see&nbsp;the <a href='https://gis4wrf.github.io'>website</a>.</p>",
-    "license": "MIT",
     "title": "The GIS4WRF Plugin",
-    "upload_type": "software",
+    "description": "<p><a href='https://github.com/GIS4WRF/gis4wrf'>GIS4WRF</a> is a free and open source&nbsp;<a href='https://qgis.org/'>QGIS</a>&nbsp;plug-in to help researchers and practitioners with their&nbsp;<a href='https://www.mmm.ucar.edu/weather-research-and-forecasting-model'>Advanced Research Weather Research and Forecasting</a>&nbsp;modelling workflows. GIS4WRF can be used to pre-process input data, run simulations, and visualize or post-process results. For documentation and tutorials see&nbsp;the <a href='https://gis4wrf.github.io'>website</a>.</p>",
     "keywords": [
         "GIS",
         "WRF",
@@ -10,6 +8,9 @@
         "NWP",
         "NetCDF"
     ],
+    "upload_type": "software",
+    "access_right": "open",
+    "license": "MIT",
     "creators": [
         {
             "orcid": "0000-0002-7071-7547",
@@ -20,5 +21,10 @@
             "name": "M. Riechert"
         }
     ],
-    "access_right": "open"
+    "related_identifiers": [
+        {
+            "relation": "isSupplementedBy",
+            "identifier": "10.1016/j.envsoft.2018.10.018"
+        }
+    ]
 }
