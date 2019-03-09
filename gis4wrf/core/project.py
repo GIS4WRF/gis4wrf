@@ -58,12 +58,32 @@ class Project(object):
             raise UserError(f'{project_json_path} not found')
         with open(project_json_path) as fp:
             data = json.load(fp, object_hook=ProjectJSONDecoder)
+        assert data['version'] > 0
         if data['version'] < PROJECT_JSON_VERSION:
-            # upgrade to new version
-            pass
+            Project.upgrade(data)
         elif data['version'] > PROJECT_JSON_VERSION:
             raise UserError('Plugin too old to read project file of version {}'.format(data['version']))
         return Project(data, path)
+
+    @staticmethod
+    def upgrade(data: dict) -> None:
+        if data['version'] == 1:
+            # v1 did not store stand_lon for Lambert separately but used the domain center longitude instead.
+            # v2 requires stand_lon, so we initialize it to the domain center longitude.
+            # See https://github.com/GIS4WRF/gis4wrf/issues/116.
+            domains = data.get('domains')
+            if domains is not None:
+                main_domain = domains[0]
+                map_proj = main_domain['map_proj']
+                if map_proj == 'lambert':
+                    main_domain['stand_lon'] = main_domain['center_lonlat'][0]
+            data['version'] = 2
+
+        if data['version'] == 2:
+            # nothing to do, current version
+            pass 
+
+        assert data['version'] == PROJECT_JSON_VERSION
 
     def save(self) -> None:
         if not self.path:
@@ -195,7 +215,8 @@ class Project(object):
 
     def set_domains(self, map_proj: str,
                     cell_size: Tuple[float,float], domain_size: Tuple[int,int],
-                    center_lonlat: LonLat, truelat1: float=None, truelat2: float=None,
+                    center_lonlat: LonLat,
+                    truelat1: float=None, truelat2: float=None, stand_lon: float=None,
                     parent_domains: List[dict]=[]) -> None:
         self.data['domains'] = [{
             "map_proj": map_proj,
@@ -215,6 +236,9 @@ class Project(object):
         if map_proj == 'lambert':
             main_domain['truelat2'] = truelat2
 
+        if map_proj in ['lambert', 'polar']:
+            main_domain['stand_lon'] = stand_lon
+
         self.fill_domains()
 
         self.save()
@@ -224,14 +248,15 @@ class Project(object):
         domain = self.data['domains'][0]
         map_proj = domain['map_proj']
         if map_proj == 'lambert':
+            origin = LonLat(lon=domain['stand_lon'], lat=domain['center_lonlat'][1]) 
             return CRS.create_lambert(
-                domain['truelat1'], domain['truelat2'], LonLat(*domain['center_lonlat']))
+                domain['truelat1'], domain['truelat2'], origin)
         elif map_proj == 'mercator':
             return CRS.create_mercator(
                 domain['truelat1'], domain['center_lonlat'][0])
         elif map_proj == 'polar':
             return CRS.create_polar(
-                domain['truelat1'], domain['center_lonlat'][0])
+                domain['truelat1'], domain['stand_lon'])
         elif map_proj == 'lat-lon':
             return CRS.create_lonlat()
         else:

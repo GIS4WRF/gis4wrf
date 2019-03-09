@@ -69,7 +69,9 @@ class DomainWidget(QWidget):
         projs = {
             'undefined' : '-', # do not use a default projection - let the user pick the projection.
             'lat-lon'   : 'Latitude/Longitude',
-            'lambert'   : 'Lambert'
+            'lambert'   : 'Lambert Conformal',
+            'mercator'  : 'Mercator',
+            'polar'     : 'Polar Stereographic'
         }
         for proj_id, proj_label in projs.items():
             self.projection.addItem(proj_label, proj_id)
@@ -86,15 +88,21 @@ class DomainWidget(QWidget):
         hbox_map_type.addWidget(self.projection)
         vbox_map_type.addLayout(hbox_map_type)
 
-        ## Lambert only: show 'True Latitudes' field
-        truelat_grid = QGridLayout()
-        self.truelat1 = add_grid_lineedit(truelat_grid, 0, 'True Latitude 1',
+        ## Projection parameters
+        #  Lat/Lon:  none
+        #  Lambert:  True Latitude 1 & 2, Standard Longitude
+        #  Polar:    True Latitude (1), Standard Longitude
+        #  Mercator: True Latitude (1)
+        proj_params_grid = QGridLayout()
+        self.truelat1 = add_grid_lineedit(proj_params_grid, 0, 'True Latitude 1',
                                           LAT_VALIDATOR, unit='°', required=True)
-        self.truelat2 = add_grid_lineedit(truelat_grid, 1, 'True Latitude 2',
+        self.truelat2 = add_grid_lineedit(proj_params_grid, 1, 'True Latitude 2',
                                           LAT_VALIDATOR, unit='°', required=True)
-        self.widget_true_lats = QWidget()
-        self.widget_true_lats.setLayout(truelat_grid)
-        vbox_map_type.addWidget(self.widget_true_lats)
+        self.stand_lon = add_grid_lineedit(proj_params_grid, 2, 'Standard Longitude',
+                                          LON_VALIDATOR, unit='°', required=True)
+        self.widget_proj_params = QWidget()
+        self.widget_proj_params.setLayout(proj_params_grid)
+        vbox_map_type.addWidget(self.widget_proj_params)
 
         self.domain_pb_set_projection = QPushButton("Set Map CRS")
         self.domain_pb_set_projection.setObjectName('set_projection_button')
@@ -162,7 +170,7 @@ class DomainWidget(QWidget):
         self.group_box_manual_domain.setLayout(vbox_manual_domain)
 
         for field in [self.resolution, self.center_lat, self.center_lon, self.rows, self.cols,
-                      self.truelat1, self.truelat2]:
+                      self.truelat1, self.truelat2, self.stand_lon]:
           # editingFinished is only emitted on user input, not via programmatic changes.
           # This is important as we want to avoid re-drawing the bbox many times when several
           # fields get changed while using the automatic domain generator.
@@ -229,17 +237,17 @@ class DomainWidget(QWidget):
             return
         
         main_domain = domains[0]
+        map_proj = main_domain['map_proj']
 
-        idx = self.projection.findData(main_domain['map_proj'])
+        idx = self.projection.findData(map_proj)
         self.projection.setCurrentIndex(idx)
-        try:
-            truelat1 = main_domain['truelat1']
-            self.truelat1.set_value(truelat1)
 
-            truelat2 = main_domain['truelat2']
-            self.truelat2.set_value(truelat2)
-        except KeyError:
-            pass
+        if map_proj in ['lambert', 'mercator', 'polar']:
+            self.truelat1.set_value(main_domain['truelat1'])
+        if map_proj == 'lambert':
+            self.truelat2.set_value(main_domain['truelat2'])
+        if map_proj in ['lambert', 'polar']:
+            self.stand_lon.set_value(main_domain['stand_lon'])
 
         self.resolution.set_value(main_domain['cell_size'][0])
 
@@ -309,18 +317,26 @@ class DomainWidget(QWidget):
         if proj is None:
             raise UserError('Incomplete projection definition')
 
-        origin_valid = all(map(lambda w: w.is_valid(), [self.center_lat, self.center_lon]))
-        if origin_valid:
-            origin = LonLat(self.center_lon.value(), self.center_lat.value())
-        else:
-            origin = LonLat(0, 0)
+        map_proj = proj['map_proj']
 
-        if proj['map_proj'] == 'lambert':
-            crs = CRS.create_lambert(proj['truelat1'], proj['truelat2'], origin)
-        elif proj['map_proj'] == 'lat-lon':
+        if map_proj == 'lambert':
+            if self.center_lat.is_valid():
+                origin_lat = self.center_lat.value()
+            else:
+                origin_lat = 0
+            crs = CRS.create_lambert(proj['truelat1'], proj['truelat2'], LonLat(proj['stand_lon'], origin_lat))
+        elif map_proj == 'polar':
+            crs = CRS.create_polar(proj['truelat1'], proj['stand_lon'])
+        elif map_proj == 'mercator':
+            if self.center_lon.is_valid():
+                origin_lon = self.center_lon.value()
+            else:
+                origin_lon = 0
+            crs = CRS.create_mercator(proj['truelat1'], origin_lon)
+        elif map_proj == 'lat-lon':
             crs = CRS.create_lonlat()
         else:
-            assert False, 'unknown proj: ' + proj['map_proj']
+            assert False, 'unknown proj: ' + map_proj
         return crs
 
     @pyqtSlot()
@@ -420,9 +436,9 @@ class DomainWidget(QWidget):
     @pyqtSlot(int)
     def on_projection_currentIndexChanged(self, index: int) -> None:
         proj_id = self.projection.currentData()
-        is_lambert = proj_id == 'lambert'
         is_undefined = proj_id == 'undefined'
         is_lat_lon = proj_id == 'lat-lon'
+        is_projected = not is_undefined and not is_lat_lon
 
         self.domain_pb_set_projection.setDisabled(is_undefined)
         self.group_box_resol.setDisabled(is_undefined)
@@ -430,13 +446,24 @@ class DomainWidget(QWidget):
         self.group_box_manual_domain.setDisabled(is_undefined)
         self.group_box_parent_domain.setDisabled(is_undefined)
 
-        self.widget_true_lats.setVisible(is_lambert)
+        def update_field(field, enabled):
+            field.required = enabled
+            field.setEnabled(enabled)
+            if not enabled:
+                field.setText('')
+            # refresh to update background color from validation
+            field.textChanged.emit(field.text())
+
+        self.widget_proj_params.setVisible(is_projected)
+        update_field(self.truelat1, proj_id in ['lambert', 'mercator', 'polar'])
+        update_field(self.truelat2, proj_id == 'lambert')
+        update_field(self.stand_lon, proj_id in ['lambert', 'polar'])
 
         if is_undefined:
             self.proj_res_unit = ''
         elif is_lat_lon:
             self.proj_res_unit = '°'
-        elif is_lambert:
+        elif is_projected:
             self.proj_res_unit = 'm'
         self.resolution_label.setText(self.proj_res_unit)
 
@@ -449,18 +476,21 @@ class DomainWidget(QWidget):
 
     def get_proj_kwargs(self) -> dict:
         proj_id = self.projection.currentData()
-        kwargs = {
-            'map_proj': proj_id
-        }
-        if proj_id == 'lambert':
-            valid = all(map(lambda w: w.is_valid(), [self.truelat1, self.truelat2]))
-            if not valid:
+        kwargs = { 'map_proj': proj_id }
+        if proj_id in ['lambert', 'mercator', 'polar']:
+            if not self.truelat1.is_valid():
                 return None
-            kwargs = {
-                'map_proj' : proj_id,
-                'truelat1' : self.truelat1.value(),
-                'truelat2' : self.truelat2.value(),
-            }
+            kwargs['truelat1'] = self.truelat1.value()
+
+        if proj_id == 'lambert':
+            if not self.truelat2.is_valid():
+                return None
+            kwargs['truelat2'] = self.truelat2.value()
+
+        if proj_id in ['lambert', 'polar']:
+            if not self.stand_lon.is_valid():
+                return None
+            kwargs['stand_lon'] = self.stand_lon.value()
         return kwargs
 
     def update_project(self) -> bool:

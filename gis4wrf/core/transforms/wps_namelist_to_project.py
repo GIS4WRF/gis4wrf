@@ -33,9 +33,9 @@ def convert_nml_to_project_domains(nml: dict) -> List[dict]:
     dy = [nml['dy']] # type: List[float]
     ref_lon = nml['ref_lon'] # type: float
     ref_lat = nml['ref_lat'] # type: float
-    truelat1 = nml.get('truelat1')
-    truelat2 = nml.get('truelat2')
-    standlon = nml.get('stand_lon', 0.0)
+    truelat1 = nml.get('truelat1') # type: float
+    truelat2 = nml.get('truelat2') # type: float
+    stand_lon = nml.get('stand_lon', 0.0) # type: float
 
     # Check that there are no domains with 2 nests on the same level
     if parent_id != [1] + list(range(1, max_dom)):
@@ -48,13 +48,20 @@ def convert_nml_to_project_domains(nml: dict) -> List[dict]:
 
     # Create CRS object from projection metadata.
     if map_proj == 'lat-lon':
-        if standlon != 0.0:
+        if stand_lon != 0.0:
             raise UnsupportedError('Rotated lat-lon projection is not supported')
         crs = CRS.create_lonlat()
     elif map_proj == 'lambert':
-        # It doesn't matter what the origin is. See wps_binary_to_gdal.py for details.
-        origin = LonLat(lon=standlon, lat=(truelat1 + truelat2)/2)
+        # It doesn't matter what the latitude origin is.
+        # Longitude is standard longitude and matters.
+        # See wps_binary_to_gdal.py for details.
+        origin = LonLat(lon=stand_lon, lat=(truelat1 + truelat2)/2)
         crs = CRS.create_lambert(truelat1, truelat2, origin)
+    elif map_proj == 'mercator':
+        # It doesn't matter what the longitude origin is.
+        crs = CRS.create_mercator(truelat1, 0.0)
+    elif map_proj == 'polar':
+        crs = CRS.create_polar(truelat1, stand_lon)
     else:
         raise UnsupportedError(f'Map projection "{map_proj}" is not supported')
 
@@ -102,12 +109,14 @@ def convert_nml_to_project_domains(nml: dict) -> List[dict]:
         'cell_size': [dx[-1], dy[-1]],
         'center_lonlat': [ref_lonlat.lon, ref_lonlat.lat],
         'domain_size': [cols[-1], rows[-1]],
-        'stand_lon': standlon,
+        'stand_lon': stand_lon,
     }
     if truelat1 is not None:
         first_domain['truelat1'] = truelat1
     if truelat2 is not None:
         first_domain['truelat2'] = truelat2
+    if stand_lon is not None:
+        first_domain['stand_lon'] = stand_lon
 
     domains = [first_domain]
     for i in range(max_dom - 1):

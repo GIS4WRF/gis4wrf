@@ -3,7 +3,16 @@
 
 WRF_EARTH_RADIUS = 6370000
 WRF_PROJ4_SPHERE = '+a={radius} +b={radius}'.format(radius=WRF_EARTH_RADIUS)
-PROJECT_JSON_VERSION = 1
+
+'''
+v1:
+Initial version
+
+v2:
+Add stand_lon to Lambert projections.
+In v1, stand_lon was implicitly required to be identical to domain center longitude.
+'''
+PROJECT_JSON_VERSION = 2
 
 # gdal forces us to provide names for categories starting from index 0.
 # WRF's categories typically start at 1, so we need to add fake entries
