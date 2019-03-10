@@ -47,19 +47,19 @@ def convert_nml_to_project_domains(nml: dict) -> List[dict]:
         raise UnsupportedError('ref_x/ref_y is not supported in namelist')
 
     # Create CRS object from projection metadata.
+    # See wps_binary_to_gdal.py for further explanations regarding latitude
+    # and longitude of origin.
     if map_proj == 'lat-lon':
         if stand_lon != 0.0:
             raise UnsupportedError('Rotated lat-lon projection is not supported')
         crs = CRS.create_lonlat()
     elif map_proj == 'lambert':
-        # It doesn't matter what the latitude origin is.
-        # Longitude is standard longitude and matters.
-        # See wps_binary_to_gdal.py for details.
-        origin = LonLat(lon=stand_lon, lat=(truelat1 + truelat2)/2)
+        arbitrary_latitude_origin = (truelat1 + truelat2)/2
+        origin = LonLat(lon=stand_lon, lat=arbitrary_latitude_origin)
         crs = CRS.create_lambert(truelat1, truelat2, origin)
     elif map_proj == 'mercator':
-        # It doesn't matter what the longitude origin is.
-        crs = CRS.create_mercator(truelat1, 0.0)
+        arbitrary_longitude_origin = 0
+        crs = CRS.create_mercator(truelat1, arbitrary_longitude_origin)
     elif map_proj == 'polar':
         crs = CRS.create_polar(truelat1, stand_lon)
     else:
