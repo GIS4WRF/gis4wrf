@@ -2,10 +2,9 @@
 
 # GIS4WRF
 
-| Build and Tests | Article | Software | Documentation |
-|-------------|---------|----------|---------------|
-[![Build Status](https://travis-ci.com/GIS4WRF/gis4wrf.svg?branch=master)](https://travis-ci.com/GIS4WRF/gis4wrf) | [![DOI](https://img.shields.io/badge/DOI-10.1016%2Fj.envsoft.2018.10.018-brightgreen.svg)](https://doi.org/10.1016/j.envsoft.2018.10.018) | [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1288569.svg)](https://doi.org/10.5281/zenodo.1288569)| [![docs](https://img.shields.io/badge/docs-gis4wrf.github.io-blue.svg)](https://gis4wrf.github.io)
-
+| Build and Tests | Documentation | Article DOI | Software DOI |
+|-----------------|---------------|-------------|--------------|
+[![Build Status](https://travis-ci.com/GIS4WRF/gis4wrf.svg?branch=master)](https://travis-ci.com/GIS4WRF/gis4wrf) | [![docs](https://img.shields.io/badge/docs-gis4wrf.github.io-blue.svg)](https://gis4wrf.github.io) | [![DOI](https://img.shields.io/badge/DOI-10.1016%2Fj.envsoft.2018.10.018-brightgreen.svg)](https://doi.org/10.1016/j.envsoft.2018.10.018) | [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1288569.svg)](https://doi.org/10.5281/zenodo.1288569) |
 
 GIS4WRF is a free and open source [QGIS](https://qgis.org/) plug-in to help researchers and practitioners with their [Advanced Research Weather Research and Forecasting](https://www.mmm.ucar.edu/weather-research-and-forecasting-model) modelling workflows. GIS4WRF can be used to pre-process input data, run simulations, and visualize or post-process results. We offer MPI-enabled pre-built binary distributions for Windows, macOS and Linux through [WRF-CMake](https://github.com/WRF-CMake/WRF).
 
