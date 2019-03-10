@@ -133,8 +133,6 @@ def convert_wrf_nc_var_to_gdal_dataset(
 
     ds = nc.Dataset(path)
     try:
-        attrs = ds.__dict__ # type: dict
-
         rows = ds.dimensions['south_north'].size
         cols = ds.dimensions['west_east'].size
 
@@ -302,7 +300,6 @@ def get_supported_wrf_nc_variables(path: str) -> Dict[str,WRFNetCDFVariable]:
 
             var = ds.variables[var_name]
             dims = var.dimensions
-            shape = var.shape
 
             if len(dims) > 4:
                 # should never happen
