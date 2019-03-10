@@ -197,28 +197,6 @@ def create_two_radio_group_box(radio1_name: str, radio2_name: str,
     group_box.setLayout(vbox)
     return group_box
 
-class RadioWithButtonWidget(QGroupBox):
-    def __init__(self) -> None:
-        super().__init__('Data Selector')
-
-        self.radio_list = [] # type: list
-
-    def add_radio(self, radio_button_name: str) -> list:
-        self.radio_list.append(radio_button_name)
-        return self.radio_list
-
-    def create_layout(self):
-        vbox = QVBoxLayout()
-        for radio_button in self.radio_list:
-            self.radio_button = QRadioButton(radio_button)
-            self.radio_button.toggled.connect(lambda:self.radiostate(self.radio_button))
-            vbox.addWidget(self.radio_button)
-        self.setLayout(vbox)
-
-    def radiostate(self,b):
-        for radio_button in radio_list:
-            print(self.radio_button.text())
-
 def ensure_folder_empty(folder: str, iface: QgisInterface) -> bool:
     existing_files = os.listdir(folder)
     if not existing_files:

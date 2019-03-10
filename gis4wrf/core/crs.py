@@ -107,8 +107,7 @@ class CRS(object):
             ('+proj=aea +lat_1={lat1} +lat_2={lat2} +lat_0={lat0} +lon_0={lon0} '
              '+x_0=0 +y_0=0 +datum=NAD83').format(
                  lat1=truelat1, lat2=truelat2,
-                 lon0=origin.lon, lat0=origin.lat,
-                 datum=CRS.WRF_DATUM_PROJ4))
+                 lon0=origin.lon, lat0=origin.lat))
 
     @staticmethod
     def create_mercator(truelat1: float, origin_lon: float):

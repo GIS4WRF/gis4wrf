@@ -71,7 +71,7 @@ def convert_wps_binary_to_vrt_dataset(folder: str, use_vsi: bool=False) -> Tuple
         # See comment above about origin.
         origin_lon = m.stdlon if m.stdlon is not None else 0
         crs = CRS.create_mercator(m.truelat1, origin_lon)
-    elif proj_id == 'albers_nad83':
+    elif m.proj_id == 'albers_nad83':
         # See comment above about origin.
         origin = LonLat(lon=m.stdlon, lat=(m.truelat1+m.truelat2)/2)
         crs = CRS.create_albers_nad83(m.truelat1, m.truelat2, origin)

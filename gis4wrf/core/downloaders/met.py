@@ -7,6 +7,9 @@ from typing import List, Iterable, Tuple, Union
 import time
 import requests
 from pathlib import Path
+import glob
+import os
+import shutil
 from datetime import datetime
 
 from .util import download_file_with_progress, requests_retry_session
@@ -159,6 +162,11 @@ def rda_download_dataset(request_id: str, auth: tuple, path: Path) -> Iterable[T
             for file_progress in download_file_with_progress(url, path_tmp / file_name, session=session):
                 dataset_progress = (i + file_progress) / len(urls)
                 yield dataset_progress, file_progress, url
+    
+    # Downloaded files may be tar archives, not always though.
+    for tar_path in glob.glob(str(path_tmp / '*.tar')):
+        shutil.unpack_archive(tar_path, path_tmp)
+        os.remove(tar_path)
 
     path_tmp.rename(path)
 
