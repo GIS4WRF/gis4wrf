@@ -116,6 +116,7 @@ To create the plugin archive simply run `python build.py`.
 
 Before creating a new release, make sure to complete the following checklist:
 
+```
 - [ ] Create a new issue named `Prepare for GIS4WRF <VERSION_NUMBER> release`, and copy and paste this check-list and tick what is appropriate.
 - [ ] Check that the [documentation](https://gis4wrf.github.io/) repository is up to date.
 - [ ] Check that the [readme](README.md) file is up-to-date.
@@ -129,3 +130,4 @@ Before creating a new release, make sure to complete the following checklist:
 - [ ] Upload the zip package to the [QGIS Python Plugins Repository](https://plugins.qgis.org).
 - [ ] Tag a new release.
 - [ ] Close the issue named `Prepare for GIS4WRF <VERSION_NUMBER> release`.
+```
