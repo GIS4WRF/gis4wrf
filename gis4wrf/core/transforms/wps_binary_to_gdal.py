@@ -60,25 +60,43 @@ def convert_wps_binary_to_vrt_dataset(folder: str, use_vsi: bool=False) -> Tuple
     if m.proj_id == 'regular_ll':
         crs = CRS.create_lonlat()
     elif m.proj_id == 'lambert':
-        # It doesn't matter what the origin is. This only influences the
-        # projection coordinates to which the data is anchored to but the
-        # georeferencing itself does not change. See down below on how
-        # the geo transform is computed based on the known geographical
-        # coordinates in the data.
-        origin = LonLat(lon=m.stdlon, lat=(m.truelat1+m.truelat2)/2)
+        # The map distortion of a Lambert Conformal projection is fully
+        # defined by the two true latitudes.
+        #
+        # However, the longitude of origin is important for WRF as well,
+        # since we only deal with upright rectangles (the domains) on the map.
+        # For that reason, WRF allows the user to define the "standard longitude"
+        # which is the longitude of origin.
+        #
+        # The latitude of origin on the other hand does not have any significance
+        # here and cannot be specified by the user. The geo transform for a given
+        # grid is computed based on any arbitrary latitude of origin (see below).
+        # In QGIS, the only difference are the displayed projected y coordinates,
+        # but the actual grid georeferencing is unaffected.
+        # This is possible as WRF's georeferencing metadata is based on geographical
+        # reference coordinates for a grid cell, not projected coordinates.
+        arbitrary_latitude_origin = (m.truelat1 + m.truelat2)/2
+        origin = LonLat(lon=m.stdlon, lat=arbitrary_latitude_origin)
         crs = CRS.create_lambert(m.truelat1, m.truelat2, origin)
     elif m.proj_id == 'mercator':
-        # See comment above about origin.
-        origin_lon = m.stdlon if m.stdlon is not None else 0
-        crs = CRS.create_mercator(m.truelat1, origin_lon)
+        # The map distortion of a Mercator projection is fully
+        # defined by the true latitude.
+        # The longitude of origin does not have any significance and
+        # any arbitrary value is handled when computing the geo transform
+        # for a given grid (see below). See also the comment above for Lambert.
+        arbitrary_longitude_origin = 0
+        crs = CRS.create_mercator(m.truelat1, arbitrary_longitude_origin)
     elif m.proj_id == 'albers_nad83':
-        # See comment above about origin.
-        origin = LonLat(lon=m.stdlon, lat=(m.truelat1+m.truelat2)/2)
+        # See the comment above for Lambert. The same applies here.
+        arbitrary_latitude_origin = (m.truelat1 + m.truelat2)/2
+        origin = LonLat(lon=m.stdlon, lat=arbitrary_latitude_origin)
         crs = CRS.create_albers_nad83(m.truelat1, m.truelat2, origin)
     # FIXME handle polar vs polar_wgs84 differently
     elif m.proj_id == 'polar':
+        # See the comment above for Lambert. The same applies here.
         crs = CRS.create_polar(m.truelat1, m.stdlon)
     elif m.proj_id == 'polar_wgs84':
+        # See the comment above for Lambert. The same applies here.
         crs = CRS.create_polar(m.truelat1, m.stdlon)
     else:
         raise UnsupportedError(f'Projection {m.proj_id} is not supported')

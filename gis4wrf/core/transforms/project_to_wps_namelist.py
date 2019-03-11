@@ -68,7 +68,7 @@ def convert_project_to_wps_namelist(project: Project) -> dict:
         wps['geogrid']['truelat2'] = innermost_domain['truelat2']
 
     if map_proj in ['lambert', 'polar']:
-        wps['geogrid']['stand_lon'] = innermost_domain['center_lonlat'][0]
+        wps['geogrid']['stand_lon'] = innermost_domain['stand_lon']
 
     if map_proj == 'lat-lon':
         wps['geogrid']['stand_lon'] = innermost_domain['stand_lon'] # rotation

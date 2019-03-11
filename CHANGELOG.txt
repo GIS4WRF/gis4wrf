@@ -1,7 +1,11 @@
+0.14.0
+- Add support for Polar Stereographic and Mercator projections.
+- Allow Standard Longitude to be specified for Lambert conformal projection (#116).
+
 0.13.2
 - Remove restriction of QGIS max version 3.2.x due to QGIS bug (#98).
 - Update wrf-python wheel URLs for Windows to Python 3.7 (#100).
-- Add workaround for Python 3.7.0 bug in subprocess on Windows (#101)
+- Add workaround for Python 3.7.0 bug in subprocess on Windows (#101).
 
 0.13.1
 - Momentarily limit GIS4WRF installation to QGIS max version 3.2.x due to QGIS bug (#98).
