@@ -123,9 +123,9 @@ Before creating a new release, make sure to complete the following checklist:
 - [ ] Check that the [documentation](https://gis4wrf.github.io/) repository is up to date.
 - [ ] Check that the [README](https://github.com/GIS4WRF/gis4wrf/blob/master/README.md) file is up-to-date.
 - [ ] Add and reference issues and PRs mentioned in the milestone to [`CHANGELOG.txt`](https://github.com/GIS4WRF/gis4wrf/blob/master/CHANGELOG.txt).
-- [ ] Bump the version in the [metadata.txt](https://github.com/GIS4WRF/gis4wrf/gis4wrf/metadata.txt) file.
+- [ ] Bump the version in the [metadata.txt](https://github.com/GIS4WRF/gis4wrf/blob/master/gis4wrf/metadata.txt) file.
 - [ ] Check that all issues and PRs for the version number to release have been closed.
-- [ ] [Create the zip package](#zip-packaging).
+- [ ] [Create the zip package](https://github.com/GIS4WRF/gis4wrf/blob/master/DEVELOP.md#zip-packaging).
 - [ ] Upload the zip package to the [QGIS Python Plugins Repository](https://plugins.qgis.org).
 - [ ] Tag a new release.
 - [ ] Close the issue named `Prepare for GIS4WRF <VERSION_NUMBER> release`.
