@@ -1,6 +1,7 @@
 0.14.0
-- Add support for Polar Stereographic and Mercator projections.
+- Add support for Polar Stereographic and Mercator projections (#117).
 - Allow Standard Longitude to be specified for Lambert conformal projection (#116).
+- Fix bug with WPS Binary loading for Albers NAD83 & Polar projections.
 
 0.13.2
 - Remove restriction of QGIS max version 3.2.x due to QGIS bug (#98).

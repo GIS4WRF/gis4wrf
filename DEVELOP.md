@@ -121,8 +121,8 @@ Before creating a new release, make sure to complete the following checklist:
 - [ ] Create a milestone for the version to release if not done already.
 - [ ] Check that all issues and PRs targeting the new release have been addded to the milestone.
 - [ ] Check that the [documentation](https://gis4wrf.github.io/) repository is up to date.
-- [ ] Check that the [readme](https://github.com/GIS4WRF/gis4wrf/README.md) file is up-to-date.
-- [ ] Add and reference issues and PRs mentioned in the milestone to `CHANGELOG.txt`.
+- [ ] Check that the [README](https://github.com/GIS4WRF/gis4wrf/blob/master/README.md) file is up-to-date.
+- [ ] Add and reference issues and PRs mentioned in the milestone to [`CHANGELOG.txt`](https://github.com/GIS4WRF/gis4wrf/blob/master/CHANGELOG.txt).
 - [ ] Bump the version in the [metadata.txt](https://github.com/GIS4WRF/gis4wrf/gis4wrf/metadata.txt) file.
 - [ ] Check that all issues and PRs for the version number to release have been closed.
 - [ ] [Create the zip package](#zip-packaging).
