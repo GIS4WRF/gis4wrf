@@ -203,6 +203,8 @@ def bootstrap() -> Iterable[Tuple[str,Any]]:
             else:
                 python_qgis_dir = exe_dir
             python = os.path.abspath(os.path.join(python_qgis_dir, 'python-qgis.bat'))
+            if not os.path.isfile(python):
+                python = os.path.abspath(os.path.join(python_qgis_dir, 'python-qgis-ltr.bat'))
 
         # Must use a single pip install invocation, otherwise dependencies of newly
         # installed packages get re-installed and we couldn't pin versions.
