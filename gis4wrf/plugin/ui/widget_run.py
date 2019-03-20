@@ -158,7 +158,7 @@ class RunWidget(QWidget):
         path, _ = QFileDialog.getOpenFileName(
             caption='Open WRF NetCDF File',
             directory=self.project.run_wps_folder,
-            filter='geo_em*;met_em*')
+            filter='WPS output (geo_em* met_em*)')
         if not path:
             return
         self.view_wrf_nc_file.emit(path)
@@ -167,7 +167,7 @@ class RunWidget(QWidget):
         path, _ = QFileDialog.getOpenFileName(
             caption='Open WRF NetCDF File',
             directory=self.project.run_wrf_folder,
-            filter='wrfinput*;wrfout*;wrfrst*')
+            filter='WRF input/output (wrfinput* wrfout* wrfrst*)')
         if not path:
             return
         self.view_wrf_nc_file.emit(path)
