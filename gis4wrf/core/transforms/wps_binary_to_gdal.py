@@ -55,7 +55,8 @@ def convert_wps_binary_to_vrt_dataset(folder: str, use_vsi: bool=False) -> Tuple
     try:
         dtype = dtype_mapping[(m.word_size, m.signed)]
     except KeyError:
-        raise UnsupportedError('word_size/signed combination is not supported')
+        raise UnsupportedError('word_size={} signed={} is not supported'.format(
+            m.word_size, m.signed))
 
     if m.proj_id == 'regular_ll':
         crs = CRS.create_lonlat()
