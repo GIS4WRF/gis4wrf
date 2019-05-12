@@ -264,14 +264,16 @@ def create_index_dict(dataset: gdal.Dataset, tilesize_x: int, tilesize_y: int, y
     if dtype in DTYPE_INT:
         no_data_value = band.GetNoDataValue() # type: Optional[float]
         scale_factor = band.GetScale()
+        if scale_factor is None:
+            scale_factor = 1
         inv_scale_factor = None
-        if band.GetOffset() != 0:
+        if band.GetOffset() is not None and band.GetOffset() != 0:
             raise UnsupportedError('Integer data with offset not supported')
     elif dtype in DTYPE_FLOAT:
         if is_categorical:
             raise UserError('Categorical data must have integer-type data but is float')
-        assert band.GetOffset() == 0
-        assert band.GetScale() == 1
+        assert band.GetOffset() is None or band.GetOffset() == 0, band.GetOffset()
+        assert band.GetScale() is None or band.GetScale() == 1, band.GetScale()
         # WPS binary doesn't support floating point data.
         # Floating point data must be converted to integers by scaling and rounding.
         inv_scale_factor, min_max = compute_inv_scale_factor(read_blocks(band))
@@ -298,7 +300,12 @@ def create_index_dict(dataset: gdal.Dataset, tilesize_x: int, tilesize_y: int, y
     wordsize = gdal.GetDataTypeSize(dtype) // 8
 
     wkt = dataset.GetProjection()
-    srs = osr.SpatialReference(wkt)
+    if wkt:
+        srs = osr.SpatialReference(wkt)
+    else:
+        # assume WGS84
+        srs = osr.SpatialReference()
+        srs.ImportFromEPSG(4326)
 
     truelat1 = truelat2 = stand_lon = None
 
