@@ -12,6 +12,7 @@ import subprocess
 import sysconfig
 import site
 import pkg_resources
+import random
 
 DID_BOOTSTRAP = False
 
@@ -166,7 +167,9 @@ def bootstrap() -> Iterable[Tuple[str,Any]]:
         # which may lead to multiple pkg-0.20.3.dist-info folders for different versions
         # and that would lead to false positives with pkg_resources.get_distribution().
         if os.path.exists(INSTALL_PREFIX):
-            tmp_dir = INSTALL_PREFIX + '_tmp'
+            # Some randomness for the temp folder name, in case an old one is still lying around for some reason. 
+            rnd = random.randint(10000, 99999)
+            tmp_dir = INSTALL_PREFIX + '_tmp_{}'.format(rnd)
             # On Windows, rename + delete allows to re-create the folder immediately,
             # otherwise it may still be locked and we get "Permission denied" errors.
             os.rename(INSTALL_PREFIX, tmp_dir)
