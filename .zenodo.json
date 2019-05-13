@@ -1,6 +1,6 @@
 {
     "title": "The GIS4WRF Plugin",
-    "description": "<p><a href='https://github.com/GIS4WRF/gis4wrf'>GIS4WRF</a> is a free and open source&nbsp;<a href='https://qgis.org/'>QGIS</a>&nbsp;plug-in to help researchers and practitioners with their&nbsp;<a href='https://www.mmm.ucar.edu/weather-research-and-forecasting-model'>Advanced Research Weather Research and Forecasting</a>&nbsp;modelling workflows. GIS4WRF can be used to pre-process input data, run simulations, and visualize or post-process results. For documentation and tutorials see&nbsp;the <a href='https://gis4wrf.github.io'>website</a>.</p>",
+    "description": "<p><a href=\"https://github.com/GIS4WRF/gis4wrf\">GIS4WRF</a> is a free and open source&nbsp;<a href=\"https://qgis.org/\">QGIS</a>&nbsp;plug-in to help researchers and practitioners with their&nbsp;<a href=\"https://www.mmm.ucar.edu/weather-research-and-forecasting-model\">Advanced Research Weather Research and Forecasting</a>&nbsp;modelling workflows.</p> <p>GIS4WRF can be used to pre-process input data, run simulations, and visualize or post-process results. We offer MPI-enabled pre-built binary distributions for Windows, macOS and Linux through <a title=\"WRF-CMake\" href=\"https://github.com/WRF-CMake/WRF\">WRF-CMake</a>.</p><p>For information on how to install GIS4WRF, or check out the main documentation and tutorials, please refer to the GIS4WRF website at <a href=\"https://gis4wrf.github.io\">https://gis4wrf.github.io</a>.</p>",
     "keywords": [
         "GIS",
         "WRF",
@@ -14,11 +14,11 @@
     "creators": [
         {
             "orcid": "0000-0002-7071-7547",
-            "name": "D. Meyer"
+            "name": "Meyer, D."
         },
         {
             "orcid": "0000-0003-3299-1382",
-            "name": "M. Riechert"
+            "name": "Riechert, M."
         }
     ],
     "related_identifiers": [
