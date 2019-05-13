@@ -70,8 +70,8 @@ if PY_MAJORMINOR == ('3', '6'):
     if platform.system() == 'Windows':
         DEPS += [
             Dependency('wrf-python',
-                install='https://ci.appveyor.com/api/buildjobs/sj9br4xl885ncidm/artifacts/wrf_python-1.1.2-cp36-cp36m-win_amd64.whl',
-                min='1.1.2'),
+                install='https://ci.appveyor.com/api/buildjobs/1sosto3otm5spo4s/artifacts/wrf_python-1.3.2-cp36-cp36m-win_amd64.whl',
+                min='1.3.2'),
         ]
 elif PY_MAJORMINOR == ('3', '7'):
     DEPS += [
@@ -82,8 +82,8 @@ elif PY_MAJORMINOR == ('3', '7'):
     if platform.system() == 'Windows':
         DEPS += [
             Dependency('wrf-python',
-                install='https://ci.appveyor.com/api/buildjobs/o3ow5itmyi8nhhk2/artifacts/wrf_python-1.1.2-cp37-cp37m-win_amd64.whl',
-                min='1.1.2'),
+                install='https://ci.appveyor.com/api/buildjobs/472wbd8dnd3exv2w/artifacts/wrf_python-1.3.2-cp37-cp37m-win_amd64.whl',
+                min='1.3.2'),
         ]
 
 # Use a custom folder for the packages to avoid polluting the per-user site-packages.
