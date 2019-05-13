@@ -1,3 +1,8 @@
+0.14.1
+- Fix conversion to WRF Binary if input layer is missing some metadata (#136).
+- Fix Windows installation issues (#124, #138).
+- Fix filename filter not working on Linux (#125).
+
 0.14.0
 - Add support for Polar Stereographic and Mercator projections (#117).
 - Allow Standard Longitude to be specified for Lambert conformal projection (#116).
