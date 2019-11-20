@@ -23,10 +23,10 @@ from gis4wrf.plugin.ui.helpers import dispose_after_delete
 def get_qgis_crs(proj4: str) -> QgsCoordinateReferenceSystem:
     # https://issues.qgis.org/issues/17781#change-85587
     crs = QgsCoordinateReferenceSystem.fromProj4(proj4) # type: QgsCoordinateReferenceSystem
+    assert crs.isValid(), proj4
     if not crs.authid():
         srs_id = crs.saveAsUserCrs('WRF CRS ({})'.format(proj4))
-        assert srs_id != -1
-        assert crs.isValid()
+        assert srs_id != -1, proj4
     return crs
 
 def rect_to_bbox(rect: QgsRectangle) -> BoundingBox2D:
