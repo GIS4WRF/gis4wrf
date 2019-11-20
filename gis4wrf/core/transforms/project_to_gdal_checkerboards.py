@@ -26,7 +26,7 @@ def convert_project_to_gdal_checkerboards(project: Project) -> List[str]:
 
         driver = gdal.GetDriverByName('VRT') # type: gdal.Driver
         vrt_ds = driver.Create(vsi_path, w, h, 0) # type: gdal.Dataset
-        vrt_ds.SetProjection(project.projection.proj4)
+        vrt_ds.SetProjection(project.projection.wkt)
         vrt_ds.SetGeoTransform(geo_transform)
 
         options = [

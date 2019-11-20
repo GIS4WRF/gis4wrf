@@ -159,7 +159,7 @@ def convert_wps_binary_to_vrt_dataset(folder: str, use_vsi: bool=False) -> Tuple
     # create mosaic VRT
     mosaic_vrt_path = '{}/mosaic.vrt'.format(out_dir)
     vrt = driver.Create(mosaic_vrt_path, xsize, ysize, zsize, dtype) # type: gdal.Dataset
-    vrt.SetProjection(crs.proj4)
+    vrt.SetProjection(crs.wkt)
     vrt.SetGeoTransform(geo_transform)
 
     if m.categorical:
