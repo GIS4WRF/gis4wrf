@@ -71,7 +71,7 @@ if PY_MAJORMINOR == ('3', '6'):
     if platform.system() == 'Windows':
         DEPS += [
             Dependency('wrf-python',
-                install='https://ci.appveyor.com/api/buildjobs/1sosto3otm5spo4s/artifacts/wrf_python-1.3.2-cp36-cp36m-win_amd64.whl',
+                install='https://7933911d6844c6c53a7d-47bd50c35cd79bd838daf386af554a83.ssl.cf2.rackcdn.com/wrf_python-1.3.2-cp36-cp36m-win_amd64.whl',
                 min='1.3.2'),
         ]
 elif PY_MAJORMINOR == ('3', '7'):
@@ -83,7 +83,7 @@ elif PY_MAJORMINOR == ('3', '7'):
     if platform.system() == 'Windows':
         DEPS += [
             Dependency('wrf-python',
-                install='https://ci.appveyor.com/api/buildjobs/472wbd8dnd3exv2w/artifacts/wrf_python-1.3.2-cp37-cp37m-win_amd64.whl',
+                install='https://7933911d6844c6c53a7d-47bd50c35cd79bd838daf386af554a83.ssl.cf2.rackcdn.com/wrf_python-1.3.2-cp37-cp37m-win_amd64.whl',
                 min='1.3.2'),
         ]
 
