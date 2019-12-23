@@ -46,7 +46,7 @@ def read_grib_files_metadata(paths: List[str]) -> Tuple[GribMetadata, List[GribM
         if not variables:
             variables = meta.variables
         else:
-            assert meta.variables == variables
+            variables.update(meta.variables)
             assert not set(meta.times).intersection(times)
         times.extend(meta.times)
 
