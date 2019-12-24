@@ -20,9 +20,9 @@ A clear and concise description of what you expected to happen.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
-**Operating System Information (please complete the following information):**
- - OS: [e.g. Windows]
- - Version [e.g. 10]
+**System Information (please complete the following information):**
+ - OS: [e.g. Windows 10]
+ - QGIS: [e.g. 3.10.0]
 
 **Additional context**
 Add any other context about the problem here.
