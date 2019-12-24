@@ -180,6 +180,7 @@ class CRS(object):
         srs = self.srs
         datum = self.srs.GetAttrValue('datum')
         srs_out = osr.SpatialReference()
+        fix_axis_order(srs_out)
         srs_out.SetGeogCS('', datum, '', srs.GetSemiMajor(), srs.GetInvFlattening())
         assert not srs_out.EPSGTreatsAsLatLong(), 'expected lon/lat axis order'
         return srs_out
@@ -191,3 +192,8 @@ class CRS(object):
         transform = osr.CoordinateTransformation(srs_in, srs_out)
         point_geom.Transform(transform)
         return Coordinate2D(x=point_geom.GetX(), y=point_geom.GetY())
+
+def fix_axis_order(srs):
+    # https://github.com/OSGeo/gdal/blob/release/3.0/gdal/MIGRATION_GUIDE.TXT
+    if hasattr(osr, 'OAMS_TRADITIONAL_GIS_ORDER'):
+        srs.SetAxisMappingStrategy(osr.OAMS_TRADITIONAL_GIS_ORDER)
