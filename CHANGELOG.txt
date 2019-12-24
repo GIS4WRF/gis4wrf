@@ -1,3 +1,8 @@
+0.14.2
+- Fix issues when using GDAL 3, e.g. QGIS >= 3.10 on Windows (#152, #158, #157).
+- Fix crash if GRIB files within one folder have different variables (#151, #156).
+- Fix Windows installation issue (#155).
+
 0.14.1
 - Fix conversion to WRF Binary if input layer is missing some metadata (#136).
 - Fix Windows installation issues (#124, #138).
