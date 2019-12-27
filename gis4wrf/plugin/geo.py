@@ -15,6 +15,8 @@ from qgis.core import (
 )
 from qgis.gui import QgsMapCanvas
 
+from PyQt5.QtWidgets import QMessageBox
+
 import gis4wrf.core
 from gis4wrf.core import BoundingBox2D
 from gis4wrf.plugin.ui.helpers import dispose_after_delete
@@ -26,7 +28,13 @@ def get_qgis_crs(proj4: str) -> QgsCoordinateReferenceSystem:
     assert crs.isValid(), proj4
     if not crs.authid():
         srs_id = crs.saveAsUserCrs('WRF CRS ({})'.format(proj4))
-        assert srs_id != -1, proj4
+        if srs_id == -1:
+            QMessageBox.critical(
+                None, 'QGIS version too old', 
+                'Your QGIS version is too old. See <a href="https://github.com/GIS4WRF/gis4wrf/issues/149#issuecomment-569264760">github.com/GIS4WRF/gis4wrf/issues/149</a> for details.',
+                QMessageBox.Ok,
+                QMessageBox.Ok)
+        #assert srs_id != -1, proj4
     return crs
 
 def rect_to_bbox(rect: QgsRectangle) -> BoundingBox2D:
