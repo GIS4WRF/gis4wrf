@@ -111,7 +111,7 @@ def read_wps_binary_index_file(folder: str) -> WPSBinaryIndexMetadata:
         raise UserError(f'{index_path} is missing, this is not a valid WPS Binary dataset')
     with open(index_path) as f:
         index = '\n'.join(line.strip() for line in f.readlines())
-    parser = ConfigParser()
+    parser = ConfigParser(interpolation=None)
     parser.read_string('[root]\n' + index)
     meta = parser['root']
 
