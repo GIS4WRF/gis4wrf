@@ -58,9 +58,6 @@ DEPS = [
     #Dependency('pandas', install='0.20.3', min=None) # for xarray
 ]
 # For some packages we need to use different versions depending on the Python version used.
-# Also, wrf-python does not have official wheels yet, see https://github.com/NCAR/wrf-python/issues/42.
-# Instead, at least for Windows, we install our own.
-# macOS/Linux wheels are built via Travis CI which doesn't provide free artifact storage.
 if PY_MAJORMINOR == ('3', '6'):
     DEPS += [
         # NetCDF4 >= 1.3.0 is built against too recent numpy version.
@@ -68,24 +65,12 @@ if PY_MAJORMINOR == ('3', '6'):
             install='1.2.9',
             min='None'),
     ]
-    if platform.system() == 'Windows':
-        DEPS += [
-            Dependency('wrf-python',
-                install='https://7933911d6844c6c53a7d-47bd50c35cd79bd838daf386af554a83.ssl.cf2.rackcdn.com/wrf_python-1.3.2-cp36-cp36m-win_amd64.whl',
-                min='1.3.2'),
-        ]
 elif PY_MAJORMINOR == ('3', '7'):
     DEPS += [
         Dependency('netCDF4',
             install='1.4.2',
             min='None'),
     ]
-    if platform.system() == 'Windows':
-        DEPS += [
-            Dependency('wrf-python',
-                install='https://7933911d6844c6c53a7d-47bd50c35cd79bd838daf386af554a83.ssl.cf2.rackcdn.com/wrf_python-1.3.2-cp37-cp37m-win_amd64.whl',
-                min='1.3.2'),
-        ]
 
 # Use a custom folder for the packages to avoid polluting the per-user site-packages.
 # This also avoids any permission issues.
