@@ -1,3 +1,7 @@
+0.14.3
+- Fix issue opening WPS datasets with special characters in metadata (#167).
+- Fix installation issue on Windows due to inavailability of Python wheels for wrf-python (#176).
+
 0.14.2
 - Fix issues when using GDAL 3, e.g. QGIS >= 3.10 on Windows (#152, #158, #157).
 - Fix crash if GRIB files within one folder have different variables (#151, #156).
