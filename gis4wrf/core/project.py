@@ -471,7 +471,7 @@ class Project(object):
 
         # Remove everything except real.exe output files to ensure
         # that no old files are reused by wrf.exe.
-        clean_exclude = ['wrfinput_', 'wrfbdy_', 'wrfrst_']
+        clean_exclude = ['wrfinput_', 'wrfbdy_', 'wrfrst_', 'wrffdda_', 'wrfsfdda_', 'wrflowinp_']
         for filename in os.listdir(self.run_wrf_folder):
             if any(filename.startswith(exclude) for exclude in clean_exclude):
                 continue
