@@ -423,8 +423,17 @@ class Project(object):
         # TODO create separate functions that clean outputs from previous runs, selectively for geogrid etc.
         if not os.path.exists(wps_folder):
             raise WPSDistributionError(f'{wps_folder} does not exist')
-        self.update_wps_namelist()
+        
         os.makedirs(self.run_wps_folder, exist_ok=True)
+
+        # Remove old metgrid output files, just in case the met dataset time range
+        # has been changed. met_em* files contain date/time in their filenames
+        # and keeping old/unused files may lead to trouble in subsequent steps.
+        # See https://github.com/GIS4WRF/gis4wrf/issues/183.
+        for path in glob.glob(os.path.join(self.run_wps_folder, 'met_em.*.nc')):
+            os.remove(path)
+
+        self.update_wps_namelist()
         # We use the default relative folder locations (./geogrid, ./metgrid)
         # to avoid having to hard-code custom folders in the namelist files.
         geogrid_folder = os.path.join(self.run_wps_folder, 'geogrid')
