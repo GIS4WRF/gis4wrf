@@ -213,7 +213,7 @@ time_control:
     description: name of input file for lower boundary file; works with sst_update
       = 1
     type: str
-    example: wrflowinp_d<domai n>
+    example: wrflowinp_d<domain>
   auxinput4_interval:
     description: file interval in minutes for lower boundary file; works with sst_update
       = 1
@@ -360,7 +360,7 @@ time_control:
   input_outname:
     description: Output file name from 3DVAR
     type: str
-    example: '"wrf_3dvar_input_d< domain>_<date>"'
+    example: wrf_3dvar_input_d<domain>_<date>
   inputout_begin_y:
     description: beginning year to write 3DVAR data
     type: list
@@ -1170,7 +1170,6 @@ physics:
     description: limit on temp tendency from microphysics latent heating when radar
       data assimilation is used
     type: int
-    example: ''
   gsfcgce_hail:
     description: Whether to run gsfcgce scheme with grauper or hail
     type: int
@@ -1191,7 +1190,6 @@ physics:
     description: (default) CCN concentration; used by WDM schemes (previously afwa_ccn_conc,
       new in V3.6.1).  (new name since V3.7)
     type: real
-    example: ''
   hail_opt:
     description: hail/graupel switch for WSM6, WDM6, and Morrison schemes (previously
       afwa_hail_opt, new in V3.6.1).  (new name since V3.7)
@@ -1589,7 +1587,6 @@ physics:
     type: list
     itemtype: int
     minlen: max_dom
-    example: ''
   topo_wind:
     description: turns on topographic surface wind correction, and  requires extra
       input from geogrid. YSU PBL only.  (new since V3.4)
@@ -1705,7 +1702,6 @@ physics:
     type: list
     itemtype: int
     minlen: max_dom
-    example: ''
   opt_thcnd:
     description: option to treat thermal conductivity in Noah LSM . (new since V3.8)
     type: int
@@ -1740,7 +1736,6 @@ physics:
     description: (default) number of mosaic landuse categories in a grid cell.  (new
       since V3.6)
     type: int
-    example: ''
   grav_settling:
     description: gravitational settling of fog/cloud droplets (Now works for any PBL
       scheme, since V3.5.1)
@@ -1793,7 +1788,6 @@ physics:
     type: list
     itemtype: int
     minlen: max_dom
-    example: ''
   kfeta_trigger:
     description: KF trigger option (cu_physics=1 only)
     type: int
@@ -2096,7 +2090,6 @@ physics:
     description: days over which tnm (deep layer soil temp) is computed using skin
       temperature
     type: int
-    example: ''
   sst_skin:
     description: Calculation of SST
     type: int
@@ -2159,7 +2152,6 @@ physics:
   oml_gamma:
     description: (K m-1) lapse rate in deep water. (below the mixed layer) for oml
     type: real
-    example: ''
   oml_relaxation_time:
     description: 'relaxation time (seconds) of mixed layer ocean model back to original
       values (e.g. value: 259200 sec - 3 days).  (new since V3.8)'
@@ -2356,13 +2348,11 @@ physics:
     type: list
     minlen: max_dom
     itemtype: int
-    example: ''
   iccg_prescribed_den:
     description: Denominator of user-specified prescribed IC:CG
     type: list
     minlen: max_dom
     itemtype: int
-    example: ''
   windfarm_opt:
     description: simulates the effets of wind turbines in the atmospheric evolution
       (default is  0 = off). For Wind Turbine Drag Parameterization  (new since V3.3)
@@ -2893,7 +2883,7 @@ fdda:
     description: name of fdda input file that will be produced when running real.
       (For Grid Nudging)
     type: str
-    example: '"wrffdda_d<domain>"'
+    example: wrffdda_d<domain>
   gfdda_interval_m:
     description: time interval (in mins) between analysis times. (For Grid Nudging)
     type: list
@@ -3035,7 +3025,7 @@ fdda:
     description: defined name for surface nuding input file (from program obsgrid).
       (For Grid Nudging)
     type: str
-    example: '"wrfsfdda_d<domain >"'
+    example: wrfsfdda_d<domain>
   sgfdda_interval_m:
     description: time interval (in mins) between surface analsysis times. (For Grid
       Nudging)
@@ -3189,7 +3179,6 @@ fdda:
     type: list
     minlen: max_dom
     itemtype: real
-    example: ''
   obs_nudge_temp:
     description: set to =1 to nudge temperatures (default is 0=off). (For Obs Nudging)
     type: list
@@ -3204,7 +3193,6 @@ fdda:
     type: list
     minlen: max_dom
     itemtype: real
-    example: ''
   obs_nudge_mois:
     description: set to =1 to nudge water vapor mixing ratio (default is 0=off). (For
       Obs Nudging)
