@@ -73,12 +73,12 @@ def read_grib_file_metadata(path: str) -> GribMetadata:
         var_unit = meta['GRIB_UNIT'] # "[m/s]"
         var_name = meta['GRIB_ELEMENT'] # "VGRD"
         var_label = meta['GRIB_COMMENT'] # "v-component of wind [m/s]"
-        ref_time = meta['GRIB_REF_TIME'] # "  1438754400 sec UTC"
+        valid_time = meta['GRIB_VALID_TIME'] # "  1438754400 sec UTC"
 
         var_label_without_unit = var_label.replace(var_unit, '').strip()
         variables[var_name] = var_label_without_unit
         
-        unix = int(''.join(c for c in ref_time if c.isdigit()))
+        unix = int(''.join(c for c in valid_time if c.isdigit()))
         time = datetime.utcfromtimestamp(unix)
         times.add(time)
 
