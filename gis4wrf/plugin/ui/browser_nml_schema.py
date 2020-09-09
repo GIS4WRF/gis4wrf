@@ -1,4 +1,5 @@
 from typing import Tuple, Set, Any
+import html
 
 from PyQt5.QtWidgets import QTextBrowser
 
@@ -41,7 +42,7 @@ def get_schema_html(nml_schema: dict) -> Tuple[str, Set[str]]:
             options = variable.get('options')
 
             nml_html += f'<h3><a name="{var_name}">{var_name}</a></h3>'
-            nml_html += f'<p>{description}</p>'
+            nml_html += f'<p>{html.escape(description)}</p>'
             nml_html += f'Type: {type_}<br>'
             if min_len is not None:
                 if isinstance(min_len, str):
@@ -57,9 +58,9 @@ def get_schema_html(nml_schema: dict) -> Tuple[str, Set[str]]:
                     if default == []:
                         nml_html += f'Default: empty list'
                     else:
-                        nml_html += f'Default: list of <code>{default_}</code>'
+                        nml_html += f'Default: list of <code>{html.escape(default_)}</code>'
                 else:
-                    nml_html += f'Default: <code>{default_}</code><br>'
+                    nml_html += f'Default: <code>{html.escape(default_)}</code><br>'
             if example is not None:
                 val_type = item_type if item_type else type_
                 if isinstance(example, str) and val_type != 'str':
@@ -68,16 +69,16 @@ def get_schema_html(nml_schema: dict) -> Tuple[str, Set[str]]:
                     pass
                 else:
                     example = to_fortran(example)
-                nml_html += f'Example: <code>{example}</code><br>'
+                nml_html += f'Example: <code>{html.escape(example)}</code><br>'
             if options:
                 if isinstance(options, list):
-                    nml_html += 'Options: <code>' + ', '.join(map(to_fortran, options)) + '</code><br>'
+                    nml_html += f'Options: <code>{html.escape(", ".join(map(to_fortran, options)))}</code><br>'
                 else:
                     nml_html += '<br>Options: <table border=1>'
                     for val, description in options.items():
                         val = to_fortran(val)
-                        nml_html += f'<tr><td width="30%" align="center"><code>{val}</code></td>'
-                        nml_html += f'<td width="70%">{description}</td></tr>'
+                        nml_html += f'<tr><td width="30%" align="center"><code>{html.escape(val)}</code></td>'
+                        nml_html += f'<td width="70%">{html.escape(description)}</td></tr>'
                     nml_html += '</table>'
 
     nml_html += '</html>'
