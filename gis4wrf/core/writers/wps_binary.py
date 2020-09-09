@@ -298,11 +298,16 @@ def create_index_dict(dataset: gdal.Dataset, tilesize_x: int, tilesize_y: int, y
 
     signed = gdal_dtype_is_signed(dtype)
     wordsize = gdal.GetDataTypeSize(dtype) // 8
-
-    wkt = dataset.GetProjection()
-    if wkt:
-        srs = osr.SpatialReference(wkt)
-    else:
+    
+    srs = None
+    try:
+        srs = dataset.GetSpatialRef()
+    except AttributeError:
+        # Fall-back for GDAL < 3.
+        wkt = dataset.GetProjection()
+        if wkt:
+            srs = osr.SpatialReference(wkt)
+    if srs is None:
         # assume WGS84
         srs = osr.SpatialReference()
         srs.ImportFromEPSG(4326)
@@ -319,9 +324,16 @@ def create_index_dict(dataset: gdal.Dataset, tilesize_x: int, tilesize_y: int, y
     datum_mismatch = None
 
     if srs.IsGeographic():
-        if srs.EPSGTreatsAsLatLong():
-            raise UnsupportedError("Unsupported axis order: Lat/Lon, must be Lon/Lat")
+        epsg_is_latlon = srs.EPSGTreatsAsLatLong()
+        try:
+            data_is_latlon = epsg_is_latlon and srs.GetAxisMappingStrategy() == osr.OAMS_AUTHORITY_COMPLIANT
+        except AttributeError:
+            # Fall-back for GDAL < 3.
+            data_is_latlon = False
 
+        if data_is_latlon:
+            raise UnsupportedError("Unsupported data axis order: Lat/Lon, must be Lon/Lat")
+        
         if not CRS.is_wrf_sphere_datum(srs):
             datum_mismatch = DatumMismatch(
                 expected='WRF Sphere (6370km)',
