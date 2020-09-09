@@ -1,5 +1,9 @@
-0.14.4 (next release)
+0.14.4
+- Fix WPS conversion issue (lat/lon axis order) when using newer QGIS versions. (#165)
 - Fix issue re-running WRF when changing met dataset date/time range (#183).
+- Fix date handling of forecast met datasets (#182).
+- Fix issue running WRF with nudging options (#164).
+- Fix minor issues in namelist schema help view (typos & HTML escaping). (#186, #187)
 
 0.14.3
 - Fix issue opening WPS datasets with special characters in metadata (#167).
