@@ -128,7 +128,7 @@ Before creating a new release, make sure to complete the following checklist:
 - [ ] [Create the zip package](https://github.com/GIS4WRF/gis4wrf/blob/master/DEVELOP.md#zip-packaging).
 - [ ] Test the zip package locally.
 - [ ] Upload the zip package to the [QGIS Python Plugins Repository](https://plugins.qgis.org).
-- [ ] Confirm that the package has bee approved on the [QGIS Python Plugins Repository](https://plugins.qgis.org).
+- [ ] Confirm that the package has been approved on the [QGIS Python Plugins Repository](https://plugins.qgis.org).
 - [ ] Create a new release.
 - [ ] Close the issue named `Prepare for GIS4WRF <VERSION_NUMBER> release`.
 ```
