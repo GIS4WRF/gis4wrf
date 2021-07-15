@@ -110,7 +110,9 @@ class QGISPlugin():
 
     def init_logging(self) -> None:
         levels = {
-            logging.NOTSET: getattr(Qgis, 'None'),
+            # https://github.com/qgis/QGIS/issues/42996
+            logging.NOTSET: Qgis.NoLevel if hasattr(Qgis, 'NoLevel') else getattr(Qgis, 'None'),
+            
             logging.DEBUG: Qgis.Info,
             logging.INFO: Qgis.Info,
             logging.WARN: Qgis.Warning,
