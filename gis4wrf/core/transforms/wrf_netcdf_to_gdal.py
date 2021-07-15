@@ -149,7 +149,7 @@ def convert_wrf_nc_var_to_gdal_dataset(
                 var = wrf.getvar(ds, var_name, timeidx=wrf.ALL_TIMES, squeeze=False, meta=False)
             if interp_level is not None:
                 vert = wrf.getvar(ds, interp_vert_name, timeidx=wrf.ALL_TIMES, squeeze=False, meta=False)
-                var = wrf.interplevel(var, vert, interp_level, missing=no_data, meta=False)
+                var = wrf.interplevel(var, vert, interp_level, missing=no_data, squeeze=False, meta=False)
                 dims = MASS
             else:
                 dims = DIAG_DIMS[var_name]
