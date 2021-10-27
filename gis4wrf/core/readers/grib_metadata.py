@@ -24,11 +24,15 @@ class GribMetadata(object):
         first, second = self.times[:2]
         return int((second - first).total_seconds())
 
+def is_grib_file(path: str) -> bool:
+    with open(path, 'rb') as f:
+        return f.read(4) == b'GRIB'
+
 @export
 def read_grib_folder_metadata(folder: str) -> Tuple[GribMetadata, List[GribMetadata]]:
     paths = [os.path.join(folder, filename)
-             for filename in os.listdir(folder)
-             if not filename.endswith('.aux.xml')]
+             for filename in os.listdir(folder)]
+    paths = [path for path in paths if is_grib_file(path)]
     return read_grib_files_metadata(paths)
 
 @export
