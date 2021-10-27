@@ -65,10 +65,18 @@ if PY_MAJORMINOR == ('3', '6'):
             install='1.2.9',
             min='None'),
     ]
+# QGIS 3.16
 elif PY_MAJORMINOR == ('3', '7'):
     DEPS += [
         Dependency('netCDF4',
             install='1.4.2',
+            min='None'),
+    ]
+# QGIS 3.18+
+elif PY_MAJORMINOR == ('3', '9'):
+    DEPS += [
+        Dependency('netCDF4',
+            install='1.5.7',
             min='None'),
     ]
 
