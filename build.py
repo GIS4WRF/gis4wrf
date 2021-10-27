@@ -9,8 +9,10 @@ import glob
 from fnmatch import fnmatch
 import zipfile
 import shutil
+import json
 
 import PyQt5.pyrcc_main as pyrcc
+import yaml
 
 PKG_NAME = 'gis4wrf'
 
@@ -21,7 +23,8 @@ ZIP_FILE = PKG_DIR + '.zip'
 # All entries will be interpreted with wildcards around them
 ZIP_EXCLUDES = [
     '__pycache__',
-    '.gif'
+    '.gif',
+    '.yml'
 ]
 
 # Create QT resources file
@@ -33,6 +36,17 @@ PYQT_RESOURCE_FILE = os.path.join(QT_RESOURCES_DIR, 'resources.py')
 if not pyrcc.processResourceFile(QT_RESOURCES, PYQT_RESOURCE_FILE, listFiles=False):
     print('Error creating PyQT resources file', file=sys.stderr)
     sys.exit(1)
+
+# Convert YAML to JSON
+
+YAML_DIR = os.path.join(PKG_DIR, 'core', 'readers', 'nml_schemas')
+YAML_PATHS = glob.glob(os.path.join(YAML_DIR, '*.yml'))
+JSON_PATHS = [os.path.splitext(yaml_path)[0] + '.json' for yaml_path in YAML_PATHS]
+
+for yaml_path, json_path in zip(YAML_PATHS, JSON_PATHS):
+    with open(yaml_path, 'r') as yaml_file:
+        with open(json_path, 'w') as json_file:
+            json.dump(yaml.safe_load(yaml_file), json_file, indent=1)
 
 # Symlink plugin into QGIS plugins folder
 

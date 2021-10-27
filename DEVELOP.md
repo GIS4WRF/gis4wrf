@@ -64,6 +64,12 @@ Some files have to be generated. Run the following from the repository root to (
 > "C:\Program Files\QGIS <VERSION_NUMBER>\bin\python-qgis.bat" build.py
 ```
 
+If you get an import error for `yaml`, start an administrator command prompt and run:
+
+```
+> "C:\Program Files\QGIS <VERSION_NUMBER>\bin\python-qgis.bat" -m pip install pyyaml
+```
+
 For fast iteration, the following two steps are recommended:
 
 1. Install the [QGIS Plugin Reloader](https://plugins.qgis.org/plugins/plugin_reloader/) plugin.
