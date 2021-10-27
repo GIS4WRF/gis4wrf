@@ -42,7 +42,6 @@ DEPS = [
 
     #Dependency('xarray', install='0.10.0', min=None),
     Dependency('f90nml', install='1.0.2', min=None),
-    Dependency('pyyaml', install='3.13', min=None),
 
     # Indirect dependencies.
     # Indirect dependencies are dependencies that we don't import directly in our code but

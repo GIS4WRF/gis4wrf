@@ -5,8 +5,8 @@ from typing import Dict, Any, Union, Optional
 import os
 from io import StringIO
 import re
+import json
 
-import yaml
 import f90nml
 
 from gis4wrf.core.util import export
@@ -50,9 +50,9 @@ def read_namelist(path: Union[str, StringIO], schema_name: Optional[str]=None) -
 @export
 def get_namelist_schema(name: str) -> dict:
     if name not in SCHEMA_CACHE:
-        schema_path = os.path.join(SCHEMA_DIR, name + '.yml')
+        schema_path = os.path.join(SCHEMA_DIR, name + '.json')
         with open(schema_path, encoding='utf-8') as f:
-            schema = yaml.load(f)
+            schema = json.load(f)
         # Enforce lower-case keys to ease processing.
         # Note that Fortran is case-insensitive.
         schema = {

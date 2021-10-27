@@ -107,7 +107,8 @@ namelist.wps
 namelist.input
 
 # Auto-generated
-resources.py
+gis4wrf/plugin/resources/resources.py
+gis4wrf/core/readers/nml_schemas/*.json
 *.zip
 
 # mypy linter cache
