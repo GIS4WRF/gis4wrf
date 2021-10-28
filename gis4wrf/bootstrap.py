@@ -40,7 +40,6 @@ Dependency = namedtuple('Dep', ['name', 'min', 'install'])
 DEPS = [
     # Direct dependencies.
 
-    #Dependency('xarray', install='0.10.0', min=None),
     Dependency('f90nml', install='1.0.2', min=None),
 
     # Indirect dependencies.
@@ -52,9 +51,6 @@ DEPS = [
     # bugs where the latest version is binary incompatible with older versions of numpy.
     # And since we can't update numpy ourselves, we need to use older versions of those indirect
     # dependencies which are built against older versions of numpy.
-
-    # https://github.com/pandas-dev/pandas/issues/18967
-    #Dependency('pandas', install='0.20.3', min=None) # for xarray
 ]
 # For some packages we need to use different versions depending on the Python version used.
 if PY_MAJORMINOR == ('3', '6'):
@@ -63,19 +59,40 @@ if PY_MAJORMINOR == ('3', '6'):
         Dependency('netCDF4',
             install='1.2.9',
             min='None'),
+        # dependency of netCDF4
+        Dependency('cftime',
+            install='1.5.1',
+            min='None'),
     ]
-# QGIS 3.16
 elif PY_MAJORMINOR == ('3', '7'):
     DEPS += [
         Dependency('netCDF4',
             install='1.4.2',
             min='None'),
+        # dependency of netCDF4
+        Dependency('cftime',
+            install='1.5.1',
+            min='None'),
     ]
-# QGIS 3.18+
 elif PY_MAJORMINOR == ('3', '9'):
     DEPS += [
         Dependency('netCDF4',
             install='1.5.7',
+            min='None'),
+        # dependency of netCDF4
+        Dependency('cftime',
+            install='1.5.1',
+            min='None'),
+    ]
+# best effort
+else:
+    DEPS += [
+        Dependency('netCDF4',
+            install='1.*',
+            min='None'),
+        # dependency of netCDF4
+        Dependency('cftime',
+            install='1.*',
             min='None'),
     ]
 
