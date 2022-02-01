@@ -263,7 +263,7 @@ class WaitDialog(IgnoreKeyPressesDialog):
         self.setWindowTitle(title)
         self.setLayout(vbox)
         self.setMaximumHeight(0)
-        self.setFixedWidth(parent.width() * 0.5)
+        self.setFixedWidth(parent.width() // 2)
         self.show()
     
     def update_progress(self, progress: float) -> None:
