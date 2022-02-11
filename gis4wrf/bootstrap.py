@@ -125,11 +125,19 @@ def bootstrap() -> Iterable[Tuple[str,Any]]:
         if not path.startswith(INSTALL_PREFIX):
             # On macOS, some global paths are added as well which we don't want.
             continue
+        
+        # Distribution installs of Python in Ubuntu return "dist-packages"
+        # instead of "site-packages". But 'pip install --prefix ..' always
+        # uses "site-packages" as the install location.
+        path = path.replace('dist-packages', 'site-packages')
+
         yield ('log', 'Added {} as module search path'.format(path))
+        
         # Make sure directory exists as it may otherwise be ignored later on when we need it.
         # This is because Python seems to cache whether module search paths do not exist to avoid
         # redundant lookups.
         os.makedirs(path, exist_ok=True)
+
         site.addsitedir(path)
         # pkg_resources doesn't listen to changes on sys.path.
         pkg_resources.working_set.add_entry(path)
