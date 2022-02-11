@@ -62,6 +62,24 @@ def get_namelist_schema(name: str) -> dict:
             }
             for group_name, group in schema.items()
         }
+        # Convert non-string "options" keys to their type.
+        for _, group in schema.items():
+            for _, var_val in group.items():
+                if 'options' in var_val:
+                    if var_val['type'] == 'list':
+                        t = var_val['itemtype']
+                    else:
+                        t = var_val['type']
+                    if t == 'int':
+                        parsefn = int
+                    elif t == 'bool':
+                        parsefn = lambda k: k.lower() == 'true'
+                    else:
+                        continue
+                    var_val['options'] = {
+                        parsefn(k): v
+                        for k, v in var_val['options'].items()
+                    }
         SCHEMA_CACHE[name] = schema
     return SCHEMA_CACHE[name]
 
@@ -86,14 +104,14 @@ def verify_namelist_var(var_name: str, var_val: Union[str,int,float,bool,list],
     options = schema_var.get('options')
     if not isinstance(var_val, list):
         if isinstance(options, dict):
-            options = list(map(schema_type, options.keys()))
+            options = list(options.keys())
         if options and var_val not in options:
             raise ValueError('Variable "{}" has the value "{}" but must be one of {}'.format(
                 var_name, var_val, options))
     else:
         item_type = SCHEMA_VAR_TYPES[schema_var['itemtype']]
         if isinstance(options, dict):
-            options = list(map(item_type, options.keys()))
+            options = list(options.keys())
         # Currently, min/max/regex is only used for list variables in the schema.
         val_min = schema_var.get('min') # type: Optional[int]
         val_max = schema_var.get('max') # type: Optional[int]
