@@ -29,7 +29,7 @@ class AboutDialog(QDialog):
         geom = QGuiApplication.primaryScreen().geometry()
         w, h = geom.width(), geom.height()
         self.setWindowTitle("About")
-        self.setMinimumSize(w * 0.5, h * 0.5)
+        self.setMinimumSize(w // 2, h // 2)
         font = QFont('Monospace', 9)
         font.setStyleHint(QFont.TypeWriter)
         
