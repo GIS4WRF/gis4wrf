@@ -28,3 +28,33 @@ def test_wps_namelist_verify_invalid():
     }
     with pytest.raises(ValueError):
         gis4wrf.core.verify_namelist(namelist, 'wps')
+
+
+def test_wrf_namelist_verify_valid():
+    namelist = {
+        'time_control': {
+            'start_year': [2018, 2018],
+            'interval_seconds': 21600,
+            'input_from_file': [True, True],
+            'restart': False,
+            'restart_interval': 7200,
+            'io_form_history': 2
+        },
+        'domains': {
+            'time_step': 40,
+            'max_dom': 2
+        },
+        'physics': {
+            'physics_suite': 'CONUS'
+        }
+    }
+    gis4wrf.core.verify_namelist(namelist, 'wrf')
+
+def test_wrf_namelist_verify_invalid():
+    namelist = {
+        'time_control': {
+            'start_year': ['2018']
+        }
+    }
+    with pytest.raises(TypeError):
+        gis4wrf.core.verify_namelist(namelist, 'wrf')
