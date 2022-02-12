@@ -1,17 +1,18 @@
 # GIS4WRF (https://doi.org/10.5281/zenodo.1288569)
 # Copyright (c) 2018 D. Meyer and M. Riechert. Licensed under MIT.
 
-from typing import Iterable
+from typing import Iterable, Union
+from pathlib import Path
 
 import requests
 from requests.adapters import HTTPAdapter
-from requests.packages.urllib3.util.retry import Retry
+from urllib3.util.retry import Retry
 
 def download_file(url: str, path: str, session=None) -> None:
     for _ in download_file_with_progress(url, path, session):
         pass
 
-def download_file_with_progress(url: str, path: str, session=None) -> Iterable[float]:
+def download_file_with_progress(url: str, path: Union[str, Path], session=None) -> Iterable[float]:
     new_session = session is None
     if new_session:
         session = requests_retry_session()
