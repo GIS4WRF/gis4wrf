@@ -23,7 +23,7 @@ def convert_wps_binary_to_vrt_dataset(folder: str, use_vsi: bool=False) -> Tuple
         raise UnsupportedError('Rotated pole system is not supported')
 
     # scan folder for available tiles
-    tile_filename_re = re.compile('^({d})-({d})\.({d})-({d})$'.format(d='\d{' + str(m.filename_digits) + '}'))
+    tile_filename_re = re.compile('^({d})-({d})\\.({d})-({d})$'.format(d='\\d{' + str(m.filename_digits) + '}'))
     tiles = []
     for filename in os.listdir(folder):
         match = tile_filename_re.match(filename)

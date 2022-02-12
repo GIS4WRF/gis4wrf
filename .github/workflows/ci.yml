@@ -13,7 +13,10 @@ jobs:
     
     # Login shell needed for conda to activate env
     - shell: bash -l {0}
-      run: conda install numpy gdal requests pytest
+      run: conda install numpy gdal requests pyqt pyyaml pytest
+    
+    - shell: bash -l {0}
+      run: python build.py
     
     - shell: bash -l {0}
       run: python -m pytest -v -s
