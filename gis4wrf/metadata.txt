@@ -1,6 +1,6 @@
 [general]
 name=GIS4WRF
-version=0.14.6
+version=0.14.7
 author=D. Meyer and M. Riechert
 email=gis4wrf@mail.com
 description=Toolkit for pre- and post-processing, visualizing, and running simulations in WRF

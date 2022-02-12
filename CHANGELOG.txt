@@ -1,3 +1,9 @@
+0.14.7
+- Use new RDA API for downloading met datasets (#228).
+- Fix namelist editor handling of non-string options (#232).
+- Fix dependency installation on Ubuntu (#234).
+- Fix issue loading the plugin with newer Qt versions (#229).
+
 0.14.6
 - Fix plugin loading in QGIS 3.16 (#223).
 
