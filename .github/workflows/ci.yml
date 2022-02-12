@@ -20,3 +20,8 @@ jobs:
     
     - shell: bash -l {0}
       run: python -m pytest -v -s
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: package
+        path: gis4wrf.zip
