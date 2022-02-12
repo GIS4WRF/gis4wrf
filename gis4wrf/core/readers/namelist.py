@@ -66,6 +66,8 @@ def get_namelist_schema(name: str) -> dict:
         for _, group in schema.items():
             for _, var_val in group.items():
                 if 'options' in var_val:
+                    if isinstance(var_val['options'], list):
+                        continue
                     if var_val['type'] == 'list':
                         t = var_val['itemtype']
                     else:
