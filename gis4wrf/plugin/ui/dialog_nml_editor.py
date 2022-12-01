@@ -29,7 +29,7 @@ class NmlEditorDialog(IgnoreKeyPressesDialog):
         w, h = geom.width(), geom.height()
     
         self.setWindowTitle(os.path.basename(path))
-        self.resize(w * 0.7, h * 0.6)
+        self.resize(int(w * 0.7), int(h * 0.6))
         
         layout = QVBoxLayout()
         self.setLayout(layout)
@@ -45,7 +45,7 @@ class NmlEditorDialog(IgnoreKeyPressesDialog):
         hbox.addLayout(schema_vbox)
 
         schema_browser = NmlSchemaBrowser(schema)
-        schema_browser.setMaximumWidth(self.width() * 0.3)
+        schema_browser.setMaximumWidth(int(self.width() * 0.3))
 
         schema_search = QLineEdit()
         schema_search.setMaximumWidth(schema_browser.maximumWidth())

@@ -31,7 +31,7 @@ class CustomMetDatasetDialog(QDialog):
         geom = QGuiApplication.primaryScreen().geometry()
         w, h = geom.width(), geom.height()
         self.setWindowTitle("Custom Meteorological Dataset")
-        self.setMinimumSize(w * 0.25, h * 0.35)
+        self.setMinimumSize(int(w * 0.25), int(h * 0.35))
 
         layout = QVBoxLayout()
 
