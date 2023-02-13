@@ -58,42 +58,42 @@ if PY_MAJORMINOR == ('3', '6'):
         # NetCDF4 >= 1.3.0 is built against too recent numpy version.
         Dependency('netCDF4',
             install='1.2.9',
-            min='None'),
+            min=None),
         # dependency of netCDF4
         Dependency('cftime',
             install='1.5.1',
-            min='None'),
+            min=None),
     ]
 elif PY_MAJORMINOR == ('3', '7'):
     DEPS += [
         Dependency('netCDF4',
             install='1.4.2',
-            min='None'),
+            min=None),
         # dependency of netCDF4
         Dependency('cftime',
             install='1.5.1',
-            min='None'),
+            min=None),
     ]
 elif PY_MAJORMINOR == ('3', '9'):
     DEPS += [
         Dependency('netCDF4',
             install='1.5.7',
-            min='None'),
+            min=None),
         # dependency of netCDF4
         Dependency('cftime',
             install='1.5.1',
-            min='None'),
+            min=None),
     ]
 # best effort
 else:
     DEPS += [
         Dependency('netCDF4',
             install='1.*',
-            min='None'),
+            min=None),
         # dependency of netCDF4
         Dependency('cftime',
             install='1.*',
-            min='None'),
+            min=None),
     ]
 
 # Use a custom folder for the packages to avoid polluting the per-user site-packages.
